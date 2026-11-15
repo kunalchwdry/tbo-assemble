@@ -3,7 +3,7 @@
 The `/login` page uses Supabase Auth, and `/secure-account` verifies identity through `getUser()`.
 The account can create, edit and delete private event drafts and room blocks using
 a user-token Supabase client and owner-scoped RLS. Private events remain separate from the old
-dashboard and do not yet support guests or bookings. The existing public event and
+dashboard and support a private guest planning list, but not guest invitations or bookings. The existing public event and
 booking routes are not protected by this preview.
 Do not use the current deployment for real customer data.
 

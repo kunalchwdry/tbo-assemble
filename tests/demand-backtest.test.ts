@@ -31,3 +31,20 @@ test('a later-reported label cannot enter rolling training before its availabili
  const all=rows(),initial=evaluateDemandBacktest(all,'2025-02-01');const delayed=all.map(r=>r.asOf===initial.sample[0].asOf?{...r,outcomeAvailableOn:'2025-01-25'}:r);const result=evaluateDemandBacktest(delayed,'2025-02-01');
  const before=result.sample.filter(r=>r.asOf<='2025-01-25');assert.ok(before.every(r=>r.rollingLatestOutcome<r.asOf));assert.ok(result.sample.length===initial.sample.length);
 });
+test('reconstructed latest available outcome baseline never uses unavailable or future labels',()=>{
+ const all=rows(),initial=evaluateDemandBacktest(all,'2025-02-01');
+ for(const sample of initial.sample){
+  const past=all.filter(r=>r.asOf<sample.asOf&&r.outcomeAvailableOn<sample.asOf).sort((a,b)=>b.periodEnd.localeCompare(a.periodEnd));
+  assert.ok(sample.observedBaselineAvailableOn<sample.asOf);
+  assert.equal(sample.observedBaseline,past[0].actualNetUnits);assert.equal(sample.observedBaselinePeriodEnd,past[0].periodEnd);
+ }
+ const target=initial.sample[4];const changed=all.map(r=>r.asOf>=target.asOf?{...r,actualNetUnits:r.actualNetUnits+999}:r);const replay=evaluateDemandBacktest(changed,'2025-02-01');
+ for(let i=0;i<=4;i++)assert.equal(initial.sample[i].observedBaseline,replay.sample[i].observedBaseline);
+ const supplied=all.map(r=>({...r,priorNetUnits:0}));const suppliedResult=evaluateDemandBacktest(supplied,'2025-02-01');assert.equal(suppliedResult.observedBaselineMae,initial.observedBaselineMae,'separate field cannot alter reconstructed baseline');
+});
+test('late reported outcomes are skipped in the reconstructed baseline',()=>{
+ const all=rows(),initial=evaluateDemandBacktest(all,'2025-02-01'),target=initial.sample[4];
+ const delayed=all.map(r=>r.periodEnd===target.observedBaselinePeriodEnd?{...r,outcomeAvailableOn:target.asOf}:r);
+ const changed=evaluateDemandBacktest(delayed,'2025-02-01').sample.find(x=>x.asOf===target.asOf)!;
+ assert.notEqual(changed.observedBaselinePeriodEnd,target.observedBaselinePeriodEnd);assert.ok(changed.observedBaselineAvailableOn<changed.asOf);
+});
