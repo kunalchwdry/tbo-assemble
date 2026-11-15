@@ -44,6 +44,7 @@ async function remove(id, snapshotId, extra={}) {
   const saved=await get(A),hidden=await get(B);
   assert.equal(saved.status,200); assert.equal(saved.body.records.length,1);
   assert.match(saved.body.records[0].sourceSha256,/^[a-f0-9]{64}$/);
+  assert.equal(saved.body.records[0].modelVersion,'india-traffic-v3');
   assert.ok(saved.body.records[0].rows.length>0); assert.deepEqual(hidden.body.records,[]);
   const ownB=await post(B); assert.equal(ownB.status,200);
   const bRecords=(await get(B)).body.records;

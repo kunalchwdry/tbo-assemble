@@ -9,6 +9,9 @@ export const ROUTES = [
 export const DGCA_URL='https://raw.githubusercontent.com/Vonter/india-aviation-traffic/main/aggregated/domestic/city.csv';
 export type Route=(typeof ROUTES)[number];
 export type MonthlyTraffic={month:string;passengers:number|null;quality:'ok'|'ambiguous'|'invalid'};
+// The source distinguishes Mumbai's existing airport from Navi Mumbai in 2026.
+// Map only the exact existing-airport label. Never merge Navi Mumbai into BOM.
+function sourceCity(value:string){const city=value.trim().toUpperCase();return city==='MUMBAI (MUMBAI)'?'MUMBAI':city}
 /** RFC4180-style parser; quoted commas, escaped quotes and line breaks are supported. */
 export function parseCsv(input:string):string[][]{
  const out:string[][]=[];let row:string[]=[],field='',quoted=false;
@@ -19,7 +22,7 @@ export function parseCsv(input:string):string[][]{
 export function buildTraffic(csv:string, route:Route){
  const [header,...rows]=parseCsv(csv); const indices=['Year','Month','City1','City2','PaxToCity2','PaxFromCity2'].map(n=>header?.indexOf(n)??-1);if(indices.some(x=>x<0))throw Error('Unexpected source columns');
  const [y,m,c1,c2,to,from]=indices;const groups=new Map<string,Array<{value:number|null}>>();
- for(const r of rows){const a=r[c1]?.trim().toUpperCase(),b=r[c2]?.trim().toUpperCase();const forward=a===route.from&&b===route.to,reverse=a===route.to&&b===route.from;if(!forward&&!reverse)continue;
+ for(const r of rows){const a=sourceCity(r[c1]??''),b=sourceCity(r[c2]??'');const forward=a===route.from&&b===route.to,reverse=a===route.to&&b===route.from;if(!forward&&!reverse)continue;
   const year=Number(r[y]),month=Number(r[m]);if(!Number.isInteger(year)||year<2015||year>2100||!Number.isInteger(month)||month<1||month>12)continue;
   const raw=r[forward?to:from]?.trim();const value=raw!==undefined&&raw!==''?Number(raw):NaN;const key=`${year}-${String(month).padStart(2,'0')}`;
   const list=groups.get(key)??[];list.push({value:Number.isInteger(value)&&value>=0?value:null});groups.set(key,list);
