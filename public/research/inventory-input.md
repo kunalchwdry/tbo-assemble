@@ -23,7 +23,7 @@ Download the template from the dashboard. Its example row is synthetic. Replace 
 | integration | Supplier strategy label supplied by you, not an actual integration |
 | timing | Purchase timing label supplied by you, not optimized |
 
-Up to 20 rows, total capacity up to 3,000. Model forecasts are unvalidated heuristics and depend on comparable time windows. Price and cost must use the same unit and currency. Ensure you have rights to use the data and review your organization's handling rules before import. CSV files with quoted commas and quotes are supported. The pageviews and holiday APIs are external context only and do not automatically modify your inputs.
+Up to 20 rows, total capacity up to 3,000. Model forecasts are unvalidated heuristics and depend on comparable time windows. Price and cost must use the same unit and currency. Ensure you have rights to use the data and review your organization's handling rules before import. CSV files with quoted commas and quotes are supported. The opt-in live pageview scenario temporarily adjusts matching destinations in the allocation; it does not overwrite or save your manual inputs. Holidays remain context only. See live-attention-scenario.md for safeguards and limitations.
 
 ## Optional columns
 
@@ -42,4 +42,4 @@ The strategy suggestion is a simple decision rule, not a supplier integration or
 - `minOrderUnits`: optional whole-number minimum for a single item and period, between 1 and its capacity. The model selects either 0 or at least this amount. Blank means 1, not a verified contractual term. A zero-capacity row may leave the field blank and cannot be purchased.
 - `fixedOrderFee`: optional non-negative one-time INR fee (maximum ₹1 crore), charged once per opportunity if any units are bought. Blank means zero. It is included in budget and every profit scenario and assumed non-refundable; it is not included in the unsold-unit exposure metric. Fee is per row, not a shared supplier-wide fee. Taxes and other fees must be included manually in inputs where appropriate; no automatic tax or contract validation is performed.
 
-The on-page Supplier terms controls edit the current in-memory inputs. Saving a plan explicitly also stores those inputs; loading an older version recalculates with the new method. The manual quote-review panel remains separate and does not automatically apply quotes or terms.
+The on-page Supplier terms controls edit the current in-memory inputs. Saving a plan explicitly also stores those inputs; loading an older version recalculates with the new method. The manual quote-review panel changes the planner only when you explicitly apply a quote; cancellation and fee text are not automatically transferred.
