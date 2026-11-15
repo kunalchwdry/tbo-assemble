@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import {strict as assert} from 'node:assert';
+import {opportunities} from '../src/lib/procurement-core';
+import {optimizePortfolio} from '../src/lib/portfolio-optimizer';
+import {budgetTotals,compareBudgets} from '../src/lib/budget-comparison';
+const budget=1000000,risk=.35,asOf='2026-11-13';
+const rows=optimizePortfolio(opportunities,budget,risk,{asOf}).rows;
+test('same budget reuses the complete current allocation with no changes',()=>{const c=compareBudgets(opportunities,rows,budget,budget,risk,asOf);assert.deepEqual(c.current,c.candidate);assert.deepEqual(c.changes,[]);assert.equal(c.current.selected,rows.filter(r=>r.qty>0).length)});
+test('different budgets use the same optimizer and accurately identify changed quantities',()=>{const candidate=500000;const expected=optimizePortfolio(opportunities,candidate,risk,{asOf}).rows;const c=compareBudgets(opportunities,rows,budget,candidate,risk,asOf);assert.deepEqual(c.candidate,budgetTotals(expected,candidate));assert.ok(c.candidate.spend<=candidate);assert.deepEqual(new Set(c.changes.map(x=>x.id)),new Set(expected.filter((r,i)=>r.qty!==rows[i].qty).map(r=>r.id)));for(const r of c.changes){assert.equal(r.before,rows.find(x=>x.id===r.id)?.qty);assert.equal(r.after,expected.find(x=>x.id===r.id)?.qty)}});
+test('zero budget, expired quotes, fees, minimums and units remain consistent',()=>{const items=[{...opportunities[0],quoteExpiry:'2026-11-12',fixedOrderFee:500,minOrderUnits:4},{...opportunities[3],fixedOrderFee:500,minOrderUnits:4}];const existing=optimizePortfolio(items,budget,risk,{asOf}).rows;const c=compareBudgets(items,existing,budget,0,risk,asOf);assert.equal(c.candidate.spend,0);assert.equal(c.candidate.hotelUnits,0);assert.equal(c.candidate.flightUnits,0);assert.equal(existing[0].qty,0);assert.equal(c.current.flightUnits,existing[1].qty);assert.equal(c.current.spend,existing.reduce((s,x)=>s+x.spend,0));});
+test('reject invalid budgets, risk and date',()=>{for(const amount of [-1,1.5,1e9+1,NaN,Infinity])assert.throws(()=>compareBudgets(opportunities,rows,budget,amount,risk,asOf));assert.throws(()=>compareBudgets(opportunities,rows,budget,10,1,asOf));assert.throws(()=>compareBudgets(opportunities,rows,budget,10,risk,'2026-02-30'));});
