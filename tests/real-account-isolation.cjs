@@ -40,7 +40,7 @@ async function main(){
    const r=await a.from(table).delete().eq('id',id).select('id');if(r.error||r.data?.length!==1)failed.push(table+':'+id);
   }
   if(failed.length){console.error('CLEANUP REQUIRED: delete only these synthetic records via account A:',failed.join(', '));process.exitCode=1}
-  await Promise.allSettled([a.auth.signOut(),b.auth.signOut()]);
+  await Promise.allSettled([a.auth.signOut({scope:'local'}),b.auth.signOut({scope:'local'})]);
  }
 }
 main().catch(()=>{console.error('Test failed. No credentials or account data were printed. A network failure may leave a synthetic record with this exact title/name: '+mark+'. Inspect and remove only that test record in account A. Inspect configuration, auth and RLS.');process.exitCode=1});
