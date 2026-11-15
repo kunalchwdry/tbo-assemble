@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getDemoContractData, getDemoInviteData } from "@/lib/ai";
 // Explicit extension avoids the legacy local-parser.js shadowing this maintained parser in webpack.
 import { parseContractLocally, parseInviteLocally } from "@/lib/local-parser.ts";
+import {MAX_DOCUMENT_BYTES, readLimitedBody, UploadTooLarge} from "@/lib/upload-limits";
 
 export async function POST(request: Request) {
   try {
@@ -29,9 +30,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const formData = await request.formData();
-    const contractFile = formData.get("contract") as File | null;
-    const inviteFile = formData.get("invite") as File | null;
+    // Bound the actual streamed body before multipart parsing, even when the
+    // client omits or forges Content-Length. Vercel can reject larger bodies
+    // before this handler runs; the application limit also covers other hosts.
+    let body:Uint8Array;
+    try { body=await readLimitedBody(request); }
+    catch (error) { if(error instanceof UploadTooLarge)return NextResponse.json({error:"Upload too large. Each file must be 2 MiB or less."},{status:413}); throw error; }
+    let formData:FormData;
+    try { formData=await new Request(request.url,{method:'POST',headers:{'content-type':contentType},body:body as BodyInit}).formData(); }
+    catch { return NextResponse.json({error:'Invalid multipart upload.'},{status:400}); }
+    if ([...formData.keys()].some(key=>key!=='contract'&&key!=='invite') || formData.getAll('contract').length>1 || formData.getAll('invite').length>1)
+      return NextResponse.json({error:'Upload at most one contract and one invitation.'},{status:400});
+    const contractEntry=formData.get('contract'),inviteEntry=formData.get('invite');
+    if(typeof contractEntry==='string'||typeof inviteEntry==='string')return NextResponse.json({error:'Uploaded documents must be files.'},{status:400});
+    const contractFile=contractEntry,inviteFile=inviteEntry;
+    if ((contractFile && contractFile.size>MAX_DOCUMENT_BYTES)||(inviteFile && inviteFile.size>MAX_DOCUMENT_BYTES))
+      return NextResponse.json({error:'Upload too large. Each file must be 2 MiB or less.'},{status:413});
 
     if (
       (!contractFile || contractFile.size === 0) &&

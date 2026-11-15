@@ -1,0 +1,9 @@
+# Document upload limits and remaining risks
+
+The public `/api/ai/parse` endpoint reads at most 4,300,000 actual request bytes before multipart parsing, and allows at most one file per field with a 2 MiB maximum per file. The UI shows the per-file limit. The server counts streamed bytes independently of `Content-Length`; this is important for chunked and misleading requests. Platform or proxy limits can be lower. Demo mode remains available.
+
+These limits reduce, but do not eliminate, parser resource-exhaustion risk. XLSX and DOCX are compressed archives and may expand far beyond their upload size; PDF, XLS and image/OCR parsing also accept complex untrusted input. MIME types are client-supplied and are not proof of format or safety. The endpoint remains public and has no distributed rate limiting or isolated parsing worker. Before accepting untrusted production documents, use strict content validation, bounded decompression, rate limits and independently sandboxed, time/memory-limited parser processes. Do not upload sensitive documents to the demo.
+
+The dependency lockfile is audited separately. A clean npm audit only covers known registry advisories and is not a complete security review. The development-only `@typescript-eslint/typescript-estree` minimatch override intentionally replaces the vulnerable v10 with v11; retain only while compatibility tests pass and revisit when the upstream dependency range permits a patched release. `npm ci --ignore-scripts` plus `prisma generate` was used for the local clean-install test.
+
+**Separate unresolved risk:** legacy event and booking routes still allow shared access, as described in `rollout.md`. Upload limits and dependency updates do not authorize or protect those routes. A verified owner migration, scoped private queries and revocable guest tokens are required; old links cannot safely be treated as authenticated merely because they still work.

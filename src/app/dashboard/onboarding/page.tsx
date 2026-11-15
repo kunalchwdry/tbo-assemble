@@ -887,7 +887,7 @@ export default function OnboardingPage() {
                   </div>
                   <div>
                     <CardTitle className="text-sm">Hotel Contract</CardTitle>
-                    <CardDescription className="text-xs">PDF, Word, Excel, or image of venue agreement</CardDescription>
+                    <CardDescription className="text-xs">PDF, Word, Excel, or image of venue agreement · max 2 MiB</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -925,7 +925,7 @@ export default function OnboardingPage() {
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0] || null;
-                      if (file && file.size > 10 * 1024 * 1024) { alert("File too large. Max 10MB."); return; }
+                      if (file && file.size > 2 * 1024 * 1024) { alert("File too large. Maximum is 2 MiB per file."); e.target.value=""; return; }
                       handleContractFile(file);
                     }}
                   />
@@ -942,7 +942,7 @@ export default function OnboardingPage() {
                   </div>
                   <div>
                     <CardTitle className="text-sm">Event Invitation</CardTitle>
-                    <CardDescription className="text-xs">Image, PDF, Word, or Excel for theme extraction</CardDescription>
+                    <CardDescription className="text-xs">Image, PDF, Word, or Excel for theme extraction · max 2 MiB</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -980,7 +980,7 @@ export default function OnboardingPage() {
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0] || null;
-                      if (file && file.size > 10 * 1024 * 1024) { alert("File too large. Max 10MB."); return; }
+                      if (file && file.size > 2 * 1024 * 1024) { alert("File too large. Maximum is 2 MiB per file."); e.target.value=""; return; }
                       handleInviteFile(file);
                     }}
                   />
