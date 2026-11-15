@@ -17,6 +17,7 @@ import {applyDemandScenarios,type DemandScenario} from '@/lib/validated-demand-s
 import InventoryImport from '@/components/inventory-import';
 import PlanApiCheck from '@/components/plan-api-check';
 import HistoricalDemandCard from '@/components/historical-demand-card';
+import SingaporeDemandStudy from '@/components/singapore-demand-study';
 import DemandValidation from '@/components/demand-validation';
 import PortfolioStress from '@/components/portfolio-stress';
 import CancellationSandbox from '@/components/cancellation-sandbox';
@@ -137,6 +138,7 @@ export default function InventoryWorkspace({children}:{children:ReactNode}){
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/demand-validation'}>{keep('/inventory/demand-validation')&&<>
   <DemandValidation items={inventory} asOf={asOf} today={fitToday} scenarios={fitScenarios} onUse={s=>{setFitNow(Date.now());setFitScenarios(prev=>({...prev,[s.result.opportunityId]:s}))}} onRemove={id=>setFitScenarios(prev=>{const next={...prev};delete next[id];return next})} onClear={()=>setFitScenarios({})}/>
+  <SingaporeDemandStudy/>
   <HistoricalDemandCard/>
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/market'}>{keep('/inventory/market')&&<>
