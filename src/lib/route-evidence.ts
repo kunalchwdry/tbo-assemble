@@ -1,5 +1,5 @@
 import type {MonthlyTraffic} from './india-market';
-export type StoredRouteEvidence={id:string;origin:string;destination:string;capturedAt:string;sourceSha256:string;rows:MonthlyTraffic[];forecast:{targetMonth:string;value:number;lower:number;upper:number;method:string}|null;modelVersion:string};
+export type StoredRouteEvidence={id:string;origin:string;destination:string;capturedAt:string;sourceSha256:string;rows:(MonthlyTraffic & {provenance?:{kind:string;url:string;sha256:string;month?:string}})[];forecast:{targetMonth:string;value:number;lower:number;upper:number;method:string}|null;modelVersion:string};
 /** An actual becomes comparable only if the forecast was recorded before its target
  * and the later snapshot was captured after the target month ended. Values may
  * be revised and archive times depend on a trustworthy server clock. */

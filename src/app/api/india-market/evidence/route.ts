@@ -1,7 +1,7 @@
 import {NextRequest,NextResponse} from 'next/server';
-import {createHash} from 'node:crypto';
 import {supabaseServer} from '@/lib/supabase/server';
-import {buildTraffic,DGCA_URL,ROUTES} from '@/lib/india-market';
+import {ROUTES} from '@/lib/india-market';
+import {loadIndiaTraffic} from '@/lib/india-traffic-source';
 import {studyTraffic} from '@/lib/india-traffic-forecast';
 import {evidenceOutcomes,type StoredRouteEvidence} from '@/lib/route-evidence';
 export const dynamic='force-dynamic';export const maxDuration=30;
@@ -35,13 +35,12 @@ export async function POST(req:NextRequest){
  const input=await req.json().catch(()=>null),route=routeFor(input?.origin,input?.destination),clientTime=Date.parse(input?.clientTime);
  if(!route||!Number.isFinite(clientTime))return reply({error:'Choose a route and provide the device time.'},400);
  if(Math.abs(Date.now()-clientTime)>300000)return reply({error:'Device and server clocks differ by more than five minutes. Evidence was not saved.'},409);
- const response=await fetch(DGCA_URL,{cache:'no-store',signal:AbortSignal.timeout(20000)});if(!response.ok)throw Error('source');const text=await response.text();if(text.length<1000||text.length>10_000_000)throw Error('size');
- const {monthly}=buildTraffic(text,route),now=new Date(),asOfMonth=now.toISOString().slice(0,7);
+ const now=new Date(),{monthly,sourceSha256}=await loadIndiaTraffic(route,now),asOfMonth=now.toISOString().slice(0,7);
  if(!monthly.length||monthly.some(r=>r.month>=asOfMonth))return reply({error:'The source has current or future months; capture paused until data and clock are checked.'},409);
  const study=studyTraffic(monthly,asOfMonth),forecast=(study.status==='available'||study.status==='baseline')&&study.forecast!==null&&study.lower!==null&&study.upper!==null&&study.targetMonth&&study.method?{targetMonth:study.targetMonth,value:study.forecast,lower:study.lower,upper:study.upper,method:study.method}:null;
- const hash=createHash('sha256').update(text).digest('hex');const {default:db}=await import('@/lib/db');
+ const hash=sourceSha256;const {default:db}=await import('@/lib/db');
  const result=await db.$transaction(async tx=>{await tx.$queryRaw`SELECT 1::int AS locked FROM (SELECT pg_advisory_xact_lock(hashtextextended(${u.id},0))) AS acquired`;const status=await tx.$queryRaw<Array<{n:number;skew:number}>>`SELECT (SELECT count(*)::int FROM public.route_forecast_evidence WHERE owner_id=${u.id}::uuid) AS n, abs(extract(epoch from (now()-${now}::timestamptz)))::float8 AS skew`;if(status[0].n>=100)throw Error('limit');if(status[0].skew>300)throw Error('clock');
- return tx.$queryRaw<Array<{id:string}>>`INSERT INTO public.route_forecast_evidence(owner_id,origin,destination,source_sha256,snapshot,forecast,model_version) VALUES (${u.id}::uuid,${route.origin},${route.destination},${hash},${JSON.stringify(monthly)}::jsonb,${forecast?JSON.stringify(forecast):null}::jsonb,'india-traffic-v3') ON CONFLICT DO NOTHING RETURNING id`});
+ return tx.$queryRaw<Array<{id:string}>>`INSERT INTO public.route_forecast_evidence(owner_id,origin,destination,source_sha256,snapshot,forecast,model_version) VALUES (${u.id}::uuid,${route.origin},${route.destination},${hash},${JSON.stringify(monthly)}::jsonb,${forecast?JSON.stringify(forecast):null}::jsonb,'india-traffic-v4') ON CONFLICT DO NOTHING RETURNING id`});
  if(!result.length)return reply({error:'A snapshot for this route was already saved today UTC.'},409);
  return reply({saved:true,forecastRecorded:!!forecast});
  }catch(e){if(e instanceof Error&&e.message==='limit')return reply({error:'Evidence limit reached (100 snapshots per account).'},429);if(e instanceof Error&&e.message==='clock')return reply({error:'Database and server clocks differ. Evidence was not saved.'},409);return reply({error:'Could not save evidence. The source, account or database may be unavailable.'},503)}

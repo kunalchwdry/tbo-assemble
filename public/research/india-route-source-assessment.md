@@ -1,6 +1,6 @@
 # Indian domestic route data: source assessment
 
-Assessment date: 13 November 2026. This is a source investigation, not a data-source migration. The app's live route predictor and private evidence archive still use the Vonter DGCA-derived CSV, which was observed to end in July 2026. Their stale-data and validation gates remain in force.
+Assessment date: 13 November 2026. The app now supplements the historical Vonter DGCA-derived CSV (observed ending in July 2026) with newer official DGCA workbooks, for the six supported routes. Their stale-data and validation gates remain in force. See [India travel data methodology](india-market-data.md) for the integration and source-hash format.
 
 ## Primary source: DGCA domestic city-pair workbooks
 
@@ -22,6 +22,6 @@ The [Dataful preview](https://dataful.in/datasets/14866/) also lists September 2
 
 DGCA's [website policy](https://www.dgca.gov.in/digigov-portal/jsp/dgca/footerLink/WebsitePolicy.jsp) says website material may be reproduced free of charge if accurately reproduced and prominently attributed, with an exception for third-party copyrighted material. Confirm applicability and operational reuse requirements before republishing or building an automated production pipeline.
 
-## Before switching the app
+## Integration and remaining limitations
 
-A safe integration should discover new workbooks from the official index, validate file size, format, month, headers, unique directional city-pair rows, and exact Mumbai labels, record original workbook hashes and retrieval time, and retain missing/ambiguous data rather than fabricate values. Preserve historical provenance and the archive's source hashing when combining old and new files; do not silently represent a mixed dataset as a single original file. Test revisions, duplicate routes, endpoint failures, date gating, and historical backtests. Direct parsing of downloaded workbooks adds security and availability considerations. Once validated, compare all six supported routes and recalculate retrospective results; as of November, September remains older than the last completed month, so the existing strict forecast gate would still flag it stale.
+The app discovers newer workbooks through the official index and checks file size, workbook month and passenger headers, directional city-pair duplicates, and exact Mumbai labels. Per-row file hashes and a separate combined manifest hash retain mixed-source provenance in v4 snapshots. Missing and ambiguous values are not filled. It fails closed on source discovery errors rather than silently masking an outage; upstream format changes may require maintenance. Direct parsing of downloaded workbooks still adds security and availability considerations. As of November, September remains older than the last completed month, so the existing strict forecast gate flags it stale. The frozen February–July comparison is unchanged, and the supplemented source does not turn the passenger proxy into TBO transaction data.

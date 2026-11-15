@@ -2,6 +2,10 @@
 
 This is a decision-support prototype, not a complete operational procurement system. Features marked **prototype** depend on synthetic data or unvalidated assumptions; do not use them as verified forecasts or instructions to buy.
 
+## Assessment against the original TBO challenge
+
+**4/10 overall alignment; 6/10 as a hackathon prototype; 2/10 for real purchasing.** These are qualitative engineering judgments, not measured accuracy or profitability. The official DGCA workbook bridge improves traceable route evidence, but does not supply TBO booking/search/look-to-book histories or supplier offers, and the September 2026 counts remain stale under the forecast gate in November. Therefore it does not materially change the earlier overall rating. The browser-only quote approval checklist is not an authorized durable approval system, and no supplier purchase is placed. Private evidence has been exercised with real PostgreSQL and a local authentication double; a real signed-in save/reload still requires confirmation. Existing shared legacy event and guest access remains active by explicit user choice.
+
 | Problem-statement area | Available now | Remaining work |
 | --- | --- | --- |
 | Budget, opportunities and quantities | Prototype inventory planner ranks hotel/flight product-periods and makes budget-constrained quantity recommendations. Supplier minimums and one-time fees can be entered manually; an isolated landed-cost comparison can test additional per-unit charges and percentage costs for one item. | Reliable demand and costs, supplier-wide constraints, currencies, taxes, deposits, shared capacity and an independently validated optimizer. |
