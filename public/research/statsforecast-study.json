@@ -1,0 +1,2977 @@
+{
+  "schema": "statsforecast-traffic-study-v1",
+  "statsforecastVersion": "2.0.3",
+  "numpyVersion": "2.4.6",
+  "snapshotSha256": "5e118f2b76ff029aa690a4bb3ccdc04452c99bf71055ad454265198bd3a97684",
+  "trainingMonths": 36,
+  "selectionWindow": "2024-01 to 2025-12",
+  "laterWindow": "2026-02 to 2026-09",
+  "horizonMonths": 2,
+  "replayAssumption": "t-2 data available; publication vintages and revisions are unverified",
+  "methods": [
+    "last-observed",
+    "last-year",
+    "ses-optimized",
+    "seasonal-auto-ets"
+  ],
+  "routes": [
+    {
+      "origin": "BOM",
+      "destination": "DEL",
+      "retrievedAt": "2026-11-15T13:55:07.037Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "rowsSha256": "23e7c88f771cc5a61ea592ee4ed1453d598ca6d67ac0a7d712587fff105152d4",
+      "latestUsableMonth": "2026-09",
+      "selection": {
+        "count": 20,
+        "excludedReasons": {
+          "missing-or-invalid-target": 2,
+          "missing-baseline-input": 2
+        },
+        "mae": {
+          "last-observed": 17523.9,
+          "last-year": 21948.05,
+          "ses-optimized": 17465.070844711783,
+          "seasonal-auto-ets": 16787.86436547168
+        },
+        "rows": [
+          {
+            "month": "2024-01",
+            "actual": 289788,
+            "cutoff": "2023-11",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 276279,
+              "last-year": 249392,
+              "ses-optimized": 276272.97145964863,
+              "seasonal-auto-ets": 276278.9649453433
+            }
+          },
+          {
+            "month": "2024-02",
+            "actual": 293493,
+            "cutoff": "2023-12",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 284574,
+              "last-year": 264525,
+              "ses-optimized": 284490.9613948134,
+              "seasonal-auto-ets": 284573.1704964945
+            }
+          },
+          {
+            "month": "2024-03",
+            "actual": 288891,
+            "cutoff": "2024-01",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 289788,
+              "last-year": 260603,
+              "ses-optimized": 289735.0102962458,
+              "seasonal-auto-ets": 289787.47851704963
+            }
+          },
+          {
+            "month": "2024-04",
+            "actual": 302589,
+            "cutoff": "2024-02",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 293493,
+              "last-year": 279827,
+              "ses-optimized": 293455.3993000822,
+              "seasonal-auto-ets": 293492.6294478517
+            }
+          },
+          {
+            "month": "2024-06",
+            "actual": 262604,
+            "cutoff": "2024-04",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 302589,
+              "last-year": 243112,
+              "ses-optimized": 302452.4260052915,
+              "seasonal-auto-ets": 288696.06595996616
+            }
+          },
+          {
+            "month": "2024-08",
+            "actual": 290300,
+            "cutoff": "2024-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 262604,
+              "last-year": 253806,
+              "ses-optimized": 262728.38381336624,
+              "seasonal-auto-ets": 283580.97561003774
+            }
+          },
+          {
+            "month": "2024-09",
+            "actual": 292814,
+            "cutoff": "2024-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 269329,
+              "last-year": 250465,
+              "ses-optimized": 269121.0627153817,
+              "seasonal-auto-ets": 286067.54920327157
+            }
+          },
+          {
+            "month": "2024-10",
+            "actual": 298125,
+            "cutoff": "2024-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 290300,
+              "last-year": 275931,
+              "ses-optimized": 288623.5374816306,
+              "seasonal-auto-ets": 289985.0975540835
+            }
+          },
+          {
+            "month": "2024-11",
+            "actual": 283790,
+            "cutoff": "2024-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 292814,
+              "last-year": 276279,
+              "ses-optimized": 286622.8869056938,
+              "seasonal-auto-ets": 308586.9994629277
+            }
+          },
+          {
+            "month": "2024-12",
+            "actual": 271126,
+            "cutoff": "2024-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 298125,
+              "last-year": 284574,
+              "ses-optimized": 297078.96872454253,
+              "seasonal-auto-ets": 311001.0656144145
+            }
+          },
+          {
+            "month": "2025-01",
+            "actual": 282359,
+            "cutoff": "2024-11",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 283790,
+              "last-year": 289788,
+              "ses-optimized": 287641.7983216306,
+              "seasonal-auto-ets": 290789.86908218043
+            }
+          },
+          {
+            "month": "2025-02",
+            "actual": 283669,
+            "cutoff": "2024-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 271126,
+              "last-year": 293493,
+              "ses-optimized": 271254.1398944348,
+              "seasonal-auto-ets": 271155.04785873584
+            }
+          },
+          {
+            "month": "2025-03",
+            "actual": 285382,
+            "cutoff": "2025-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 282359,
+              "last-year": 288891,
+              "ses-optimized": 281470.7854023955,
+              "seasonal-auto-ets": 281183.3325125619
+            }
+          },
+          {
+            "month": "2025-04",
+            "actual": 283055,
+            "cutoff": "2025-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 283669,
+              "last-year": 302589,
+              "ses-optimized": 283127.40479049704,
+              "seasonal-auto-ets": 283137.2905635991
+            }
+          },
+          {
+            "month": "2025-06",
+            "actual": 241903,
+            "cutoff": "2025-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 283055,
+              "last-year": 262604,
+              "ses-optimized": 283078.1106697065,
+              "seasonal-auto-ets": 283055.23268286866
+            }
+          },
+          {
+            "month": "2025-07",
+            "actual": 244021,
+            "cutoff": "2025-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 264850,
+              "last-year": 269329,
+              "ses-optimized": 265032.39006640675,
+              "seasonal-auto-ets": 264851.8205232683
+            }
+          },
+          {
+            "month": "2025-08",
+            "actual": 251212,
+            "cutoff": "2025-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 241903,
+              "last-year": 290300,
+              "ses-optimized": 242134.3954821045,
+              "seasonal-auto-ets": 241905.29488205232
+            }
+          },
+          {
+            "month": "2025-09",
+            "actual": 254492,
+            "cutoff": "2025-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 244021,
+              "last-year": 292814,
+              "ses-optimized": 244002.12672968223,
+              "seasonal-auto-ets": 244020.7884294882
+            }
+          },
+          {
+            "month": "2025-10",
+            "actual": 295183,
+            "cutoff": "2025-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 251212,
+              "last-year": 298125,
+              "ses-optimized": 250945.3562031004,
+              "seasonal-auto-ets": 250937.13277546136
+            }
+          },
+          {
+            "month": "2025-11",
+            "actual": 294192,
+            "cutoff": "2025-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 254492,
+              "last-year": 283790,
+              "ses-optimized": 254458.45900913872,
+              "seasonal-auto-ets": 254458.55138145896
+            }
+          }
+        ]
+      },
+      "selectedPolicy": "last-observed",
+      "later": {
+        "count": 7,
+        "excludedReasons": {
+          "missing-baseline-input": 1
+        },
+        "mae": {
+          "last-observed": 25321.571428571428,
+          "last-year": 12836.57142857143,
+          "ses-optimized": 25191.995393592177,
+          "seasonal-auto-ets": 25315.654929412176
+        },
+        "resultVsBestBaseline": "underperformed",
+        "rows": [
+          {
+            "month": "2026-03",
+            "actual": 271372,
+            "cutoff": "2026-01",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 275144,
+              "last-year": 285382,
+              "ses-optimized": 275106.1064084695,
+              "seasonal-auto-ets": 275143.59843066096
+            }
+          },
+          {
+            "month": "2026-04",
+            "actual": 272282,
+            "cutoff": "2026-02",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 286792,
+              "last-year": 283055,
+              "ses-optimized": 286675.07279925724,
+              "seasonal-auto-ets": 286790.8351598431
+            }
+          },
+          {
+            "month": "2026-05",
+            "actual": 276140,
+            "cutoff": "2026-03",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 271372,
+              "last-year": 264850,
+              "ses-optimized": 271525.1201230924,
+              "seasonal-auto-ets": 271373.541883516
+            }
+          },
+          {
+            "month": "2026-06",
+            "actual": 218850,
+            "cutoff": "2026-04",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 272282,
+              "last-year": 241903,
+              "ses-optimized": 272274.4267798083,
+              "seasonal-auto-ets": 272281.90915418835
+            }
+          },
+          {
+            "month": "2026-07",
+            "actual": 225172,
+            "cutoff": "2026-05",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 276140,
+              "last-year": 244021,
+              "ses-optimized": 275954.9770079136,
+              "seasonal-auto-ets": 275943.2575747244
+            }
+          },
+          {
+            "month": "2026-08",
+            "actual": 247570,
+            "cutoff": "2026-06",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 218850,
+              "last-year": 251212,
+              "ses-optimized": 219422.8147571485,
+              "seasonal-auto-ets": 218855.72896141908
+            }
+          },
+          {
+            "month": "2026-09",
+            "actual": 246253,
+            "cutoff": "2026-07",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 225172,
+              "last-year": 254492,
+              "ses-optimized": 225005.68036006248,
+              "seasonal-auto-ets": 225007.74496859647
+            }
+          }
+        ]
+      },
+      "currentMethodComparison": {
+        "note": "Intersection only; existing policy was selected on its own full 2024–25 sample, independently of this experiment.",
+        "existingPolicy": "adaptive",
+        "selection": {
+          "count": 20,
+          "months": [
+            "2024-01",
+            "2024-02",
+            "2024-03",
+            "2024-04",
+            "2024-06",
+            "2024-08",
+            "2024-09",
+            "2024-10",
+            "2024-11",
+            "2024-12",
+            "2025-01",
+            "2025-02",
+            "2025-03",
+            "2025-04",
+            "2025-06",
+            "2025-07",
+            "2025-08",
+            "2025-09",
+            "2025-10",
+            "2025-11"
+          ],
+          "mae": {
+            "last-observed": 17523.9,
+            "last-year": 21948.05,
+            "ses-optimized": 17465.070844711783,
+            "seasonal-auto-ets": 16787.86436547168,
+            "currentAdaptive": 15780.884595058486
+          }
+        },
+        "later": {
+          "count": 7,
+          "months": [
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06",
+            "2026-07",
+            "2026-08",
+            "2026-09"
+          ],
+          "mae": {
+            "last-observed": 25321.571428571428,
+            "last-year": 12836.57142857143,
+            "ses-optimized": 25191.995393592177,
+            "seasonal-auto-ets": 25315.654929412176,
+            "currentPolicy": 13652.25652635862
+          }
+        }
+      }
+    },
+    {
+      "origin": "DEL",
+      "destination": "BOM",
+      "retrievedAt": "2026-11-15T13:55:04.564Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "rowsSha256": "d99d64cf5147c23d102187b8353c087e56745f946d21065e074d8cb34e222e79",
+      "latestUsableMonth": "2026-09",
+      "selection": {
+        "count": 20,
+        "excludedReasons": {
+          "missing-or-invalid-target": 2,
+          "missing-baseline-input": 2
+        },
+        "mae": {
+          "last-observed": 15980.5,
+          "last-year": 20325.6,
+          "ses-optimized": 15027.123175549154,
+          "seasonal-auto-ets": 16290.006876078705
+        },
+        "rows": [
+          {
+            "month": "2024-01",
+            "actual": 284143,
+            "cutoff": "2023-11",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 254129,
+              "last-year": 245843,
+              "ses-optimized": 254682.30605661022,
+              "seasonal-auto-ets": 254680.02637839402
+            }
+          },
+          {
+            "month": "2024-02",
+            "actual": 280016,
+            "cutoff": "2023-12",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 308682,
+              "last-year": 256563,
+              "ses-optimized": 302265.95532956126,
+              "seasonal-auto-ets": 302157.8461198015
+            }
+          },
+          {
+            "month": "2024-03",
+            "actual": 290453,
+            "cutoff": "2024-01",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 284143,
+              "last-year": 272879,
+              "ses-optimized": 286600.8968942713,
+              "seasonal-auto-ets": 286602.1653904013
+            }
+          },
+          {
+            "month": "2024-04",
+            "actual": 276200,
+            "cutoff": "2024-02",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 280016,
+              "last-year": 265591,
+              "ses-optimized": 281192.24950039183,
+              "seasonal-auto-ets": 278899.0489462682
+            }
+          },
+          {
+            "month": "2024-06",
+            "actual": 290790,
+            "cutoff": "2024-04",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 276200,
+              "last-year": 264260,
+              "ses-optimized": 277906.7017574466,
+              "seasonal-auto-ets": 275307.39829876454
+            }
+          },
+          {
+            "month": "2024-08",
+            "actual": 290187,
+            "cutoff": "2024-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 290790,
+              "last-year": 255324,
+              "ses-optimized": 286243.668705803,
+              "seasonal-auto-ets": 281935.7265607279
+            }
+          },
+          {
+            "month": "2024-09",
+            "actual": 288534,
+            "cutoff": "2024-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 277921,
+              "last-year": 254808,
+              "ses-optimized": 281484.69543681236,
+              "seasonal-auto-ets": 285395.7756301986
+            }
+          },
+          {
+            "month": "2024-10",
+            "actual": 261087,
+            "cutoff": "2024-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 290187,
+              "last-year": 260769,
+              "ses-optimized": 285539.75635358866,
+              "seasonal-auto-ets": 288958.3778912233
+            }
+          },
+          {
+            "month": "2024-11",
+            "actual": 296267,
+            "cutoff": "2024-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 288534,
+              "last-year": 254129,
+              "ses-optimized": 285920.19269469776,
+              "seasonal-auto-ets": 293289.6190474773
+            }
+          },
+          {
+            "month": "2024-12",
+            "actual": 295226,
+            "cutoff": "2024-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 261087,
+              "last-year": 308682,
+              "ses-optimized": 276872.05432373646,
+              "seasonal-auto-ets": 289860.21683351137
+            }
+          },
+          {
+            "month": "2025-01",
+            "actual": 279457,
+            "cutoff": "2024-11",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 296267,
+              "last-year": 284143,
+              "ses-optimized": 284046.1135966411,
+              "seasonal-auto-ets": 288022.49357421364
+            }
+          },
+          {
+            "month": "2025-02",
+            "actual": 271320,
+            "cutoff": "2024-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 295226,
+              "last-year": 280016,
+              "ses-optimized": 294842.9644899303,
+              "seasonal-auto-ets": 283181.13575522415
+            }
+          },
+          {
+            "month": "2025-03",
+            "actual": 290413,
+            "cutoff": "2025-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 279457,
+              "last-year": 290453,
+              "ses-optimized": 284316.6459516408,
+              "seasonal-auto-ets": 288830.48996368377
+            }
+          },
+          {
+            "month": "2025-04",
+            "actual": 269338,
+            "cutoff": "2025-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 271320,
+              "last-year": 276200,
+              "ses-optimized": 279057.35340090364,
+              "seasonal-auto-ets": 289713.66228129977
+            }
+          },
+          {
+            "month": "2025-06",
+            "actual": 266944,
+            "cutoff": "2025-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 269338,
+              "last-year": 290790,
+              "ses-optimized": 275530.25992406084,
+              "seasonal-auto-ets": 286967.72193919
+            }
+          },
+          {
+            "month": "2025-07",
+            "actual": 249657,
+            "cutoff": "2025-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 273585,
+              "last-year": 277921,
+              "ses-optimized": 275164.51256949524,
+              "seasonal-auto-ets": 282831.5202475352
+            }
+          },
+          {
+            "month": "2025-08",
+            "actual": 256618,
+            "cutoff": "2025-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 266944,
+              "last-year": 290187,
+              "ses-optimized": 269935.3843438723,
+              "seasonal-auto-ets": 278755.35318650864
+            }
+          },
+          {
+            "month": "2025-09",
+            "actual": 248779,
+            "cutoff": "2025-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 249657,
+              "last-year": 288534,
+              "ses-optimized": 259562.97066951997,
+              "seasonal-auto-ets": 278003.8284242937
+            }
+          },
+          {
+            "month": "2025-10",
+            "actual": 253111,
+            "cutoff": "2025-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 256618,
+              "last-year": 261087,
+              "ses-optimized": 258194.44378989103,
+              "seasonal-auto-ets": 259209.0216515315
+            }
+          },
+          {
+            "month": "2025-11",
+            "actual": 308118,
+            "cutoff": "2025-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 248779,
+              "last-year": 296267,
+              "ses-optimized": 252366.33863585466,
+              "seasonal-auto-ets": 256602.4543923567
+            }
+          }
+        ]
+      },
+      "selectedPolicy": "ses-optimized",
+      "later": {
+        "count": 7,
+        "excludedReasons": {
+          "missing-baseline-input": 1
+        },
+        "mae": {
+          "last-observed": 24152.714285714286,
+          "last-year": 13532.57142857143,
+          "ses-optimized": 18631.709044464045,
+          "seasonal-auto-ets": 20330.240931158103
+        },
+        "resultVsBestBaseline": "underperformed",
+        "rows": [
+          {
+            "month": "2026-03",
+            "actual": 271231,
+            "cutoff": "2026-01",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 274754,
+              "last-year": 290413,
+              "ses-optimized": 279175.3965434423,
+              "seasonal-auto-ets": 278770.0359082105
+            }
+          },
+          {
+            "month": "2026-04",
+            "actual": 239956,
+            "cutoff": "2026-02",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 266765,
+              "last-year": 269338,
+              "ses-optimized": 274795.97525707417,
+              "seasonal-auto-ets": 273877.0918499829
+            }
+          },
+          {
+            "month": "2026-05",
+            "actual": 287542,
+            "cutoff": "2026-03",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 271231,
+              "last-year": 273585,
+              "ses-optimized": 273625.685678476,
+              "seasonal-auto-ets": 273880.51281558065
+            }
+          },
+          {
+            "month": "2026-06",
+            "actual": 267073,
+            "cutoff": "2026-04",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 239956,
+              "last-year": 266944,
+              "ses-optimized": 259342.0433038405,
+              "seasonal-auto-ets": 273179.90555224585
+            }
+          },
+          {
+            "month": "2026-07",
+            "actual": 233888,
+            "cutoff": "2026-05",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 287542,
+              "last-year": 249657,
+              "ses-optimized": 270744.57368421624,
+              "seasonal-auto-ets": 270724.96891170926
+            }
+          },
+          {
+            "month": "2026-08",
+            "actual": 245164,
+            "cutoff": "2026-06",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 267073,
+              "last-year": 256618,
+              "ses-optimized": 269439.8063878765,
+              "seasonal-auto-ets": 269539.10162175086
+            }
+          },
+          {
+            "month": "2026-09",
+            "actual": 253634,
+            "cutoff": "2026-07",
+            "imputedMonths": [
+              "2024-05",
+              "2025-12"
+            ],
+            "predictions": {
+              "last-observed": 233888,
+              "last-year": 248779,
+              "ses-optimized": 258491.94042095562,
+              "seasonal-auto-ets": 273505.095489788
+            }
+          }
+        ]
+      },
+      "currentMethodComparison": {
+        "note": "Intersection only; existing policy was selected on its own full 2024–25 sample, independently of this experiment.",
+        "existingPolicy": "last-observed",
+        "selection": {
+          "count": 20,
+          "months": [
+            "2024-01",
+            "2024-02",
+            "2024-03",
+            "2024-04",
+            "2024-06",
+            "2024-08",
+            "2024-09",
+            "2024-10",
+            "2024-11",
+            "2024-12",
+            "2025-01",
+            "2025-02",
+            "2025-03",
+            "2025-04",
+            "2025-06",
+            "2025-07",
+            "2025-08",
+            "2025-09",
+            "2025-10",
+            "2025-11"
+          ],
+          "mae": {
+            "last-observed": 15980.5,
+            "last-year": 20325.6,
+            "ses-optimized": 15027.123175549152,
+            "seasonal-auto-ets": 16290.006876078702,
+            "currentAdaptive": 15980.5
+          }
+        },
+        "later": {
+          "count": 7,
+          "months": [
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06",
+            "2026-07",
+            "2026-08",
+            "2026-09"
+          ],
+          "mae": {
+            "last-observed": 24152.714285714286,
+            "last-year": 13532.57142857143,
+            "ses-optimized": 18631.709044464045,
+            "seasonal-auto-ets": 20330.240931158103,
+            "currentPolicy": 24152.714285714286
+          }
+        }
+      }
+    },
+    {
+      "origin": "DEL",
+      "destination": "PNQ",
+      "retrievedAt": "2026-11-15T13:54:59.143Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "rowsSha256": "69f97c1446d301c674cf67ed91555123dc5fefd7c9d3bc6fc287ad91a1275c1f",
+      "latestUsableMonth": "2026-09",
+      "selection": {
+        "count": 21,
+        "excludedReasons": {
+          "missing-or-invalid-target": 1,
+          "missing-baseline-input": 2
+        },
+        "mae": {
+          "last-observed": 8952.047619047618,
+          "last-year": 6310.238095238095,
+          "ses-optimized": 7228.680525962749,
+          "seasonal-auto-ets": 6124.565321967237
+        },
+        "rows": [
+          {
+            "month": "2024-01",
+            "actual": 113725,
+            "cutoff": "2023-11",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 106287,
+              "last-year": 118262,
+              "ses-optimized": 109639.89696091053,
+              "seasonal-auto-ets": 109633.13946392824
+            }
+          },
+          {
+            "month": "2024-02",
+            "actual": 113664,
+            "cutoff": "2023-12",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 122630,
+              "last-year": 117775,
+              "ses-optimized": 117538.77930010919,
+              "seasonal-auto-ets": 117509.84317820355
+            }
+          },
+          {
+            "month": "2024-03",
+            "actual": 121645,
+            "cutoff": "2024-01",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 113725,
+              "last-year": 121572,
+              "ses-optimized": 115235.84226315538,
+              "seasonal-auto-ets": 125764.96998953476
+            }
+          },
+          {
+            "month": "2024-04",
+            "actual": 118809,
+            "cutoff": "2024-02",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 113664,
+              "last-year": 121081,
+              "ses-optimized": 114334.84755586216,
+              "seasonal-auto-ets": 112255.25882117206
+            }
+          },
+          {
+            "month": "2024-06",
+            "actual": 127274,
+            "cutoff": "2024-04",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 118809,
+              "last-year": 116447,
+              "ses-optimized": 118980.56544697774,
+              "seasonal-auto-ets": 119503.32214783078
+            }
+          },
+          {
+            "month": "2024-08",
+            "actual": 119895,
+            "cutoff": "2024-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 127274,
+              "last-year": 120850,
+              "ses-optimized": 121713.26122751797,
+              "seasonal-auto-ets": 120962.70030134356
+            }
+          },
+          {
+            "month": "2024-09",
+            "actual": 115280,
+            "cutoff": "2024-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 123462,
+              "last-year": 118785,
+              "ses-optimized": 122312.29303428513,
+              "seasonal-auto-ets": 121186.73056608507
+            }
+          },
+          {
+            "month": "2024-10",
+            "actual": 113908,
+            "cutoff": "2024-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 119895,
+              "last-year": 112293,
+              "ses-optimized": 121173.21856317404,
+              "seasonal-auto-ets": 120411.26997544144
+            }
+          },
+          {
+            "month": "2024-11",
+            "actual": 125164,
+            "cutoff": "2024-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 115280,
+              "last-year": 106287,
+              "ses-optimized": 117450.30811281149,
+              "seasonal-auto-ets": 119472.70668480244
+            }
+          },
+          {
+            "month": "2024-12",
+            "actual": 134175,
+            "cutoff": "2024-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 113908,
+              "last-year": 122630,
+              "ses-optimized": 116705.50600392598,
+              "seasonal-auto-ets": 120437.44304971542
+            }
+          },
+          {
+            "month": "2025-01",
+            "actual": 124651,
+            "cutoff": "2024-11",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 125164,
+              "last-year": 113725,
+              "ses-optimized": 120308.44435672832,
+              "seasonal-auto-ets": 120517.6353390413
+            }
+          },
+          {
+            "month": "2025-02",
+            "actual": 110248,
+            "cutoff": "2024-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 134175,
+              "last-year": 113664,
+              "ses-optimized": 133772.82690175634,
+              "seasonal-auto-ets": 119584.94933465048
+            }
+          },
+          {
+            "month": "2025-03",
+            "actual": 126739,
+            "cutoff": "2025-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 124651,
+              "last-year": 121645,
+              "ses-optimized": 126447.98701865124,
+              "seasonal-auto-ets": 121379.39281555217
+            }
+          },
+          {
+            "month": "2025-04",
+            "actual": 116279,
+            "cutoff": "2025-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 110248,
+              "last-year": 118809,
+              "ses-optimized": 118552.30986742346,
+              "seasonal-auto-ets": 118515.50948261208
+            }
+          },
+          {
+            "month": "2025-06",
+            "actual": 121021,
+            "cutoff": "2025-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 116279,
+              "last-year": 127274,
+              "ses-optimized": 119451.46447919696,
+              "seasonal-auto-ets": 120705.99038060832
+            }
+          },
+          {
+            "month": "2025-07",
+            "actual": 113912,
+            "cutoff": "2025-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 119217,
+              "last-year": 123462,
+              "ses-optimized": 119368.72803604166,
+              "seasonal-auto-ets": 119890.23423443861
+            }
+          },
+          {
+            "month": "2025-08",
+            "actual": 116794,
+            "cutoff": "2025-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 121021,
+              "last-year": 119895,
+              "ses-optimized": 120194.60806893805,
+              "seasonal-auto-ets": 120341.03444775593
+            }
+          },
+          {
+            "month": "2025-09",
+            "actual": 104237,
+            "cutoff": "2025-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 113912,
+              "last-year": 115280,
+              "ses-optimized": 117513.68158830138,
+              "seasonal-auto-ets": 119940.34835300644
+            }
+          },
+          {
+            "month": "2025-10",
+            "actual": 109349,
+            "cutoff": "2025-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 116794,
+              "last-year": 113908,
+              "ses-optimized": 116839.97537251028,
+              "seasonal-auto-ets": 119953.94721517724
+            }
+          },
+          {
+            "month": "2025-11",
+            "actual": 128354,
+            "cutoff": "2025-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 104237,
+              "last-year": 125164,
+              "ses-optimized": 108896.62940376914,
+              "seasonal-auto-ets": 117697.86190350568
+            }
+          },
+          {
+            "month": "2025-12",
+            "actual": 119639,
+            "cutoff": "2025-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 109349,
+              "last-year": 134175,
+              "ses-optimized": 117355.89931285084,
+              "seasonal-auto-ets": 118182.91471078075
+            }
+          }
+        ]
+      },
+      "selectedPolicy": "last-year",
+      "later": {
+        "count": 8,
+        "excludedReasons": {},
+        "mae": {
+          "last-observed": 7833.25,
+          "last-year": 5236.875,
+          "ses-optimized": 8150.035160945008,
+          "seasonal-auto-ets": 7876.118256493804
+        },
+        "resultVsBestBaseline": "matched",
+        "rows": [
+          {
+            "month": "2026-02",
+            "actual": 119436,
+            "cutoff": "2025-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 119639,
+              "last-year": 110248,
+              "ses-optimized": 118296.70329216697,
+              "seasonal-auto-ets": 118365.9015298316
+            }
+          },
+          {
+            "month": "2026-03",
+            "actual": 128404,
+            "cutoff": "2026-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 125954,
+              "last-year": 126739,
+              "ses-optimized": 118034.23978990293,
+              "seasonal-auto-ets": 118579.96820231462
+            }
+          },
+          {
+            "month": "2026-04",
+            "actual": 115625,
+            "cutoff": "2026-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 119436,
+              "last-year": 116279,
+              "ses-optimized": 119164.7061474847,
+              "seasonal-auto-ets": 118632.82928104927
+            }
+          },
+          {
+            "month": "2026-05",
+            "actual": 131920,
+            "cutoff": "2026-03",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 128404,
+              "last-year": 119217,
+              "ses-optimized": 119725.33464664442,
+              "seasonal-auto-ets": 118815.84314885015
+            }
+          },
+          {
+            "month": "2026-06",
+            "actual": 125937,
+            "cutoff": "2026-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 115625,
+              "last-year": 121021,
+              "ses-optimized": 119551.21448041493,
+              "seasonal-auto-ets": 118661.63987271559
+            }
+          },
+          {
+            "month": "2026-07",
+            "actual": 113641,
+            "cutoff": "2026-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 131920,
+              "last-year": 113912,
+              "ses-optimized": 119966.04960410036,
+              "seasonal-auto-ets": 119166.12349066655
+            }
+          },
+          {
+            "month": "2026-08",
+            "actual": 107771,
+            "cutoff": "2026-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 125937,
+              "last-year": 116794,
+              "ses-optimized": 120389.69655193164,
+              "seasonal-auto-ets": 119435.19442613698
+            }
+          },
+          {
+            "month": "2026-09",
+            "actual": 107712,
+            "cutoff": "2026-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 113641,
+              "last-year": 104237,
+              "ses-optimized": 120339.32119317261,
+              "seasonal-auto-ets": 119250.15160780959
+            }
+          }
+        ]
+      },
+      "currentMethodComparison": {
+        "note": "Intersection only; existing policy was selected on its own full 2024–25 sample, independently of this experiment.",
+        "existingPolicy": "last-year",
+        "selection": {
+          "count": 21,
+          "months": [
+            "2024-01",
+            "2024-02",
+            "2024-03",
+            "2024-04",
+            "2024-06",
+            "2024-08",
+            "2024-09",
+            "2024-10",
+            "2024-11",
+            "2024-12",
+            "2025-01",
+            "2025-02",
+            "2025-03",
+            "2025-04",
+            "2025-06",
+            "2025-07",
+            "2025-08",
+            "2025-09",
+            "2025-10",
+            "2025-11",
+            "2025-12"
+          ],
+          "mae": {
+            "last-observed": 8952.047619047618,
+            "last-year": 6310.238095238095,
+            "ses-optimized": 7228.680525962748,
+            "seasonal-auto-ets": 6124.565321967237,
+            "currentAdaptive": 8129.602843519506
+          }
+        },
+        "later": {
+          "count": 8,
+          "months": [
+            "2026-02",
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06",
+            "2026-07",
+            "2026-08",
+            "2026-09"
+          ],
+          "mae": {
+            "last-observed": 7833.25,
+            "last-year": 5236.875,
+            "ses-optimized": 8150.035160945008,
+            "seasonal-auto-ets": 7876.118256493804,
+            "currentPolicy": 5236.875
+          }
+        }
+      }
+    },
+    {
+      "origin": "PNQ",
+      "destination": "DEL",
+      "retrievedAt": "2026-11-15T13:55:01.614Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "rowsSha256": "57194fb356665b14efc70fd33508b0025a13d4f33258f95260fc7dfcfe2ed3da",
+      "latestUsableMonth": "2026-09",
+      "selection": {
+        "count": 21,
+        "excludedReasons": {
+          "missing-or-invalid-target": 1,
+          "missing-baseline-input": 2
+        },
+        "mae": {
+          "last-observed": 5910.523809523809,
+          "last-year": 5688.238095238095,
+          "ses-optimized": 5538.95370138439,
+          "seasonal-auto-ets": 5302.093032850404
+        },
+        "rows": [
+          {
+            "month": "2024-01",
+            "actual": 113497,
+            "cutoff": "2023-11",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 113905,
+              "last-year": 120180,
+              "ses-optimized": 115369.66221961481,
+              "seasonal-auto-ets": 115399.86842719054
+            }
+          },
+          {
+            "month": "2024-02",
+            "actual": 116998,
+            "cutoff": "2023-12",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 115946,
+              "last-year": 121304,
+              "ses-optimized": 115815.53498895797,
+              "seasonal-auto-ets": 115816.14033542856
+            }
+          },
+          {
+            "month": "2024-03",
+            "actual": 123334,
+            "cutoff": "2024-01",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 113497,
+              "last-year": 122112,
+              "ses-optimized": 114030.8282458941,
+              "seasonal-auto-ets": 114037.87683187379
+            }
+          },
+          {
+            "month": "2024-04",
+            "actual": 123871,
+            "cutoff": "2024-02",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 116998,
+              "last-year": 127791,
+              "ses-optimized": 116268.6503043618,
+              "seasonal-auto-ets": 124692.60000802249
+            }
+          },
+          {
+            "month": "2024-06",
+            "actual": 112743,
+            "cutoff": "2024-04",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 123871,
+              "last-year": 111182,
+              "ses-optimized": 123555.86322397139,
+              "seasonal-auto-ets": 121262.32009994086
+            }
+          },
+          {
+            "month": "2024-08",
+            "actual": 118496,
+            "cutoff": "2024-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 112743,
+              "last-year": 122363,
+              "ses-optimized": 113912.262429072,
+              "seasonal-auto-ets": 120792.25498318489
+            }
+          },
+          {
+            "month": "2024-09",
+            "actual": 118046,
+            "cutoff": "2024-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 117729,
+              "last-year": 116240,
+              "ses-optimized": 116273.66741238114,
+              "seasonal-auto-ets": 120754.66542287226
+            }
+          },
+          {
+            "month": "2024-10",
+            "actual": 129527,
+            "cutoff": "2024-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 118496,
+              "last-year": 121003,
+              "ses-optimized": 117515.11879119798,
+              "seasonal-auto-ets": 120139.63355700199
+            }
+          },
+          {
+            "month": "2024-11",
+            "actual": 123018,
+            "cutoff": "2024-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 118046,
+              "last-year": 113905,
+              "ses-optimized": 118063.65215209404,
+              "seasonal-auto-ets": 119494.72198511912
+            }
+          },
+          {
+            "month": "2024-12",
+            "actual": 125760,
+            "cutoff": "2024-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 129527,
+              "last-year": 115946,
+              "ses-optimized": 125705.88581806504,
+              "seasonal-auto-ets": 125716.93299892913
+            }
+          },
+          {
+            "month": "2025-01",
+            "actual": 124066,
+            "cutoff": "2024-11",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 123018,
+              "last-year": 113497,
+              "ses-optimized": 123927.21206991456,
+              "seasonal-auto-ets": 120937.30072620492
+            }
+          },
+          {
+            "month": "2025-02",
+            "actual": 112173,
+            "cutoff": "2024-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 125760,
+              "last-year": 116998,
+              "ses-optimized": 125665.25700089282,
+              "seasonal-auto-ets": 125350.81882114851
+            }
+          },
+          {
+            "month": "2025-03",
+            "actual": 122769,
+            "cutoff": "2025-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 124066,
+              "last-year": 123334,
+              "ses-optimized": 124339.34839745845,
+              "seasonal-auto-ets": 124402.71732930606
+            }
+          },
+          {
+            "month": "2025-04",
+            "actual": 118349,
+            "cutoff": "2025-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 112173,
+              "last-year": 123871,
+              "ses-optimized": 115481.03447516816,
+              "seasonal-auto-ets": 115472.99407360003
+            }
+          },
+          {
+            "month": "2025-06",
+            "actual": 113486,
+            "cutoff": "2025-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 118349,
+              "last-year": 112743,
+              "ses-optimized": 118973.39927495044,
+              "seasonal-auto-ets": 119068.17921218203
+            }
+          },
+          {
+            "month": "2025-07",
+            "actual": 104653,
+            "cutoff": "2025-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 112178,
+              "last-year": 117729,
+              "ses-optimized": 113592.8285782996,
+              "seasonal-auto-ets": 118269.84934107802
+            }
+          },
+          {
+            "month": "2025-08",
+            "actual": 112133,
+            "cutoff": "2025-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 113486,
+              "last-year": 118496,
+              "ses-optimized": 113512.63040488814,
+              "seasonal-auto-ets": 115347.28242065487
+            }
+          },
+          {
+            "month": "2025-09",
+            "actual": 111611,
+            "cutoff": "2025-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 104653,
+              "last-year": 118046,
+              "ses-optimized": 107390.24951435454,
+              "seasonal-auto-ets": 107685.19249165419
+            }
+          },
+          {
+            "month": "2025-10",
+            "actual": 120550,
+            "cutoff": "2025-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 112133,
+              "last-year": 129527,
+              "ses-optimized": 110657.95893198386,
+              "seasonal-auto-ets": 110738.36654655021
+            }
+          },
+          {
+            "month": "2025-11",
+            "actual": 123164,
+            "cutoff": "2025-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 111611,
+              "last-year": 123018,
+              "ses-optimized": 111297.65575312341,
+              "seasonal-auto-ets": 111486.90484210753
+            }
+          },
+          {
+            "month": "2025-12",
+            "actual": 114344,
+            "cutoff": "2025-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 120550,
+              "last-year": 125760,
+              "ses-optimized": 116656.74951556513,
+              "seasonal-auto-ets": 117363.4620127474
+            }
+          }
+        ]
+      },
+      "selectedPolicy": "seasonal-auto-ets",
+      "later": {
+        "count": 8,
+        "excludedReasons": {},
+        "mae": {
+          "last-observed": 8549.625,
+          "last-year": 6873.25,
+          "ses-optimized": 9210.309196473403,
+          "seasonal-auto-ets": 10802.599707325531
+        },
+        "resultVsBestBaseline": "underperformed",
+        "rows": [
+          {
+            "month": "2026-02",
+            "actual": 126097,
+            "cutoff": "2025-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 114344,
+              "last-year": 112173,
+              "ses-optimized": 117125.34953025934,
+              "seasonal-auto-ets": 117733.95303242149
+            }
+          },
+          {
+            "month": "2026-03",
+            "actual": 127288,
+            "cutoff": "2026-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 121533,
+              "last-year": 122769,
+              "ses-optimized": 117227.31635518397,
+              "seasonal-auto-ets": 117759.61611461213
+            }
+          },
+          {
+            "month": "2026-04",
+            "actual": 125007,
+            "cutoff": "2026-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 126097,
+              "last-year": 118349,
+              "ses-optimized": 121764.37646507953,
+              "seasonal-auto-ets": 117903.71557676446
+            }
+          },
+          {
+            "month": "2026-05",
+            "actual": 129822,
+            "cutoff": "2026-03",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 127288,
+              "last-year": 112178,
+              "ses-optimized": 125764.11648804919,
+              "seasonal-auto-ets": 124240.20522782618
+            }
+          },
+          {
+            "month": "2026-06",
+            "actual": 107782,
+            "cutoff": "2026-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 125007,
+              "last-year": 113486,
+              "ses-optimized": 125011.48326549784,
+              "seasonal-auto-ets": 125006.74403770859
+            }
+          },
+          {
+            "month": "2026-07",
+            "actual": 105838,
+            "cutoff": "2026-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 129822,
+              "last-year": 104653,
+              "ses-optimized": 127607.88348568631,
+              "seasonal-auto-ets": 127510.15029821487
+            }
+          },
+          {
+            "month": "2026-08",
+            "actual": 112775,
+            "cutoff": "2026-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 107782,
+              "last-year": 112133,
+              "ses-optimized": 118702.31207796371,
+              "seasonal-auto-ets": 118368.25107408516
+            }
+          },
+          {
+            "month": "2026-09",
+            "actual": 106901,
+            "cutoff": "2026-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 105838,
+              "last-year": 111611,
+              "ses-optimized": 109323.95358121139,
+              "seasonal-auto-ets": 118255.1422002199
+            }
+          }
+        ]
+      },
+      "currentMethodComparison": {
+        "note": "Intersection only; existing policy was selected on its own full 2024–25 sample, independently of this experiment.",
+        "existingPolicy": "last-year",
+        "selection": {
+          "count": 21,
+          "months": [
+            "2024-01",
+            "2024-02",
+            "2024-03",
+            "2024-04",
+            "2024-06",
+            "2024-08",
+            "2024-09",
+            "2024-10",
+            "2024-11",
+            "2024-12",
+            "2025-01",
+            "2025-02",
+            "2025-03",
+            "2025-04",
+            "2025-06",
+            "2025-07",
+            "2025-08",
+            "2025-09",
+            "2025-10",
+            "2025-11",
+            "2025-12"
+          ],
+          "mae": {
+            "last-observed": 5910.523809523809,
+            "last-year": 5688.238095238095,
+            "ses-optimized": 5538.95370138439,
+            "seasonal-auto-ets": 5302.093032850404,
+            "currentAdaptive": 6783.668345334909
+          }
+        },
+        "later": {
+          "count": 8,
+          "months": [
+            "2026-02",
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06",
+            "2026-07",
+            "2026-08",
+            "2026-09"
+          ],
+          "mae": {
+            "last-observed": 8549.625,
+            "last-year": 6873.25,
+            "ses-optimized": 9210.309196473403,
+            "seasonal-auto-ets": 10802.599707325531,
+            "currentPolicy": 6873.25
+          }
+        }
+      }
+    },
+    {
+      "origin": "BLR",
+      "destination": "DEL",
+      "retrievedAt": "2026-11-15T13:55:09.065Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "rowsSha256": "751a189c227c796e3367152d3cb4df4f5b421a20bc752ba3af341b38097341f3",
+      "latestUsableMonth": "2026-09",
+      "selection": {
+        "count": 21,
+        "excludedReasons": {
+          "missing-or-invalid-target": 1,
+          "missing-baseline-input": 2
+        },
+        "mae": {
+          "last-observed": 8714.095238095239,
+          "last-year": 8781.142857142857,
+          "ses-optimized": 8276.175143791654,
+          "seasonal-auto-ets": 9135.265993412482
+        },
+        "rows": [
+          {
+            "month": "2024-01",
+            "actual": 202724,
+            "cutoff": "2023-11",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 188673,
+              "last-year": 206890,
+              "ses-optimized": 188936.336223408,
+              "seasonal-auto-ets": 188675.65516350762
+            }
+          },
+          {
+            "month": "2024-02",
+            "actual": 201616,
+            "cutoff": "2023-12",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 204471,
+              "last-year": 189950,
+              "ses-optimized": 204114.58020562233,
+              "seasonal-auto-ets": 204121.3288331488
+            }
+          },
+          {
+            "month": "2024-03",
+            "actual": 206370,
+            "cutoff": "2024-01",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 202724,
+              "last-year": 202622,
+              "ses-optimized": 202769.5648966752,
+              "seasonal-auto-ets": 202724.17454204656
+            }
+          },
+          {
+            "month": "2024-04",
+            "actual": 202807,
+            "cutoff": "2024-02",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 201616,
+              "last-year": 211000,
+              "ses-optimized": 201641.18208358984,
+              "seasonal-auto-ets": 201616.1108174542
+            }
+          },
+          {
+            "month": "2024-06",
+            "actual": 187355,
+            "cutoff": "2024-04",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 202807,
+              "last-year": 184262,
+              "ses-optimized": 202842.1708189004,
+              "seasonal-auto-ets": 206661.701524804
+            }
+          },
+          {
+            "month": "2024-08",
+            "actual": 197396,
+            "cutoff": "2024-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 187355,
+              "last-year": 209179,
+              "ses-optimized": 187774.04088837406,
+              "seasonal-auto-ets": 205339.23030812238
+            }
+          },
+          {
+            "month": "2024-09",
+            "actual": 195132,
+            "cutoff": "2024-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 194677,
+              "last-year": 191576,
+              "ses-optimized": 193722.27379635564,
+              "seasonal-auto-ets": 204960.8441623309
+            }
+          },
+          {
+            "month": "2024-10",
+            "actual": 210278,
+            "cutoff": "2024-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 197396,
+              "last-year": 215227,
+              "ses-optimized": 196561.45544393058,
+              "seasonal-auto-ets": 204372.57722536937
+            }
+          },
+          {
+            "month": "2024-11",
+            "actual": 188317,
+            "cutoff": "2024-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 195132,
+              "last-year": 188673,
+              "ses-optimized": 195443.98364953033,
+              "seasonal-auto-ets": 195444.09870568744
+            }
+          },
+          {
+            "month": "2024-12",
+            "actual": 194427,
+            "cutoff": "2024-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 210278,
+              "last-year": 204471,
+              "ses-optimized": 206677.9144997147,
+              "seasonal-auto-ets": 203127.74233176737
+            }
+          },
+          {
+            "month": "2025-01",
+            "actual": 194935,
+            "cutoff": "2024-11",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 188317,
+              "last-year": 202724,
+              "ses-optimized": 193235.28177748283,
+              "seasonal-auto-ets": 201055.33619414354
+            }
+          },
+          {
+            "month": "2025-02",
+            "actual": 182478,
+            "cutoff": "2024-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 194427,
+              "last-year": 201616,
+              "ses-optimized": 194368.05739904018,
+              "seasonal-auto-ets": 197248.26594561056
+            }
+          },
+          {
+            "month": "2025-03",
+            "actual": 185461,
+            "cutoff": "2025-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 194935,
+              "last-year": 206370,
+              "ses-optimized": 194749.28444768576,
+              "seasonal-auto-ets": 200286.57545587048
+            }
+          },
+          {
+            "month": "2025-04",
+            "actual": 186608,
+            "cutoff": "2025-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 182478,
+              "last-year": 202807,
+              "ses-optimized": 188194.51910049113,
+              "seasonal-auto-ets": 198962.37525743252
+            }
+          },
+          {
+            "month": "2025-06",
+            "actual": 189828,
+            "cutoff": "2025-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 186608,
+              "last-year": 187355,
+              "ses-optimized": 186685.26568701578,
+              "seasonal-auto-ets": 190949.93348121733
+            }
+          },
+          {
+            "month": "2025-07",
+            "actual": 192671,
+            "cutoff": "2025-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 174792,
+              "last-year": 194677,
+              "ses-optimized": 180045.31423991016,
+              "seasonal-auto-ets": 185207.7933735804
+            }
+          },
+          {
+            "month": "2025-08",
+            "actual": 196656,
+            "cutoff": "2025-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 189828,
+              "last-year": 197396,
+              "ses-optimized": 185310.03612415725,
+              "seasonal-auto-ets": 186093.424795103
+            }
+          },
+          {
+            "month": "2025-09",
+            "actual": 195924,
+            "cutoff": "2025-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 192671,
+              "last-year": 195132,
+              "ses-optimized": 188679.90206266043,
+              "seasonal-auto-ets": 188149.48832517856
+            }
+          },
+          {
+            "month": "2025-10",
+            "actual": 189596,
+            "cutoff": "2025-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 196656,
+              "last-year": 210278,
+              "ses-optimized": 192013.69172464003,
+              "seasonal-auto-ets": 191332.5329935951
+            }
+          },
+          {
+            "month": "2025-11",
+            "actual": 212038,
+            "cutoff": "2025-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 195924,
+              "last-year": 188317,
+              "ses-optimized": 191610.29332186206,
+              "seasonal-auto-ets": 191939.47761886424
+            }
+          },
+          {
+            "month": "2025-12",
+            "actual": 202828,
+            "cutoff": "2025-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 189596,
+              "last-year": 194427,
+              "ses-optimized": 191362.5772805783,
+              "seasonal-auto-ets": 188017.6774709643
+            }
+          }
+        ]
+      },
+      "selectedPolicy": "ses-optimized",
+      "later": {
+        "count": 8,
+        "excludedReasons": {},
+        "mae": {
+          "last-observed": 15487.375,
+          "last-year": 18944.5,
+          "ses-optimized": 15942.071046360652,
+          "seasonal-auto-ets": 16389.00925933549
+        },
+        "resultVsBestBaseline": "underperformed",
+        "rows": [
+          {
+            "month": "2026-02",
+            "actual": 223588,
+            "cutoff": "2025-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 202828,
+              "last-year": 182478,
+              "ses-optimized": 197935.6054155012,
+              "seasonal-auto-ets": 195339.87428807453
+            }
+          },
+          {
+            "month": "2026-03",
+            "actual": 212538,
+            "cutoff": "2026-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 207251,
+              "last-year": 185461,
+              "ses-optimized": 201869.40139340534,
+              "seasonal-auto-ets": 200077.5957497372
+            }
+          },
+          {
+            "month": "2026-04",
+            "actual": 224585,
+            "cutoff": "2026-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 223588,
+              "last-year": 186608,
+              "ses-optimized": 211058.2650783725,
+              "seasonal-auto-ets": 211143.79703973458
+            }
+          },
+          {
+            "month": "2026-05",
+            "actual": 201571,
+            "cutoff": "2026-03",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 212538,
+              "last-year": 174792,
+              "ses-optimized": 212594.03145491576,
+              "seasonal-auto-ets": 211719.82927222562
+            }
+          },
+          {
+            "month": "2026-06",
+            "actual": 179451,
+            "cutoff": "2026-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 224585,
+              "last-year": 189828,
+              "ses-optimized": 218108.69332407846,
+              "seasonal-auto-ets": 218161.02390805885
+            }
+          },
+          {
+            "month": "2026-07",
+            "actual": 189511,
+            "cutoff": "2026-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 201571,
+              "last-year": 192671,
+              "ses-optimized": 210665.05182803705,
+              "seasonal-auto-ets": 210827.3549991252
+            }
+          },
+          {
+            "month": "2026-08",
+            "actual": 201246,
+            "cutoff": "2026-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 179451,
+              "last-year": 196656,
+              "ses-optimized": 198356.25931375445,
+              "seasonal-auto-ets": 198198.87747510857
+            }
+          },
+          {
+            "month": "2026-09",
+            "actual": 196410,
+            "cutoff": "2026-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 189511,
+              "last-year": 195924,
+              "ses-optimized": 192445.67703511257,
+              "seasonal-auto-ets": 192669.98955207088
+            }
+          }
+        ]
+      },
+      "currentMethodComparison": {
+        "note": "Intersection only; existing policy was selected on its own full 2024–25 sample, independently of this experiment.",
+        "existingPolicy": "last-observed",
+        "selection": {
+          "count": 21,
+          "months": [
+            "2024-01",
+            "2024-02",
+            "2024-03",
+            "2024-04",
+            "2024-06",
+            "2024-08",
+            "2024-09",
+            "2024-10",
+            "2024-11",
+            "2024-12",
+            "2025-01",
+            "2025-02",
+            "2025-03",
+            "2025-04",
+            "2025-06",
+            "2025-07",
+            "2025-08",
+            "2025-09",
+            "2025-10",
+            "2025-11",
+            "2025-12"
+          ],
+          "mae": {
+            "last-observed": 8714.095238095239,
+            "last-year": 8781.142857142857,
+            "ses-optimized": 8276.175143791654,
+            "seasonal-auto-ets": 9135.265993412482,
+            "currentAdaptive": 11568.91218713684
+          }
+        },
+        "later": {
+          "count": 8,
+          "months": [
+            "2026-02",
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06",
+            "2026-07",
+            "2026-08",
+            "2026-09"
+          ],
+          "mae": {
+            "last-observed": 15487.375,
+            "last-year": 18944.5,
+            "ses-optimized": 15942.071046360652,
+            "seasonal-auto-ets": 16389.00925933549,
+            "currentPolicy": 15487.375
+          }
+        }
+      }
+    },
+    {
+      "origin": "DEL",
+      "destination": "BLR",
+      "retrievedAt": "2026-11-15T13:55:11.384Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "rowsSha256": "689d4878af09e4b3045230dfc68bc65c5ac7789b96282aff3771fd48460ad68b",
+      "latestUsableMonth": "2026-09",
+      "selection": {
+        "count": 21,
+        "excludedReasons": {
+          "missing-or-invalid-target": 1,
+          "missing-baseline-input": 2
+        },
+        "mae": {
+          "last-observed": 15548.285714285714,
+          "last-year": 11935.238095238095,
+          "ses-optimized": 13752.663614693143,
+          "seasonal-auto-ets": 13992.479369022636
+        },
+        "rows": [
+          {
+            "month": "2024-01",
+            "actual": 201415,
+            "cutoff": "2023-11",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 185492,
+              "last-year": 205146,
+              "ses-optimized": 185595.62937346558,
+              "seasonal-auto-ets": 185493.0425299867
+            }
+          },
+          {
+            "month": "2024-02",
+            "actual": 195258,
+            "cutoff": "2023-12",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 219660,
+              "last-year": 183974,
+              "ses-optimized": 219319.13030086845,
+              "seasonal-auto-ets": 219656.583304253
+            }
+          },
+          {
+            "month": "2024-03",
+            "actual": 197494,
+            "cutoff": "2024-01",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 201415,
+              "last-year": 202316,
+              "ses-optimized": 202086.82578147145,
+              "seasonal-auto-ets": 202090.92535402864
+            }
+          },
+          {
+            "month": "2024-04",
+            "actual": 197812,
+            "cutoff": "2024-02",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 195258,
+              "last-year": 201582,
+              "ses-optimized": 195366.04589464684,
+              "seasonal-auto-ets": 195362.78398848366
+            }
+          },
+          {
+            "month": "2024-06",
+            "actual": 201380,
+            "cutoff": "2024-04",
+            "imputedMonths": [
+              "2021-05"
+            ],
+            "predictions": {
+              "last-observed": 197812,
+              "last-year": 187021,
+              "ses-optimized": 197808.60104454763,
+              "seasonal-auto-ets": 194760.54593637868
+            }
+          },
+          {
+            "month": "2024-08",
+            "actual": 195261,
+            "cutoff": "2024-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 201380,
+              "last-year": 195611,
+              "ses-optimized": 201460.2023467114,
+              "seasonal-auto-ets": 204134.24434427425
+            }
+          },
+          {
+            "month": "2024-09",
+            "actual": 188636,
+            "cutoff": "2024-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 201763,
+              "last-year": 188916,
+              "ses-optimized": 201639.7490882851,
+              "seasonal-auto-ets": 204407.43938331743
+            }
+          },
+          {
+            "month": "2024-10",
+            "actual": 174119,
+            "cutoff": "2024-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 195261,
+              "last-year": 195918,
+              "ses-optimized": 197383.6448239768,
+              "seasonal-auto-ets": 203273.512274066
+            }
+          },
+          {
+            "month": "2024-11",
+            "actual": 209474,
+            "cutoff": "2024-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 188636,
+              "last-year": 185492,
+              "ses-optimized": 192689.18673771282,
+              "seasonal-auto-ets": 202121.9030381891
+            }
+          },
+          {
+            "month": "2024-12",
+            "actual": 202492,
+            "cutoff": "2024-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 174119,
+              "last-year": 219660,
+              "ses-optimized": 179379.62788454787,
+              "seasonal-auto-ets": 200073.5229812996
+            }
+          },
+          {
+            "month": "2025-01",
+            "actual": 192619,
+            "cutoff": "2024-11",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 209474,
+              "last-year": 201415,
+              "ses-optimized": 200924.11307025942,
+              "seasonal-auto-ets": 199509.41848633563
+            }
+          },
+          {
+            "month": "2025-02",
+            "actual": 179446,
+            "cutoff": "2024-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 202492,
+              "last-year": 195258,
+              "ses-optimized": 202558.33608745362,
+              "seasonal-auto-ets": 202003.58594648715
+            }
+          },
+          {
+            "month": "2025-03",
+            "actual": 189358,
+            "cutoff": "2025-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 192619,
+              "last-year": 197494,
+              "ses-optimized": 193446.2264975162,
+              "seasonal-auto-ets": 199395.07319994975
+            }
+          },
+          {
+            "month": "2025-04",
+            "actual": 182024,
+            "cutoff": "2025-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 179446,
+              "last-year": 197812,
+              "ses-optimized": 188652.21106202016,
+              "seasonal-auto-ets": 197363.12407669006
+            }
+          },
+          {
+            "month": "2025-06",
+            "actual": 188456,
+            "cutoff": "2025-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 182024,
+              "last-year": 201380,
+              "ses-optimized": 189181.20205253243,
+              "seasonal-auto-ets": 188519.33926647482
+            }
+          },
+          {
+            "month": "2025-07",
+            "actual": 188732,
+            "cutoff": "2025-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 194416,
+              "last-year": 201763,
+              "ses-optimized": 189748.56511079462,
+              "seasonal-auto-ets": 189816.97221045772
+            }
+          },
+          {
+            "month": "2025-08",
+            "actual": 191087,
+            "cutoff": "2025-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 188456,
+              "last-year": 195261,
+              "ses-optimized": 189240.5206261272,
+              "seasonal-auto-ets": 193912.71189960963
+            }
+          },
+          {
+            "month": "2025-09",
+            "actual": 167605,
+            "cutoff": "2025-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 188732,
+              "last-year": 188636,
+              "ses-optimized": 189086.76914764786,
+              "seasonal-auto-ets": 194323.8551903752
+            }
+          },
+          {
+            "month": "2025-10",
+            "actual": 184679,
+            "cutoff": "2025-08",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 191087,
+              "last-year": 174119,
+              "ses-optimized": 190252.8034676687,
+              "seasonal-auto-ets": 194750.50411468334
+            }
+          },
+          {
+            "month": "2025-11",
+            "actual": 232061,
+            "cutoff": "2025-09",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 167605,
+              "last-year": 209474,
+              "ses-optimized": 182367.32497258307,
+              "seasonal-auto-ets": 186120.2595279375
+            }
+          },
+          {
+            "month": "2025-12",
+            "actual": 218748,
+            "cutoff": "2025-10",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 184679,
+              "last-year": 202492,
+              "ses-optimized": 185268.9063950192,
+              "seasonal-auto-ets": 183991.164299252
+            }
+          }
+        ]
+      },
+      "selectedPolicy": "last-year",
+      "later": {
+        "count": 8,
+        "excludedReasons": {},
+        "mae": {
+          "last-observed": 13725.25,
+          "last-year": 18138.375,
+          "ses-optimized": 12813.303949137768,
+          "seasonal-auto-ets": 13423.509042724287
+        },
+        "resultVsBestBaseline": "underperformed",
+        "rows": [
+          {
+            "month": "2026-02",
+            "actual": 204012,
+            "cutoff": "2025-12",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 218748,
+              "last-year": 179446,
+              "ses-optimized": 196618.58759356636,
+              "seasonal-auto-ets": 195831.3274208479
+            }
+          },
+          {
+            "month": "2026-03",
+            "actual": 207345,
+            "cutoff": "2026-01",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 208730,
+              "last-year": 189358,
+              "ses-optimized": 204712.33210630683,
+              "seasonal-auto-ets": 195923.14193001724
+            }
+          },
+          {
+            "month": "2026-04",
+            "actual": 199794,
+            "cutoff": "2026-02",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 204012,
+              "last-year": 182024,
+              "ses-optimized": 198385.28593715723,
+              "seasonal-auto-ets": 196458.4738739479
+            }
+          },
+          {
+            "month": "2026-05",
+            "actual": 238750,
+            "cutoff": "2026-03",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 207345,
+              "last-year": 194416,
+              "ses-optimized": 202579.3829741645,
+              "seasonal-auto-ets": 196600.1715542056
+            }
+          },
+          {
+            "month": "2026-06",
+            "actual": 195894,
+            "cutoff": "2026-04",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 199794,
+              "last-year": 188456,
+              "ses-optimized": 201955.61227619182,
+              "seasonal-auto-ets": 196531.31224673952
+            }
+          },
+          {
+            "month": "2026-07",
+            "actual": 192916,
+            "cutoff": "2026-05",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 238750,
+              "last-year": 188732,
+              "ses-optimized": 214160.99705597202,
+              "seasonal-auto-ets": 212785.5702483515
+            }
+          },
+          {
+            "month": "2026-08",
+            "actual": 188577,
+            "cutoff": "2026-06",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 195894,
+              "last-year": 191087,
+              "ses-optimized": 207360.24142206938,
+              "seasonal-auto-ets": 206766.1317930113
+            }
+          },
+          {
+            "month": "2026-09",
+            "actual": 193923,
+            "cutoff": "2026-07",
+            "imputedMonths": [
+              "2024-05"
+            ],
+            "predictions": {
+              "last-observed": 192916,
+              "last-year": 167605,
+              "ses-optimized": 202734.16945006384,
+              "seasonal-auto-ets": 197527.1728327106
+            }
+          }
+        ]
+      },
+      "currentMethodComparison": {
+        "note": "Intersection only; existing policy was selected on its own full 2024–25 sample, independently of this experiment.",
+        "existingPolicy": "last-year",
+        "selection": {
+          "count": 21,
+          "months": [
+            "2024-01",
+            "2024-02",
+            "2024-03",
+            "2024-04",
+            "2024-06",
+            "2024-08",
+            "2024-09",
+            "2024-10",
+            "2024-11",
+            "2024-12",
+            "2025-01",
+            "2025-02",
+            "2025-03",
+            "2025-04",
+            "2025-06",
+            "2025-07",
+            "2025-08",
+            "2025-09",
+            "2025-10",
+            "2025-11",
+            "2025-12"
+          ],
+          "mae": {
+            "last-observed": 15548.285714285714,
+            "last-year": 11935.238095238095,
+            "ses-optimized": 13752.663614693141,
+            "seasonal-auto-ets": 13992.479369022634,
+            "currentAdaptive": 13239.114375858762
+          }
+        },
+        "later": {
+          "count": 8,
+          "months": [
+            "2026-02",
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06",
+            "2026-07",
+            "2026-08",
+            "2026-09"
+          ],
+          "mae": {
+            "last-observed": 13725.25,
+            "last-year": 18138.375,
+            "ses-optimized": 12813.303949137768,
+            "seasonal-auto-ets": 13423.509042724287,
+            "currentPolicy": 18138.375
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,4245 @@
+{
+  "description": "Derived industry-wide directional traffic; not TBO demand or fares.",
+  "api": "https://tbo-assemble.vercel.app/api/india-market/traffic",
+  "attribution": "DGCA and Ministry of Civil Aviation; historical CSV via Vonter/india-aviation-traffic (ODbL 1.0); official DGCA workbooks per manifest.",
+  "routes": [
+    {
+      "origin": "BOM",
+      "destination": "DEL",
+      "retrievedAt": "2026-11-15T13:55:07.037Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "sources": [
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20AUGUST%202026.xlsx",
+          "month": "2026-08",
+          "sha256": "5d282ca14c75df46902a94fa1c2f2df9274246cd0565e4a271cc168b33f1db53"
+        },
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20SEPTEMBER%202026.xlsx",
+          "month": "2026-09",
+          "sha256": "211c492dd987b916d46fa397381e3fc69e3d487e21b1872c74338c2dcf0bc893"
+        },
+        {
+          "kind": "historical-csv",
+          "url": "https://raw.githubusercontent.com/Vonter/india-aviation-traffic/main/aggregated/domestic/city.csv",
+          "sha256": "6be5b6dfc4e163e5deac88ebca7421aacc527863dc90eecd4a5a61d525855246"
+        }
+      ],
+      "rowsSha256": "23e7c88f771cc5a61ea592ee4ed1453d598ca6d67ac0a7d712587fff105152d4",
+      "monthly": [
+        {
+          "month": "2015-04",
+          "passengers": 255579,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-05",
+          "passengers": 264917,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-06",
+          "passengers": 214142,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-07",
+          "passengers": 235638,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-08",
+          "passengers": 235092,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-09",
+          "passengers": 237101,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-10",
+          "passengers": 202977,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-11",
+          "passengers": 271141,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-12",
+          "passengers": 268100,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-01",
+          "passengers": 276940,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-02",
+          "passengers": 270826,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-03",
+          "passengers": 280107,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-04",
+          "passengers": 281929,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-05",
+          "passengers": 284930,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-06",
+          "passengers": 233621,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-07",
+          "passengers": 272758,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-08",
+          "passengers": 269910,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-09",
+          "passengers": 272434,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-10",
+          "passengers": 288071,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-11",
+          "passengers": 270215,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-12",
+          "passengers": 289716,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-01",
+          "passengers": 308473,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-02",
+          "passengers": 279899,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-03",
+          "passengers": 287242,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-04",
+          "passengers": 295682,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-05",
+          "passengers": 309060,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-06",
+          "passengers": 265967,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-07",
+          "passengers": 273521,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-08",
+          "passengers": 282696,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-09",
+          "passengers": 271363,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-10",
+          "passengers": 302225,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-11",
+          "passengers": 300516,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-12",
+          "passengers": 303190,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-01",
+          "passengers": 320155,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-02",
+          "passengers": 305382,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-03",
+          "passengers": 325175,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-04",
+          "passengers": 323263,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-05",
+          "passengers": 308711,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-06",
+          "passengers": 280798,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-07",
+          "passengers": 296867,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-08",
+          "passengers": 308538,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-09",
+          "passengers": 294090,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-10",
+          "passengers": 293009,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-11",
+          "passengers": 279056,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-12",
+          "passengers": 288433,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-01",
+          "passengers": 299458,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-02",
+          "passengers": 274592,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-03",
+          "passengers": 287058,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-04",
+          "passengers": 273951,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-05",
+          "passengers": 291304,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-06",
+          "passengers": 275226,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-07",
+          "passengers": 285976,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-08",
+          "passengers": 299669,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-09",
+          "passengers": 298080,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-10",
+          "passengers": 311493,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-11",
+          "passengers": 312511,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-12",
+          "passengers": 308509,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-01",
+          "passengers": 310952,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-02",
+          "passengers": 316755,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-03",
+          "passengers": 162116,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-04",
+          "passengers": 0,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-05",
+          "passengers": 7504,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-06",
+          "passengers": 25098,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-07",
+          "passengers": 24770,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-08",
+          "passengers": 33986,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-09",
+          "passengers": 46043,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-10",
+          "passengers": 70394,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-11",
+          "passengers": 90314,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-12",
+          "passengers": 69612,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-01",
+          "passengers": 102366,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-02",
+          "passengers": 124450,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-03",
+          "passengers": 115900,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-04",
+          "passengers": 77619,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-06",
+          "passengers": 53255,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-07",
+          "passengers": 86293,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-08",
+          "passengers": 117300,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-09",
+          "passengers": 126438,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-10",
+          "passengers": 188404,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-11",
+          "passengers": 218697,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-12",
+          "passengers": 203917,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-01",
+          "passengers": 106462,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-02",
+          "passengers": 166458,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-03",
+          "passengers": 223097,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-04",
+          "passengers": 228842,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-05",
+          "passengers": 254051,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-06",
+          "passengers": 184662,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-07",
+          "passengers": 184716,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-08",
+          "passengers": 203888,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-09",
+          "passengers": 221065,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-10",
+          "passengers": 243264,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-11",
+          "passengers": 234757,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-12",
+          "passengers": 254987,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-01",
+          "passengers": 249392,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-02",
+          "passengers": 264525,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-03",
+          "passengers": 260603,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-04",
+          "passengers": 279827,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-05",
+          "passengers": 274757,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-06",
+          "passengers": 243112,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-07",
+          "passengers": 225877,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-08",
+          "passengers": 253806,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-09",
+          "passengers": 250465,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-10",
+          "passengers": 275931,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-11",
+          "passengers": 276279,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-12",
+          "passengers": 284574,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-01",
+          "passengers": 289788,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-02",
+          "passengers": 293493,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-03",
+          "passengers": 288891,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-04",
+          "passengers": 302589,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-06",
+          "passengers": 262604,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-07",
+          "passengers": 269329,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-08",
+          "passengers": 290300,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-09",
+          "passengers": 292814,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-10",
+          "passengers": 298125,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-11",
+          "passengers": 283790,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-12",
+          "passengers": 271126,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-01",
+          "passengers": 282359,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-02",
+          "passengers": 283669,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-03",
+          "passengers": 285382,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-04",
+          "passengers": 283055,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-05",
+          "passengers": 264850,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-06",
+          "passengers": 241903,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-07",
+          "passengers": 244021,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-08",
+          "passengers": 251212,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-09",
+          "passengers": 254492,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-10",
+          "passengers": 295183,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-11",
+          "passengers": 294192,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-12",
+          "passengers": null,
+          "quality": "ambiguous"
+        },
+        {
+          "month": "2026-01",
+          "passengers": 275144,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-02",
+          "passengers": 286792,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-03",
+          "passengers": 271372,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-04",
+          "passengers": 272282,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-05",
+          "passengers": 276140,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-06",
+          "passengers": 218850,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-07",
+          "passengers": 225172,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-08",
+          "passengers": 247570,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-09",
+          "passengers": 246253,
+          "quality": "ok"
+        }
+      ]
+    },
+    {
+      "origin": "DEL",
+      "destination": "BOM",
+      "retrievedAt": "2026-11-15T13:55:04.564Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "sources": [
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20AUGUST%202026.xlsx",
+          "month": "2026-08",
+          "sha256": "5d282ca14c75df46902a94fa1c2f2df9274246cd0565e4a271cc168b33f1db53"
+        },
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20SEPTEMBER%202026.xlsx",
+          "month": "2026-09",
+          "sha256": "211c492dd987b916d46fa397381e3fc69e3d487e21b1872c74338c2dcf0bc893"
+        },
+        {
+          "kind": "historical-csv",
+          "url": "https://raw.githubusercontent.com/Vonter/india-aviation-traffic/main/aggregated/domestic/city.csv",
+          "sha256": "6be5b6dfc4e163e5deac88ebca7421aacc527863dc90eecd4a5a61d525855246"
+        }
+      ],
+      "rowsSha256": "d99d64cf5147c23d102187b8353c087e56745f946d21065e074d8cb34e222e79",
+      "monthly": [
+        {
+          "month": "2015-04",
+          "passengers": 231679,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-05",
+          "passengers": 270727,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-06",
+          "passengers": 248419,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-07",
+          "passengers": 234464,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-08",
+          "passengers": 236913,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-09",
+          "passengers": 233553,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-10",
+          "passengers": 192797,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-11",
+          "passengers": 262826,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-12",
+          "passengers": 304904,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-01",
+          "passengers": 260425,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-02",
+          "passengers": 268047,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-03",
+          "passengers": 281229,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-04",
+          "passengers": 257481,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-05",
+          "passengers": 298834,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-06",
+          "passengers": 270782,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-07",
+          "passengers": 274486,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-08",
+          "passengers": 275326,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-09",
+          "passengers": 272187,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-10",
+          "passengers": 249092,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-11",
+          "passengers": 305551,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-12",
+          "passengers": 324571,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-01",
+          "passengers": 299965,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-02",
+          "passengers": 273722,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-03",
+          "passengers": 292065,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-04",
+          "passengers": 263738,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-05",
+          "passengers": 325674,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-06",
+          "passengers": 291750,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-07",
+          "passengers": 276127,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-08",
+          "passengers": 280469,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-09",
+          "passengers": 268473,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-10",
+          "passengers": 284048,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-11",
+          "passengers": 301837,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-12",
+          "passengers": 325800,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-01",
+          "passengers": 313283,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-02",
+          "passengers": 299904,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-03",
+          "passengers": 332520,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-04",
+          "passengers": 294304,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-05",
+          "passengers": 328088,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-06",
+          "passengers": 297612,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-07",
+          "passengers": 300401,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-08",
+          "passengers": 303035,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-09",
+          "passengers": 295823,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-10",
+          "passengers": 271469,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-11",
+          "passengers": 274394,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-12",
+          "passengers": 311187,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-01",
+          "passengers": 286152,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-02",
+          "passengers": 266533,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-03",
+          "passengers": 286156,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-04",
+          "passengers": 249828,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-05",
+          "passengers": 295629,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-06",
+          "passengers": 298329,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-07",
+          "passengers": 284412,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-08",
+          "passengers": 294305,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-09",
+          "passengers": 291390,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-10",
+          "passengers": 265724,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-11",
+          "passengers": 330592,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-12",
+          "passengers": 329523,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-01",
+          "passengers": 300279,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-02",
+          "passengers": 300263,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-03",
+          "passengers": 159694,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-04",
+          "passengers": 0,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-05",
+          "passengers": 1833,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-06",
+          "passengers": 16666,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-07",
+          "passengers": 19535,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-08",
+          "passengers": 47611,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-09",
+          "passengers": 68570,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-10",
+          "passengers": 78866,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-11",
+          "passengers": 82502,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-12",
+          "passengers": 84095,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-01",
+          "passengers": 101188,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-02",
+          "passengers": 114288,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-03",
+          "passengers": 104952,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-04",
+          "passengers": 55256,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-06",
+          "passengers": 58959,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-07",
+          "passengers": 89662,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-08",
+          "passengers": 124739,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-09",
+          "passengers": 130155,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-10",
+          "passengers": 173611,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-11",
+          "passengers": 226760,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-12",
+          "passengers": 230602,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-01",
+          "passengers": 104898,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-02",
+          "passengers": 162764,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-03",
+          "passengers": 226538,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-04",
+          "passengers": 214247,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-05",
+          "passengers": 257349,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-06",
+          "passengers": 220435,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-07",
+          "passengers": 188988,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-08",
+          "passengers": 213319,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-09",
+          "passengers": 216928,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-10",
+          "passengers": 208688,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-11",
+          "passengers": 259241,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-12",
+          "passengers": 276687,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-01",
+          "passengers": 245843,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-02",
+          "passengers": 256563,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-03",
+          "passengers": 272879,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-04",
+          "passengers": 265591,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-05",
+          "passengers": 277243,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-06",
+          "passengers": 264260,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-07",
+          "passengers": 234722,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-08",
+          "passengers": 255324,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-09",
+          "passengers": 254808,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-10",
+          "passengers": 260769,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-11",
+          "passengers": 254129,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-12",
+          "passengers": 308682,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-01",
+          "passengers": 284143,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-02",
+          "passengers": 280016,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-03",
+          "passengers": 290453,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-04",
+          "passengers": 276200,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-06",
+          "passengers": 290790,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-07",
+          "passengers": 277921,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-08",
+          "passengers": 290187,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-09",
+          "passengers": 288534,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-10",
+          "passengers": 261087,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-11",
+          "passengers": 296267,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-12",
+          "passengers": 295226,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-01",
+          "passengers": 279457,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-02",
+          "passengers": 271320,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-03",
+          "passengers": 290413,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-04",
+          "passengers": 269338,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-05",
+          "passengers": 273585,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-06",
+          "passengers": 266944,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-07",
+          "passengers": 249657,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-08",
+          "passengers": 256618,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-09",
+          "passengers": 248779,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-10",
+          "passengers": 253111,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-11",
+          "passengers": 308118,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-12",
+          "passengers": null,
+          "quality": "ambiguous"
+        },
+        {
+          "month": "2026-01",
+          "passengers": 274754,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-02",
+          "passengers": 266765,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-03",
+          "passengers": 271231,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-04",
+          "passengers": 239956,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-05",
+          "passengers": 287542,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-06",
+          "passengers": 267073,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-07",
+          "passengers": 233888,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-08",
+          "passengers": 245164,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-09",
+          "passengers": 253634,
+          "quality": "ok"
+        }
+      ]
+    },
+    {
+      "origin": "DEL",
+      "destination": "PNQ",
+      "retrievedAt": "2026-11-15T13:54:59.143Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "sources": [
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20AUGUST%202026.xlsx",
+          "month": "2026-08",
+          "sha256": "5d282ca14c75df46902a94fa1c2f2df9274246cd0565e4a271cc168b33f1db53"
+        },
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20SEPTEMBER%202026.xlsx",
+          "month": "2026-09",
+          "sha256": "211c492dd987b916d46fa397381e3fc69e3d487e21b1872c74338c2dcf0bc893"
+        },
+        {
+          "kind": "historical-csv",
+          "url": "https://raw.githubusercontent.com/Vonter/india-aviation-traffic/main/aggregated/domestic/city.csv",
+          "sha256": "6be5b6dfc4e163e5deac88ebca7421aacc527863dc90eecd4a5a61d525855246"
+        }
+      ],
+      "rowsSha256": "69f97c1446d301c674cf67ed91555123dc5fefd7c9d3bc6fc287ad91a1275c1f",
+      "monthly": [
+        {
+          "month": "2015-04",
+          "passengers": 67005,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-05",
+          "passengers": 75884,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-06",
+          "passengers": 72794,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-07",
+          "passengers": 72835,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-08",
+          "passengers": 71363,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-09",
+          "passengers": 71409,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-10",
+          "passengers": 61617,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-11",
+          "passengers": 74437,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-12",
+          "passengers": 85545,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-01",
+          "passengers": 73349,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-02",
+          "passengers": 75028,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-03",
+          "passengers": 80121,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-04",
+          "passengers": 82407,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-05",
+          "passengers": 98298,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-06",
+          "passengers": 94447,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-07",
+          "passengers": 93491,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-08",
+          "passengers": 89659,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-09",
+          "passengers": 90116,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-10",
+          "passengers": 81734,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-11",
+          "passengers": 104019,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-12",
+          "passengers": 105384,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-01",
+          "passengers": 101614,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-02",
+          "passengers": 94669,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-03",
+          "passengers": 105364,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-04",
+          "passengers": 100121,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-05",
+          "passengers": 117171,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-06",
+          "passengers": 111457,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-07",
+          "passengers": 109804,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-08",
+          "passengers": 108115,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-09",
+          "passengers": 98943,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-10",
+          "passengers": 108526,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-11",
+          "passengers": 110789,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-12",
+          "passengers": 122194,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-01",
+          "passengers": 116185,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-02",
+          "passengers": 109638,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-03",
+          "passengers": 119581,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-04",
+          "passengers": 110647,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-05",
+          "passengers": 123114,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-06",
+          "passengers": 129724,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-07",
+          "passengers": 125388,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-08",
+          "passengers": 113386,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-09",
+          "passengers": 112006,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-10",
+          "passengers": 112397,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-11",
+          "passengers": 109073,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-12",
+          "passengers": 116797,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-01",
+          "passengers": 114665,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-02",
+          "passengers": 109630,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-03",
+          "passengers": 108135,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-04",
+          "passengers": 100342,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-05",
+          "passengers": 117421,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-06",
+          "passengers": 116108,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-07",
+          "passengers": 117104,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-08",
+          "passengers": 112287,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-09",
+          "passengers": 108084,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-10",
+          "passengers": 101550,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-11",
+          "passengers": 116319,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-12",
+          "passengers": 118845,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-01",
+          "passengers": 114621,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-02",
+          "passengers": 112066,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-03",
+          "passengers": 62945,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-05",
+          "passengers": 3022,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-06",
+          "passengers": 19022,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-07",
+          "passengers": 18684,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-08",
+          "passengers": 34121,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-09",
+          "passengers": 43093,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-10",
+          "passengers": 46890,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-11",
+          "passengers": 49768,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-12",
+          "passengers": 47562,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-01",
+          "passengers": 51204,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-02",
+          "passengers": 51252,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-03",
+          "passengers": 44219,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-04",
+          "passengers": 31119,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-06",
+          "passengers": 30374,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-07",
+          "passengers": 44097,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-08",
+          "passengers": 58432,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-09",
+          "passengers": 59852,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-10",
+          "passengers": 38210,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-11",
+          "passengers": 81765,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-12",
+          "passengers": 99881,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-01",
+          "passengers": 54946,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-02",
+          "passengers": 75909,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-03",
+          "passengers": 99692,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-04",
+          "passengers": 93641,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-05",
+          "passengers": 107142,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-06",
+          "passengers": 98654,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-07",
+          "passengers": 88473,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-08",
+          "passengers": 101115,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-09",
+          "passengers": 95708,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-10",
+          "passengers": 91892,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-11",
+          "passengers": 116754,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-12",
+          "passengers": 124744,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-01",
+          "passengers": 118262,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-02",
+          "passengers": 117775,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-03",
+          "passengers": 121572,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-04",
+          "passengers": 121081,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-05",
+          "passengers": 113552,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-06",
+          "passengers": 116447,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-07",
+          "passengers": 120731,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-08",
+          "passengers": 120850,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-09",
+          "passengers": 118785,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-10",
+          "passengers": 112293,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-11",
+          "passengers": 106287,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-12",
+          "passengers": 122630,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-01",
+          "passengers": 113725,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-02",
+          "passengers": 113664,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-03",
+          "passengers": 121645,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-04",
+          "passengers": 118809,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-06",
+          "passengers": 127274,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-07",
+          "passengers": 123462,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-08",
+          "passengers": 119895,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-09",
+          "passengers": 115280,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-10",
+          "passengers": 113908,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-11",
+          "passengers": 125164,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-12",
+          "passengers": 134175,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-01",
+          "passengers": 124651,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-02",
+          "passengers": 110248,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-03",
+          "passengers": 126739,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-04",
+          "passengers": 116279,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-05",
+          "passengers": 119217,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-06",
+          "passengers": 121021,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-07",
+          "passengers": 113912,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-08",
+          "passengers": 116794,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-09",
+          "passengers": 104237,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-10",
+          "passengers": 109349,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-11",
+          "passengers": 128354,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-12",
+          "passengers": 119639,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-01",
+          "passengers": 125954,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-02",
+          "passengers": 119436,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-03",
+          "passengers": 128404,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-04",
+          "passengers": 115625,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-05",
+          "passengers": 131920,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-06",
+          "passengers": 125937,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-07",
+          "passengers": 113641,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-08",
+          "passengers": 107771,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-09",
+          "passengers": 107712,
+          "quality": "ok"
+        }
+      ]
+    },
+    {
+      "origin": "PNQ",
+      "destination": "DEL",
+      "retrievedAt": "2026-11-15T13:55:01.614Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "sources": [
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20AUGUST%202026.xlsx",
+          "month": "2026-08",
+          "sha256": "5d282ca14c75df46902a94fa1c2f2df9274246cd0565e4a271cc168b33f1db53"
+        },
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20SEPTEMBER%202026.xlsx",
+          "month": "2026-09",
+          "sha256": "211c492dd987b916d46fa397381e3fc69e3d487e21b1872c74338c2dcf0bc893"
+        },
+        {
+          "kind": "historical-csv",
+          "url": "https://raw.githubusercontent.com/Vonter/india-aviation-traffic/main/aggregated/domestic/city.csv",
+          "sha256": "6be5b6dfc4e163e5deac88ebca7421aacc527863dc90eecd4a5a61d525855246"
+        }
+      ],
+      "rowsSha256": "57194fb356665b14efc70fd33508b0025a13d4f33258f95260fc7dfcfe2ed3da",
+      "monthly": [
+        {
+          "month": "2015-04",
+          "passengers": 74142,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-05",
+          "passengers": 74926,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-06",
+          "passengers": 67440,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-07",
+          "passengers": 74406,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-08",
+          "passengers": 71847,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-09",
+          "passengers": 72684,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-10",
+          "passengers": 65451,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-11",
+          "passengers": 75435,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-12",
+          "passengers": 78361,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-01",
+          "passengers": 78407,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-02",
+          "passengers": 76913,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-03",
+          "passengers": 82335,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-04",
+          "passengers": 91176,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-05",
+          "passengers": 97585,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-06",
+          "passengers": 84541,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-07",
+          "passengers": 94598,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-08",
+          "passengers": 91100,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-09",
+          "passengers": 93807,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-10",
+          "passengers": 98603,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-11",
+          "passengers": 94247,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-12",
+          "passengers": 99164,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-01",
+          "passengers": 105872,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-02",
+          "passengers": 96507,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-03",
+          "passengers": 105063,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-04",
+          "passengers": 109368,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-05",
+          "passengers": 114764,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-06",
+          "passengers": 103335,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-07",
+          "passengers": 106484,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-08",
+          "passengers": 106059,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-09",
+          "passengers": 103969,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-10",
+          "passengers": 115072,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-11",
+          "passengers": 111024,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-12",
+          "passengers": 114413,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-01",
+          "passengers": 116192,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-02",
+          "passengers": 111858,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-03",
+          "passengers": 116231,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-04",
+          "passengers": 121071,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-05",
+          "passengers": 122311,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-06",
+          "passengers": 106548,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-07",
+          "passengers": 111664,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-08",
+          "passengers": 115126,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-09",
+          "passengers": 111356,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-10",
+          "passengers": 119449,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-11",
+          "passengers": 108939,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-12",
+          "passengers": 112351,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-01",
+          "passengers": 118083,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-02",
+          "passengers": 110745,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-03",
+          "passengers": 108017,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-04",
+          "passengers": 107300,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-05",
+          "passengers": 116058,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-06",
+          "passengers": 106301,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-07",
+          "passengers": 115610,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-08",
+          "passengers": 112753,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-09",
+          "passengers": 111158,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-10",
+          "passengers": 113841,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-11",
+          "passengers": 111755,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-12",
+          "passengers": 112453,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-01",
+          "passengers": 113425,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-02",
+          "passengers": 115126,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-03",
+          "passengers": 70781,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-05",
+          "passengers": 7254,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-06",
+          "passengers": 30052,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-07",
+          "passengers": 23891,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-08",
+          "passengers": 28519,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-09",
+          "passengers": 32209,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-10",
+          "passengers": 43963,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-11",
+          "passengers": 51530,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-12",
+          "passengers": 36799,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-01",
+          "passengers": 46231,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-02",
+          "passengers": 51527,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-03",
+          "passengers": 48961,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-04",
+          "passengers": 36546,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-06",
+          "passengers": 23288,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-07",
+          "passengers": 38090,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-08",
+          "passengers": 55277,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-09",
+          "passengers": 59358,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-10",
+          "passengers": 40572,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-11",
+          "passengers": 81429,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-12",
+          "passengers": 85793,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-01",
+          "passengers": 57907,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-02",
+          "passengers": 74534,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-03",
+          "passengers": 96075,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-04",
+          "passengers": 95295,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-05",
+          "passengers": 102917,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-06",
+          "passengers": 82302,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-07",
+          "passengers": 82655,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-08",
+          "passengers": 94019,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-09",
+          "passengers": 101652,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-10",
+          "passengers": 109085,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-11",
+          "passengers": 104822,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-12",
+          "passengers": 119862,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-01",
+          "passengers": 120180,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-02",
+          "passengers": 121304,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-03",
+          "passengers": 122112,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-04",
+          "passengers": 127791,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-05",
+          "passengers": 112066,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-06",
+          "passengers": 111182,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-07",
+          "passengers": 109572,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-08",
+          "passengers": 122363,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-09",
+          "passengers": 116240,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-10",
+          "passengers": 121003,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-11",
+          "passengers": 113905,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-12",
+          "passengers": 115946,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-01",
+          "passengers": 113497,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-02",
+          "passengers": 116998,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-03",
+          "passengers": 123334,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-04",
+          "passengers": 123871,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-06",
+          "passengers": 112743,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-07",
+          "passengers": 117729,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-08",
+          "passengers": 118496,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-09",
+          "passengers": 118046,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-10",
+          "passengers": 129527,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-11",
+          "passengers": 123018,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-12",
+          "passengers": 125760,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-01",
+          "passengers": 124066,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-02",
+          "passengers": 112173,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-03",
+          "passengers": 122769,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-04",
+          "passengers": 118349,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-05",
+          "passengers": 112178,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-06",
+          "passengers": 113486,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-07",
+          "passengers": 104653,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-08",
+          "passengers": 112133,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-09",
+          "passengers": 111611,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-10",
+          "passengers": 120550,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-11",
+          "passengers": 123164,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-12",
+          "passengers": 114344,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-01",
+          "passengers": 121533,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-02",
+          "passengers": 126097,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-03",
+          "passengers": 127288,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-04",
+          "passengers": 125007,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-05",
+          "passengers": 129822,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-06",
+          "passengers": 107782,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-07",
+          "passengers": 105838,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-08",
+          "passengers": 112775,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-09",
+          "passengers": 106901,
+          "quality": "ok"
+        }
+      ]
+    },
+    {
+      "origin": "BLR",
+      "destination": "DEL",
+      "retrievedAt": "2026-11-15T13:55:09.065Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "sources": [
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20AUGUST%202026.xlsx",
+          "month": "2026-08",
+          "sha256": "5d282ca14c75df46902a94fa1c2f2df9274246cd0565e4a271cc168b33f1db53"
+        },
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20SEPTEMBER%202026.xlsx",
+          "month": "2026-09",
+          "sha256": "211c492dd987b916d46fa397381e3fc69e3d487e21b1872c74338c2dcf0bc893"
+        },
+        {
+          "kind": "historical-csv",
+          "url": "https://raw.githubusercontent.com/Vonter/india-aviation-traffic/main/aggregated/domestic/city.csv",
+          "sha256": "6be5b6dfc4e163e5deac88ebca7421aacc527863dc90eecd4a5a61d525855246"
+        }
+      ],
+      "rowsSha256": "751a189c227c796e3367152d3cb4df4f5b421a20bc752ba3af341b38097341f3",
+      "monthly": [
+        {
+          "month": "2015-04",
+          "passengers": 125123,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-05",
+          "passengers": 118191,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-06",
+          "passengers": 130835,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-07",
+          "passengers": 140822,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-08",
+          "passengers": 139728,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-09",
+          "passengers": null,
+          "quality": "ambiguous"
+        },
+        {
+          "month": "2015-10",
+          "passengers": 129563,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-11",
+          "passengers": 145466,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-12",
+          "passengers": 156196,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-01",
+          "passengers": 147684,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-02",
+          "passengers": 150014,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-03",
+          "passengers": 153796,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-04",
+          "passengers": 170267,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-05",
+          "passengers": 157554,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-06",
+          "passengers": 161308,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-07",
+          "passengers": 178709,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-08",
+          "passengers": 171584,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-09",
+          "passengers": 168280,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-10",
+          "passengers": 185858,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-11",
+          "passengers": 161657,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-12",
+          "passengers": 172364,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-01",
+          "passengers": 176753,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-02",
+          "passengers": 158477,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-03",
+          "passengers": 156713,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-04",
+          "passengers": 167233,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-05",
+          "passengers": 167769,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-06",
+          "passengers": 171411,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-07",
+          "passengers": 175434,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-08",
+          "passengers": 175467,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-09",
+          "passengers": 182580,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-10",
+          "passengers": 186427,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-11",
+          "passengers": 179656,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-12",
+          "passengers": 182549,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-01",
+          "passengers": 185692,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-02",
+          "passengers": 184090,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-03",
+          "passengers": 194029,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-04",
+          "passengers": 197175,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-05",
+          "passengers": 185889,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-06",
+          "passengers": 190406,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-07",
+          "passengers": 194582,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-08",
+          "passengers": 204488,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-09",
+          "passengers": 188373,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-10",
+          "passengers": 197728,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-11",
+          "passengers": 174273,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-12",
+          "passengers": 185664,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-01",
+          "passengers": 189592,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-02",
+          "passengers": 170288,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-03",
+          "passengers": 170478,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-04",
+          "passengers": 171177,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-05",
+          "passengers": 173617,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-06",
+          "passengers": 180065,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-07",
+          "passengers": 189227,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-08",
+          "passengers": 192079,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-09",
+          "passengers": 189939,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-10",
+          "passengers": 197492,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-11",
+          "passengers": 190375,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-12",
+          "passengers": 190407,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-01",
+          "passengers": 190573,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-02",
+          "passengers": 195161,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-03",
+          "passengers": 121740,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-04",
+          "passengers": 0,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-05",
+          "passengers": 7764,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-06",
+          "passengers": 25286,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-07",
+          "passengers": 27936,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-08",
+          "passengers": 33754,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-09",
+          "passengers": 42121,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-10",
+          "passengers": 62130,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-11",
+          "passengers": 69348,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-12",
+          "passengers": 70276,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-01",
+          "passengers": 77158,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-02",
+          "passengers": 92299,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-03",
+          "passengers": 104631,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-04",
+          "passengers": 90379,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-06",
+          "passengers": 32893,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-07",
+          "passengers": 58221,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-08",
+          "passengers": 85511,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-09",
+          "passengers": 93135,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-10",
+          "passengers": 130529,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-11",
+          "passengers": 131274,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-12",
+          "passengers": 133714,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-01",
+          "passengers": 76912,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-02",
+          "passengers": 107635,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-03",
+          "passengers": 151853,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-04",
+          "passengers": 175445,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-05",
+          "passengers": 165452,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-06",
+          "passengers": 162580,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-07",
+          "passengers": 169558,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-08",
+          "passengers": 172791,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-09",
+          "passengers": 175630,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-10",
+          "passengers": 191082,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-11",
+          "passengers": 194739,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-12",
+          "passengers": 214390,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-01",
+          "passengers": 206890,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-02",
+          "passengers": 189950,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-03",
+          "passengers": 202622,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-04",
+          "passengers": 211000,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-05",
+          "passengers": 192506,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-06",
+          "passengers": 184262,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-07",
+          "passengers": 196823,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-08",
+          "passengers": 209179,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-09",
+          "passengers": 191576,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-10",
+          "passengers": 215227,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-11",
+          "passengers": 188673,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-12",
+          "passengers": 204471,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-01",
+          "passengers": 202724,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-02",
+          "passengers": 201616,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-03",
+          "passengers": 206370,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-04",
+          "passengers": 202807,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-06",
+          "passengers": 187355,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-07",
+          "passengers": 194677,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-08",
+          "passengers": 197396,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-09",
+          "passengers": 195132,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-10",
+          "passengers": 210278,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-11",
+          "passengers": 188317,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-12",
+          "passengers": 194427,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-01",
+          "passengers": 194935,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-02",
+          "passengers": 182478,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-03",
+          "passengers": 185461,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-04",
+          "passengers": 186608,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-05",
+          "passengers": 174792,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-06",
+          "passengers": 189828,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-07",
+          "passengers": 192671,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-08",
+          "passengers": 196656,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-09",
+          "passengers": 195924,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-10",
+          "passengers": 189596,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-11",
+          "passengers": 212038,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-12",
+          "passengers": 202828,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-01",
+          "passengers": 207251,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-02",
+          "passengers": 223588,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-03",
+          "passengers": 212538,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-04",
+          "passengers": 224585,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-05",
+          "passengers": 201571,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-06",
+          "passengers": 179451,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-07",
+          "passengers": 189511,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-08",
+          "passengers": 201246,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-09",
+          "passengers": 196410,
+          "quality": "ok"
+        }
+      ]
+    },
+    {
+      "origin": "DEL",
+      "destination": "BLR",
+      "retrievedAt": "2026-11-15T13:55:11.384Z",
+      "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
+      "sources": [
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20AUGUST%202026.xlsx",
+          "month": "2026-08",
+          "sha256": "5d282ca14c75df46902a94fa1c2f2df9274246cd0565e4a271cc168b33f1db53"
+        },
+        {
+          "kind": "dgca-workbook",
+          "url": "https://public-prd-dgca.s3.ap-south-1.amazonaws.com/InventoryList/dataReports/aviationDataStatistics/airTransport/domestic/monthly/DOM%20CITYPAIR%20DATA%2C%20SEPTEMBER%202026.xlsx",
+          "month": "2026-09",
+          "sha256": "211c492dd987b916d46fa397381e3fc69e3d487e21b1872c74338c2dcf0bc893"
+        },
+        {
+          "kind": "historical-csv",
+          "url": "https://raw.githubusercontent.com/Vonter/india-aviation-traffic/main/aggregated/domestic/city.csv",
+          "sha256": "6be5b6dfc4e163e5deac88ebca7421aacc527863dc90eecd4a5a61d525855246"
+        }
+      ],
+      "rowsSha256": "689d4878af09e4b3045230dfc68bc65c5ac7789b96282aff3771fd48460ad68b",
+      "monthly": [
+        {
+          "month": "2015-04",
+          "passengers": 114390,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-05",
+          "passengers": 140253,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-06",
+          "passengers": 135306,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-07",
+          "passengers": 140945,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-08",
+          "passengers": 138294,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-09",
+          "passengers": null,
+          "quality": "ambiguous"
+        },
+        {
+          "month": "2015-10",
+          "passengers": 119288,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-11",
+          "passengers": 146834,
+          "quality": "ok"
+        },
+        {
+          "month": "2015-12",
+          "passengers": 163789,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-01",
+          "passengers": 141710,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-02",
+          "passengers": 147722,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-03",
+          "passengers": 145566,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-04",
+          "passengers": 157947,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-05",
+          "passengers": 179085,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-06",
+          "passengers": 170270,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-07",
+          "passengers": 182931,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-08",
+          "passengers": 172947,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-09",
+          "passengers": 158778,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-10",
+          "passengers": 162145,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-11",
+          "passengers": 176316,
+          "quality": "ok"
+        },
+        {
+          "month": "2016-12",
+          "passengers": 180619,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-01",
+          "passengers": 170122,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-02",
+          "passengers": 148867,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-03",
+          "passengers": 152664,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-04",
+          "passengers": 150920,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-05",
+          "passengers": 190445,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-06",
+          "passengers": 175722,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-07",
+          "passengers": 180114,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-08",
+          "passengers": 176752,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-09",
+          "passengers": 169772,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-10",
+          "passengers": 185120,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-11",
+          "passengers": 178576,
+          "quality": "ok"
+        },
+        {
+          "month": "2017-12",
+          "passengers": 192829,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-01",
+          "passengers": 181900,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-02",
+          "passengers": 179121,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-03",
+          "passengers": 194405,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-04",
+          "passengers": 182790,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-05",
+          "passengers": 204057,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-06",
+          "passengers": 193060,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-07",
+          "passengers": 193888,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-08",
+          "passengers": 202528,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-09",
+          "passengers": 182982,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-10",
+          "passengers": 185409,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-11",
+          "passengers": 178357,
+          "quality": "ok"
+        },
+        {
+          "month": "2018-12",
+          "passengers": 193558,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-01",
+          "passengers": 186861,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-02",
+          "passengers": 169468,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-03",
+          "passengers": 171829,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-04",
+          "passengers": 163569,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-05",
+          "passengers": 191762,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-06",
+          "passengers": 190097,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-07",
+          "passengers": 192977,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-08",
+          "passengers": 191083,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-09",
+          "passengers": 180875,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-10",
+          "passengers": 181125,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-11",
+          "passengers": 198341,
+          "quality": "ok"
+        },
+        {
+          "month": "2019-12",
+          "passengers": 199335,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-01",
+          "passengers": 184517,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-02",
+          "passengers": 188896,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-03",
+          "passengers": 106714,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-04",
+          "passengers": 0,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-05",
+          "passengers": 4254,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-06",
+          "passengers": 22565,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-07",
+          "passengers": 19506,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-08",
+          "passengers": 36652,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-09",
+          "passengers": 48666,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-10",
+          "passengers": 57520,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-11",
+          "passengers": 66255,
+          "quality": "ok"
+        },
+        {
+          "month": "2020-12",
+          "passengers": 90729,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-01",
+          "passengers": 96333,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-02",
+          "passengers": 90174,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-03",
+          "passengers": 95021,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-04",
+          "passengers": 72042,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-06",
+          "passengers": 38208,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-07",
+          "passengers": 68302,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-08",
+          "passengers": 92234,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-09",
+          "passengers": 96346,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-10",
+          "passengers": 114079,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-11",
+          "passengers": 143750,
+          "quality": "ok"
+        },
+        {
+          "month": "2021-12",
+          "passengers": 155286,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-01",
+          "passengers": 71080,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-02",
+          "passengers": 106215,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-03",
+          "passengers": 156667,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-04",
+          "passengers": 172421,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-05",
+          "passengers": 189672,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-06",
+          "passengers": 175979,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-07",
+          "passengers": 173794,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-08",
+          "passengers": 174710,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-09",
+          "passengers": 159677,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-10",
+          "passengers": 175741,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-11",
+          "passengers": 208039,
+          "quality": "ok"
+        },
+        {
+          "month": "2022-12",
+          "passengers": 221883,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-01",
+          "passengers": 205146,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-02",
+          "passengers": 183974,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-03",
+          "passengers": 202316,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-04",
+          "passengers": 201582,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-05",
+          "passengers": 202718,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-06",
+          "passengers": 187021,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-07",
+          "passengers": 203835,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-08",
+          "passengers": 195611,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-09",
+          "passengers": 188916,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-10",
+          "passengers": 195918,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-11",
+          "passengers": 185492,
+          "quality": "ok"
+        },
+        {
+          "month": "2023-12",
+          "passengers": 219660,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-01",
+          "passengers": 201415,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-02",
+          "passengers": 195258,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-03",
+          "passengers": 197494,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-04",
+          "passengers": 197812,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-06",
+          "passengers": 201380,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-07",
+          "passengers": 201763,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-08",
+          "passengers": 195261,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-09",
+          "passengers": 188636,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-10",
+          "passengers": 174119,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-11",
+          "passengers": 209474,
+          "quality": "ok"
+        },
+        {
+          "month": "2024-12",
+          "passengers": 202492,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-01",
+          "passengers": 192619,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-02",
+          "passengers": 179446,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-03",
+          "passengers": 189358,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-04",
+          "passengers": 182024,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-05",
+          "passengers": 194416,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-06",
+          "passengers": 188456,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-07",
+          "passengers": 188732,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-08",
+          "passengers": 191087,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-09",
+          "passengers": 167605,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-10",
+          "passengers": 184679,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-11",
+          "passengers": 232061,
+          "quality": "ok"
+        },
+        {
+          "month": "2025-12",
+          "passengers": 218748,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-01",
+          "passengers": 208730,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-02",
+          "passengers": 204012,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-03",
+          "passengers": 207345,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-04",
+          "passengers": 199794,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-05",
+          "passengers": 238750,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-06",
+          "passengers": 195894,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-07",
+          "passengers": 192916,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-08",
+          "passengers": 188577,
+          "quality": "ok"
+        },
+        {
+          "month": "2026-09",
+          "passengers": 193923,
+          "quality": "ok"
+        }
+      ]
+    }
+  ]
+}
