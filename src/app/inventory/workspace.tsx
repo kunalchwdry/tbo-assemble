@@ -22,6 +22,7 @@ import CancellationSandbox from '@/components/cancellation-sandbox';
 import SupplierQuoteReview from '@/components/supplier-quote-review';
 import InventoryCoverage from '@/components/inventory-coverage';
 import DemandInputs from '@/components/demand-inputs';
+import LandedCost from '@/components/landed-cost';
 import {applySupplierQuote} from '@/lib/apply-supplier-quote';
 import ProcurementTerms from '@/components/procurement-terms';
 import PrivatePlanSnapshots from '@/components/private-plan-snapshots';
@@ -35,6 +36,7 @@ const pages = [
  {href:'/inventory/data',label:'Inventory data',description:'Upload inputs and check coverage',icon:Database},
  {href:'/inventory/supplier-quotes',label:'Supplier quotes',description:'Review manual supplier quotes',icon:ClipboardList},
  {href:'/inventory/supplier-terms',label:'Supplier terms',description:'Set minimums and fixed fees',icon:FileCheck2},
+ {href:'/inventory/landed-cost',label:'Landed cost',description:'Compare additional purchase costs',icon:CircleDollarSign},
  {href:'/inventory/saved-plans',label:'Saved plans',description:'Save and reopen your inputs',icon:Bookmark},
  {href:'/inventory/demand-inputs',label:'Demand inputs',description:'Adjust bookings, searches and risk',icon:Activity},
  {href:'/inventory/coverage',label:'Demand coverage',description:'See expected shortages by product',icon:BarChart3},
@@ -110,6 +112,9 @@ export default function InventoryWorkspace({children}:{children:ReactNode}){
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/supplier-terms'}>{keep('/inventory/supplier-terms')&&<>
   <ProcurementTerms items={inventory} onApply={(id,minOrderUnits,fixedOrderFee)=>setInventory(prev=>prev.map(item=>item.id===id?{...item,minOrderUnits,fixedOrderFee}:item))}/>
+</>}</div>
+<div className="workspace-view" hidden={pathname!=='/inventory/landed-cost'}>{keep('/inventory/landed-cost')&&<>
+  <LandedCost items={attention.items} rows={optimization.rows} budget={budget} risk={risk} asOf={asOf}/>
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/saved-plans'}>{keep('/inventory/saved-plans')&&<>
   <PrivatePlanSnapshots input={{items:inventory,budget,risk,asOf,source:fileName?'uploaded':'synthetic'}} hasUnappliedBudget={budgetInput.trim()!==String(budget)} onLoad={saved=>{setFitScenarios({});setMarketOn(false);setMarketSamples({});setInventory(saved.items);setBudget(saved.budget);setBudgetInput(String(saved.budget));setRisk(saved.risk);setAsOf(saved.asOf);setFileName(saved.source==='uploaded'?'Saved uploaded inputs':'');setKind('All inventory');setPeriod('All periods');setExpanded(null);setError('')}}/>

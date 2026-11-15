@@ -1,0 +1,7 @@
+# Additional purchase cost comparison
+
+This local, hypothetical comparison adds a manually entered percentage of one item's original unit purchase price plus a per-unit charge. These must not already be included in the buy price. It then reruns the same allocator on the current inventory, budget, review date and demand scenarios. The original plan is unchanged. Existing fixed fees, capacity, minimum quantities and quote-date rules continue to apply.
+
+Added charges are treated as non-recoverable. The existing recovery percentage is applied to the original unit purchase price only; the adjusted recovery fraction ensures the same original salvage value in the scenario. Fixed fees remain non-recoverable. Sold units pay the full landed purchase cost; revenue assumptions are unchanged. The optimizer may choose different quantities and modeled selling prices for all items. Comparison totals include all items, and expected profit is not a verified prediction.
+
+No actual tax rates, tax credits, jurisdictions, exchange rates, deposits, tax on fixed fees, refund rules, compounding, invoice-level rounding or supplier-wide charges are modeled. Validate actual terms independently. This is not tax advice, a quote, an approval or an order. The comparison exists in browser state only; it is neither saved in private plans nor included in exports, and is cleared on refresh. The underlying plan and export remain unchanged. The review date is user-selected and is not a live quote-expiry check.

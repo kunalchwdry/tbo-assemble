@@ -1,0 +1,12 @@
+import {test} from 'node:test';
+import {strict as assert} from 'node:assert';
+import {opportunities,evaluateAtPrice,purchaseCost} from '../src/lib/procurement-core';
+import {optimizePortfolio} from '../src/lib/portfolio-optimizer';
+import {compareLandedCost} from '../src/lib/landed-cost';
+const budget=1000000,risk=.35,asOf='2026-11-13';
+const rows=optimizePortfolio(opportunities,budget,risk,{asOf}).rows;
+const compare=(percent:number,perUnit:number)=>compareLandedCost(opportunities,rows,budget,risk,asOf,{itemId:'goa',percent,perUnit});
+test('zero additional costs preserve exact allocation and leave inputs unchanged',()=>{const before=JSON.stringify(opportunities),result=compare(0,0);assert.deepEqual(result.rows,rows);assert.deepEqual(result.baseline,result.scenario);assert.equal(JSON.stringify(opportunities),before)});
+test('additional costs preserve original recovery and remain within budget',()=>{const result=compare(10,75);const old=opportunities[0],changed=result.rows.find(r=>r.id==='goa')!;assert.ok(Math.abs(result.landed-(old.buy*1.1+75))<1e-8);assert.ok(Math.abs(changed.buy*(changed.recoveryPct??0)-old.buy*(old.recoveryPct??0))<1e-8);assert.ok(result.scenario.spend<=budget);for(const r of result.rows)assert.equal(r.spend,purchaseCost(r,r.qty));const oldProfit=evaluateAtPrice(old,10,old.referencePrice,risk).expectedProfit;const newProfit=evaluateAtPrice(changed,10,old.referencePrice,risk).expectedProfit;assert.ok(Math.abs((oldProfit-newProfit)-10*result.added)<1e-7)});
+test('fixed fee and quantity minimum are preserved; expired quote cannot be selected',()=>{const item={...opportunities[0],minOrderUnits:4,fixedOrderFee:200,quoteExpiry:'2026-11-12'};const base=optimizePortfolio([item],budget,risk,{asOf}).rows;const out=compareLandedCost([item],base,budget,risk,asOf,{itemId:item.id,percent:5,perUnit:100});assert.equal(out.rows[0].qty,0);assert.equal(out.rows[0].fixedOrderFee,200);assert.equal(out.rows[0].minOrderUnits,4)});
+test('invalid costs and nonexistent item fail closed',()=>{for(const [percent,perUnit] of [[-1,0],[101,0],[NaN,0],[0,Infinity],[0,-1],[0,1000001]])assert.throws(()=>compare(percent,perUnit));assert.throws(()=>compareLandedCost(opportunities,rows,budget,risk,asOf,{itemId:'missing',percent:0,perUnit:0}));});
