@@ -21,3 +21,13 @@ test('rejects overlapping periods, unequal leads, inconsistent product and malfo
  assert.throws(()=>readDemandBacktestCSV(lines.map((x,i)=>i===1?x.replace(',0.05,',',NaN,'):x).join('\n')),/conversion/);
  assert.throws(()=>evaluateDemandBacktest(rows(),'2024-03-01'),/At least/);
 });
+test('rolling replay fits only labels available before each snapshot and is immune to future outcomes',()=>{
+ const all=rows(),initial=evaluateDemandBacktest(all,'2025-02-01');assert.ok(initial.sample.every(x=>x.rollingLatestOutcome<x.asOf&&x.rollingTrainingCount>=20));
+ const target=initial.sample[4];const changed=all.map(r=>r.asOf>=target.asOf?{...r,actualNetUnits:r.actualNetUnits+500}:r);const replay=evaluateDemandBacktest(changed,'2025-02-01');
+ for(let i=0;i<=4;i++){assert.equal(initial.sample[i].rollingWeight,replay.sample[i].rollingWeight);assert.equal(initial.sample[i].rolling,replay.sample[i].rolling)}
+ assert.equal(initial.weight,replay.weight);assert.ok(initial.rollingMae<initial.rollingBaselineMae);assert.equal(initial.underpredicted+initial.overpredicted<=initial.testCount,true);
+});
+test('a later-reported label cannot enter rolling training before its availability date',()=>{
+ const all=rows(),initial=evaluateDemandBacktest(all,'2025-02-01');const delayed=all.map(r=>r.asOf===initial.sample[0].asOf?{...r,outcomeAvailableOn:'2025-01-25'}:r);const result=evaluateDemandBacktest(delayed,'2025-02-01');
+ const before=result.sample.filter(r=>r.asOf<='2025-01-25');assert.ok(before.every(r=>r.rollingLatestOutcome<r.asOf));assert.ok(result.sample.length===initial.sample.length);
+});

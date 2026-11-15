@@ -14,6 +14,7 @@ export function demandScenarioIssue(item:Opportunity|undefined,scenario:DemandSc
  if(!Number.isFinite(age)||age<0||age>90||!Number.isFinite(periodAge)||periodAge<0||periodAge>90)return 'The latest holdout travel period and its outcome must both be within 90 days.';
  if(r.trainCount<20||r.testCount<8||!Number.isFinite(r.weight)||r.weight<0||r.weight>1)return 'Not enough valid training and holdout data.';
  if(![r.fittedMae,r.currentMae,r.baselineMae].every(x=>Number.isFinite(x)&&x>=0)||r.fittedMae>=r.baselineMae*.95||r.fittedMae>=r.currentMae*.95)return 'Fitted MAE must beat both the prior-period baseline and the default planner by more than 5% on holdout.';
+ if(![r.rollingMae,r.rollingBaselineMae,r.rollingCurrentMae].every(x=>Number.isFinite(x)&&x>=0)||r.rollingMae>=r.rollingBaselineMae*.95||r.rollingMae>=r.rollingCurrentMae*.95)return 'The rolling-refit replay must also beat both comparison baselines by more than 5%.';
  return null;
 }
 export function applyDemandScenarios(items:Opportunity[],scenarios:Record<string,DemandScenario>,asOf:string,today:string){

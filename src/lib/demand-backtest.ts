@@ -29,7 +29,13 @@ export function readDemandBacktestCSV(text:string):DemandObservation[]{
 function opportunity(r:DemandObservation):Opportunity{return {id:r.opportunityId,name:r.opportunityId,destination:'',kind:'Hotel',period:'',buy:1,referencePrice:1,capacity:0,bookings:r.bookings,previousBookings:r.previousBookings,searches:r.searches,previousSearches:r.previousSearches,conversion:r.conversion,seasonal:r.seasonal,signal:r.signal,cancellations:r.cancellations,soldOut:r.soldOut,volatility:0,integration:'',timing:''}}
 function fitted(r:DemandObservation,weight:number){const o=opportunity(r);return Math.max(0,(r.bookings*weight+r.searches*r.conversion*(1-weight))*trendFactor(o)*r.seasonal*r.signal*(1+r.soldOut/100*.2)*(1-r.cancellations));}
 const avg=(v:number[])=>v.reduce((a,b)=>a+b,0)/v.length;
-export type BacktestResult={opportunityId:string;unit:'room_nights'|'seats';evaluationDate:string;trainCount:number;testCount:number;excludedFuture:number;purged:number;weight:number;testStart:string;trainLatestOutcome:string;testLatestOutcome:string;testLatestPeriodEnd:string;baselineMae:number;currentMae:number;fittedMae:number;baselineWape:number|null;currentWape:number|null;fittedWape:number|null;sample: {asOf:string;periodStart:string;periodEnd:string;actual:number;baseline:number;current:number;fitted:number}[]};
+/** Train on only the rows supplied by the caller; precompute model endpoints. */
+function fitWeight(train:DemandObservation[]){
+ const data=train.map(r=>({zero:fitted(r,0),one:fitted(r,1),actual:r.actualNetUnits}));
+ let weight=0,best=Infinity;for(let i=0;i<=20;i++){const w=i/20;const error=avg(data.map(r=>Math.abs(r.zero*(1-w)+r.one*w-r.actual)));if(error<best-1e-10){best=error;weight=w}}return weight;
+}
+
+export type BacktestResult={opportunityId:string;unit:'room_nights'|'seats';evaluationDate:string;trainCount:number;testCount:number;excludedFuture:number;purged:number;weight:number;testStart:string;trainLatestOutcome:string;testLatestOutcome:string;testLatestPeriodEnd:string;baselineMae:number;currentMae:number;fittedMae:number;baselineWape:number|null;currentWape:number|null;fittedWape:number|null;rollingMae:number;rollingBaselineMae:number;rollingCurrentMae:number;rollingWeightChanges:number;fittedBias:number;underpredicted:number;overpredicted:number;sample: {asOf:string;periodStart:string;periodEnd:string;actual:number;baseline:number;current:number;fitted:number;rolling:number;rollingWeight:number;rollingTrainingCount:number;rollingLatestOutcome:string}[]};
 /** Chronological locked holdout. The weight is fitted only on outcomes that were
  * available BEFORE the first holdout snapshot. Holdout never tunes the weight. */
 export function evaluateDemandBacktest(rows:DemandObservation[],evaluationDate:string):BacktestResult {
@@ -40,11 +46,15 @@ export function evaluateDemandBacktest(rows:DemandObservation[],evaluationDate:s
  const testStart=test[0].asOf;const train=before.filter(r=>r.outcomeAvailableOn<testStart);
  if(train.length<20)throw new Error('At least 20 training outcomes must be available before the first holdout snapshot. Add earlier completed periods.');
  // 21 predetermined candidate weights, optimized using training MAE only.
- let weight=0,best=Infinity;for(let i=0;i<=20;i++){const w=i/20,e=avg(train.map(r=>Math.abs(fitted(r,w)-r.actualNetUnits)));if(e<best-1e-10){best=e;weight=w}}
- const sample=test.map(r=>({asOf:r.asOf,periodStart:r.periodStart,periodEnd:r.periodEnd,actual:r.actualNetUnits,baseline:r.priorNetUnits,current:forecast(opportunity(r)),fitted:fitted(r,weight)}));
- const errors=(key:'baseline'|'current'|'fitted')=>sample.map(r=>Math.abs(r[key]-r.actual));
+ const weight=fitWeight(train);
+ // A second, explicitly different method: refit at each holdout snapshot using
+ // only earlier labels that have actually become available before that date.
+ // Earlier holdout labels can be used after they become available; these are
+ // not independent trials or evidence of the deployed fixed weight's accuracy.
+ const sample=test.map(r=>{const past=eligible.filter(p=>p.asOf<r.asOf&&p.outcomeAvailableOn<r.asOf);const rollingWeight=fitWeight(past);return {asOf:r.asOf,periodStart:r.periodStart,periodEnd:r.periodEnd,actual:r.actualNetUnits,baseline:r.priorNetUnits,current:forecast(opportunity(r)),fitted:fitted(r,weight),rolling:fitted(r,rollingWeight),rollingWeight,rollingTrainingCount:past.length,rollingLatestOutcome:past.map(x=>x.outcomeAvailableOn).sort().at(-1)!}});
+ const errors=(key:'baseline'|'current'|'fitted'|'rolling')=>sample.map(r=>Math.abs(r[key]-r.actual));
  const total=sample.reduce((s,r)=>s+r.actual,0),wape=(key:'baseline'|'current'|'fitted')=>total>0?errors(key).reduce((a,b)=>a+b,0)/total:null;
- return {opportunityId:rows[0].opportunityId,unit:rows[0].unit,evaluationDate,trainCount:train.length,testCount:test.length,excludedFuture:rows.length-eligible.length,purged:before.length-train.length,weight,testStart,trainLatestOutcome:train.map(r=>r.outcomeAvailableOn).sort().at(-1)!,testLatestOutcome:test.map(r=>r.outcomeAvailableOn).sort().at(-1)!,testLatestPeriodEnd:test.map(r=>r.periodEnd).sort().at(-1)!,baselineMae:avg(errors('baseline')),currentMae:avg(errors('current')),fittedMae:avg(errors('fitted')),baselineWape:wape('baseline'),currentWape:wape('current'),fittedWape:wape('fitted'),sample};
+ return {opportunityId:rows[0].opportunityId,unit:rows[0].unit,evaluationDate,trainCount:train.length,testCount:test.length,excludedFuture:rows.length-eligible.length,purged:before.length-train.length,weight,testStart,trainLatestOutcome:train.map(r=>r.outcomeAvailableOn).sort().at(-1)!,testLatestOutcome:test.map(r=>r.outcomeAvailableOn).sort().at(-1)!,testLatestPeriodEnd:test.map(r=>r.periodEnd).sort().at(-1)!,baselineMae:avg(errors('baseline')),currentMae:avg(errors('current')),fittedMae:avg(errors('fitted')),baselineWape:wape('baseline'),currentWape:wape('current'),fittedWape:wape('fitted'),rollingMae:avg(errors('rolling')),rollingBaselineMae:avg(errors('baseline')),rollingCurrentMae:avg(errors('current')),rollingWeightChanges:sample.filter(r=>r.rollingWeight!==weight).length,fittedBias:avg(sample.map(r=>r.fitted-r.actual)),underpredicted:sample.filter(r=>r.fitted<r.actual).length,overpredicted:sample.filter(r=>r.fitted>r.actual).length,sample};
 }
 export const demandBacktestTemplate=[columns.join(','),'sample-goa,room_nights,2025-01-03,2025-01-10,2025-01-16,2025-01-17,125,110,3100,2800,0.045,1.18,1.08,0.12,24,110,120'].join('\n');
 /** Fully synthetic, constructed to exercise the validation interface. */
