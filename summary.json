@@ -1,0 +1,104 @@
+{
+  "capacity": 104,
+  "lastRun": null,
+  "routes": {
+    "BLR-DEL": {
+      "captureCount": 0,
+      "comparison": {
+        "count": 0,
+        "mae": {
+          "last-observed": null,
+          "last-year": null,
+          "seasonal-auto-ets": null,
+          "selectedPolicy": null,
+          "ses-optimized": null
+        },
+        "pending": 0,
+        "scores": []
+      },
+      "lastCapture": null
+    },
+    "BOM-DEL": {
+      "captureCount": 0,
+      "comparison": {
+        "count": 0,
+        "mae": {
+          "last-observed": null,
+          "last-year": null,
+          "seasonal-auto-ets": null,
+          "selectedPolicy": null,
+          "ses-optimized": null
+        },
+        "pending": 0,
+        "scores": []
+      },
+      "lastCapture": null
+    },
+    "DEL-BLR": {
+      "captureCount": 0,
+      "comparison": {
+        "count": 0,
+        "mae": {
+          "last-observed": null,
+          "last-year": null,
+          "seasonal-auto-ets": null,
+          "selectedPolicy": null,
+          "ses-optimized": null
+        },
+        "pending": 0,
+        "scores": []
+      },
+      "lastCapture": null
+    },
+    "DEL-BOM": {
+      "captureCount": 0,
+      "comparison": {
+        "count": 0,
+        "mae": {
+          "last-observed": null,
+          "last-year": null,
+          "seasonal-auto-ets": null,
+          "selectedPolicy": null,
+          "ses-optimized": null
+        },
+        "pending": 0,
+        "scores": []
+      },
+      "lastCapture": null
+    },
+    "DEL-PNQ": {
+      "captureCount": 0,
+      "comparison": {
+        "count": 0,
+        "mae": {
+          "last-observed": null,
+          "last-year": null,
+          "seasonal-auto-ets": null,
+          "selectedPolicy": null,
+          "ses-optimized": null
+        },
+        "pending": 0,
+        "scores": []
+      },
+      "lastCapture": null
+    },
+    "PNQ-DEL": {
+      "captureCount": 0,
+      "comparison": {
+        "count": 0,
+        "mae": {
+          "last-observed": null,
+          "last-year": null,
+          "seasonal-auto-ets": null,
+          "selectedPolicy": null,
+          "ses-optimized": null
+        },
+        "pending": 0,
+        "scores": []
+      },
+      "lastCapture": null
+    }
+  },
+  "schema": "statsforecast-forward-v1",
+  "statsforecastVersion": "2.0.3"
+}
