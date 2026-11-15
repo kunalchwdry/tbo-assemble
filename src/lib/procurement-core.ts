@@ -1,5 +1,5 @@
 /** Deterministic illustrative model. Not calibrated to TBO data. */
-export type Opportunity = { id:string; name:string; destination:string; kind:'Hotel'|'Flight'; period:string; buy:number; referencePrice:number; capacity:number; bookings:number; searches:number; conversion:number; seasonal:number; signal:number; cancellations:number; volatility:number; soldOut:number; integration:string; timing:string; existingStock?:number; recoveryPct?:number; previousBuy?:number; quoteExpiry?:string; previousBookings?:number; previousSearches?:number; minOrderUnits?:number; fixedOrderFee?:number };
+export type Opportunity = { id:string; name:string; destination:string; kind:'Hotel'|'Flight'; period:string; buy:number; referencePrice:number; capacity:number; bookings:number; searches:number; conversion:number; seasonal:number; signal:number; cancellations:number; volatility:number; soldOut:number; integration:string; timing:string; existingStock?:number; recoveryPct?:number; previousBuy?:number; quoteExpiry?:string; previousBookings?:number; previousSearches?:number; minOrderUnits?:number; fixedOrderFee?:number; bookingWeight?:number };
 export const opportunities: Opportunity[] = [
  {id:'goa',quoteExpiry:'2026-11-18',previousBuy:6900,previousBookings:108,previousSearches:2650,existingStock:12,recoveryPct:.15,name:'North Goa beach hotels',destination:'Goa',kind:'Hotel',period:'Dec 2026',buy:6400,referencePrice:9200,capacity:160,bookings:125,searches:3100,conversion:.045,seasonal:1.18,signal:1.08,cancellations:.12,volatility:.28,soldOut:24,integration:'Direct contract',timing:'Buy now'},
  {id:'dubai',quoteExpiry:'2026-12-10',previousBuy:7300,previousBookings:90,previousSearches:2450,existingStock:5,recoveryPct:.2,name:'Dubai city hotels',destination:'Dubai',kind:'Hotel',period:'Jan 2027',buy:8200,referencePrice:11700,capacity:135,bookings:102,searches:2500,conversion:.046,seasonal:1.12,signal:1.06,cancellations:.1,volatility:.24,soldOut:18,integration:'Supplier API',timing:'Buy now'},
@@ -26,7 +26,7 @@ export function trendFactor(o:Opportunity) {
  const searchChange=o.previousSearches && o.previousSearches>0 ? (o.searches/o.previousSearches-1)*.2 : 0;
  return Math.max(.8,Math.min(1.2,1+bookingChange+searchChange));
 }
-export function forecast(o:Opportunity) { return Math.max(0, (o.bookings*.55 + o.searches*o.conversion*.45)*trendFactor(o)*o.seasonal*o.signal*(1+o.soldOut/100*.2)*(1-o.cancellations)); }
+export function forecast(o:Opportunity) { const weight=o.bookingWeight??.55; return Math.max(0, (o.bookings*weight + o.searches*o.conversion*(1-weight))*trendFactor(o)*o.seasonal*o.signal*(1+o.soldOut/100*.2)*(1-o.cancellations)); }
 export function purchaseCost(o:Opportunity,qty:number){return qty>0?qty*o.buy+(o.fixedOrderFee??0):0;}
 export function minimumPurchase(o:Opportunity){return o.minOrderUnits??1;}
 const scenarios = [{mult:-1,prob:.25},{mult:0,prob:.5},{mult:1,prob:.25}];

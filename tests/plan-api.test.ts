@@ -8,6 +8,8 @@ async function main(){
  const small=await post({...input,items:[constrained],budget:349});assert.equal(small.body.recommendations[0].qty,0);
  const exact=await post({...input,items:[constrained],budget:350});assert.equal(exact.body.recommendations[0].qty,3);assert.equal(exact.body.summary.spend,350);
  assert.equal((await post({...input,items:[{...constrained,minOrderUnits:9}]})).status,400);assert.equal((await post({...input,items:[{...constrained,fixedOrderFee:-1}]})).status,400);
+ const weighted={...input.items[0],bookingWeight:.2};const weightedResult=await post({...input,items:[weighted]});assert.equal(weightedResult.status,200);assert.equal(weightedResult.body.model,'scenario-grid-v4-experimental-blend');assert.equal(weightedResult.body.recommendations[0].bookingWeight,.2);assert.notEqual(weightedResult.body.recommendations[0].forecast,(await post({...input,items:[input.items[0]]})).body.recommendations[0].forecast);
+ for(const invalid of [-1,1.1,'0.2',{},true])assert.equal((await post({...input,items:[{...input.items[0],bookingWeight:invalid}]})).status,400);
  console.log('Planning API integration checks passed');
 }
 main().catch(e=>{console.error(e);process.exitCode=1});

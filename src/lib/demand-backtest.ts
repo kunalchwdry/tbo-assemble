@@ -29,7 +29,7 @@ export function readDemandBacktestCSV(text:string):DemandObservation[]{
 function opportunity(r:DemandObservation):Opportunity{return {id:r.opportunityId,name:r.opportunityId,destination:'',kind:'Hotel',period:'',buy:1,referencePrice:1,capacity:0,bookings:r.bookings,previousBookings:r.previousBookings,searches:r.searches,previousSearches:r.previousSearches,conversion:r.conversion,seasonal:r.seasonal,signal:r.signal,cancellations:r.cancellations,soldOut:r.soldOut,volatility:0,integration:'',timing:''}}
 function fitted(r:DemandObservation,weight:number){const o=opportunity(r);return Math.max(0,(r.bookings*weight+r.searches*r.conversion*(1-weight))*trendFactor(o)*r.seasonal*r.signal*(1+r.soldOut/100*.2)*(1-r.cancellations));}
 const avg=(v:number[])=>v.reduce((a,b)=>a+b,0)/v.length;
-export type BacktestResult={opportunityId:string;unit:'room_nights'|'seats';evaluationDate:string;trainCount:number;testCount:number;excludedFuture:number;purged:number;weight:number;testStart:string;trainLatestOutcome:string;baselineMae:number;currentMae:number;fittedMae:number;baselineWape:number|null;currentWape:number|null;fittedWape:number|null;sample: {asOf:string;periodStart:string;periodEnd:string;actual:number;baseline:number;current:number;fitted:number}[]};
+export type BacktestResult={opportunityId:string;unit:'room_nights'|'seats';evaluationDate:string;trainCount:number;testCount:number;excludedFuture:number;purged:number;weight:number;testStart:string;trainLatestOutcome:string;testLatestOutcome:string;testLatestPeriodEnd:string;baselineMae:number;currentMae:number;fittedMae:number;baselineWape:number|null;currentWape:number|null;fittedWape:number|null;sample: {asOf:string;periodStart:string;periodEnd:string;actual:number;baseline:number;current:number;fitted:number}[]};
 /** Chronological locked holdout. The weight is fitted only on outcomes that were
  * available BEFORE the first holdout snapshot. Holdout never tunes the weight. */
 export function evaluateDemandBacktest(rows:DemandObservation[],evaluationDate:string):BacktestResult {
@@ -44,19 +44,19 @@ export function evaluateDemandBacktest(rows:DemandObservation[],evaluationDate:s
  const sample=test.map(r=>({asOf:r.asOf,periodStart:r.periodStart,periodEnd:r.periodEnd,actual:r.actualNetUnits,baseline:r.priorNetUnits,current:forecast(opportunity(r)),fitted:fitted(r,weight)}));
  const errors=(key:'baseline'|'current'|'fitted')=>sample.map(r=>Math.abs(r[key]-r.actual));
  const total=sample.reduce((s,r)=>s+r.actual,0),wape=(key:'baseline'|'current'|'fitted')=>total>0?errors(key).reduce((a,b)=>a+b,0)/total:null;
- return {opportunityId:rows[0].opportunityId,unit:rows[0].unit,evaluationDate,trainCount:train.length,testCount:test.length,excludedFuture:rows.length-eligible.length,purged:before.length-train.length,weight,testStart,trainLatestOutcome:train.map(r=>r.outcomeAvailableOn).sort().at(-1)!,baselineMae:avg(errors('baseline')),currentMae:avg(errors('current')),fittedMae:avg(errors('fitted')),baselineWape:wape('baseline'),currentWape:wape('current'),fittedWape:wape('fitted'),sample};
+ return {opportunityId:rows[0].opportunityId,unit:rows[0].unit,evaluationDate,trainCount:train.length,testCount:test.length,excludedFuture:rows.length-eligible.length,purged:before.length-train.length,weight,testStart,trainLatestOutcome:train.map(r=>r.outcomeAvailableOn).sort().at(-1)!,testLatestOutcome:test.map(r=>r.outcomeAvailableOn).sort().at(-1)!,testLatestPeriodEnd:test.map(r=>r.periodEnd).sort().at(-1)!,baselineMae:avg(errors('baseline')),currentMae:avg(errors('current')),fittedMae:avg(errors('fitted')),baselineWape:wape('baseline'),currentWape:wape('current'),fittedWape:wape('fitted'),sample};
 }
 export const demandBacktestTemplate=[columns.join(','),'sample-goa,room_nights,2025-01-03,2025-01-10,2025-01-16,2025-01-17,125,110,3100,2800,0.045,1.18,1.08,0.12,24,110,120'].join('\n');
 /** Fully synthetic, constructed to exercise the validation interface. */
-export function syntheticDemandBacktestCSV():string {
+export function syntheticDemandBacktestCSV(options?:{startDate:string;opportunityId:string;unit:'room_nights'|'seats'}):string {
  const add=(base:string,days:number)=>new Date(Date.parse(base+'T00:00:00Z')+days*86400000).toISOString().slice(0,10);
  const lines=[columns.join(',')];
  for(let i=0;i<48;i++){
-  const start=add('2024-01-08',i*7),end=add(start,6),asOf=add(start,-2),available=add(end,1);
+  const start=add(options?.startDate??'2024-01-08',i*7),end=add(start,6),asOf=add(start,-2),available=add(end,1);
   const bookings=45+(i*13)%55,searches=1000+(i*791)%4500,actual=Math.round(bookings*.2+searches*.05*.8);
   // Chosen deliberately to show a readable test, not random market data.
   const prior=80+(i*19)%65;
-  lines.push(['synthetic-hotel','room_nights',asOf,start,end,available,bookings,bookings,searches,searches,.05,1,1,0,0,prior,actual].join(','));
+  lines.push([options?.opportunityId??'synthetic-hotel',options?.unit??'room_nights',asOf,start,end,available,bookings,bookings,searches,searches,.05,1,1,0,0,prior,actual].map(v=>typeof v==='string'?`"${v.replaceAll('"','""')}"`:v).join(','));
  }
  return lines.join('\n');
 }
