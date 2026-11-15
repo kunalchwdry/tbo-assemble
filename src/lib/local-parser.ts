@@ -79,9 +79,12 @@ export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   // which tries to read test/data/05-versions-space.pdf and fails in bundled environments
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const pdfParse = require("pdf-parse/lib/pdf-parse.js") as (
-    buf: Buffer
+    buf: Uint8Array
   ) => Promise<{ text: string; numpages: number }>;
-  const data = await pdfParse(buffer);
+  // Older PDF.js versions may read the entire Buffer backing pool rather than
+  // respecting a slice's byte offset. Use an exact standalone byte array so
+  // small pooled PDF uploads don't acquire unrelated bytes and fail XRef reads.
+  const data = await pdfParse(Uint8Array.from(buffer));
   return data.text || "";
 }
 
