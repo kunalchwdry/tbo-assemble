@@ -9,6 +9,13 @@ export type TrafficRecentTest={policy:'adaptive'|'last-observed'|'last-year'|nul
 export type TrafficStudy={recent:TrafficRecentTest;latestMonth:string|null;targetMonth:string|null;currentMonth:string;forecast:number|null;method:Method|null;status:'available'|'baseline'|'stale'|'insufficient';lower:number|null;upper:number|null;replays:TrafficReplay[];selectedMae:number|null;lastObservedMae:number|null;lastYearMae:number|null;commonCount:number;};
 const validMonth=(x:string)=>/^\d{4}-(0[1-9]|1[0-2])$/.test(x);
 const mean=(v:number[])=>v.reduce((a,b)=>a+b,0)/v.length;
+/** Descriptive comparison only; selecting a winner on this same window is not validation. */
+export function recentComparison(recent:TrafficRecentTest):'outperformed'|'matched'|'underperformed'|'unavailable'{
+ const {policyMae,lastObservedMae,lastYearMae,rows}=recent;
+ if(!rows.length||policyMae===null||lastObservedMae===null||lastYearMae===null||![policyMae,lastObservedMae,lastYearMae].every(Number.isFinite))return 'unavailable';
+ const best=Math.min(lastObservedMae,lastYearMae),tolerance=Math.max(1,best)*1e-10;
+ return policyMae<best-tolerance?'outperformed':policyMae>best+tolerance?'underperformed':'matched';
+}
 function candidates(series:Map<string,number>,target:string):Record<Method,number|null>{
  // Pretend month target-2 is the latest published observation.
  const last=series.get(shiftMonth(target,-2)),year=series.get(shiftMonth(target,-12)),anchor=series.get(shiftMonth(target,-14));
@@ -42,12 +49,12 @@ export function studyTraffic(rows:MonthlyTraffic[],asOfMonth:string):TrafficStud
  const count=replays.length,metric=(key:'prediction'|'lastObserved'|'lastYear')=>count?mean(replays.map(r=>Math.abs(r[key]-r.actual))):null;
  const selectedMae=metric('prediction'),lastObservedMae=metric('lastObserved'),lastYearMae=metric('lastYear');
  // Freeze the product policy using only the 2024–25 comparison, then score
- // February–July 2026. December 2025 is assumed known by February under the
+ // February–September 2026. December 2025 is assumed known by February under the
  // same one-month publication lag. Source revisions remain unverified.
  const wins=count>=12&&selectedMae!==null&&lastObservedMae!==null&&lastYearMae!==null&&selectedMae<lastObservedMae*.95&&selectedMae<lastYearMae*.95;
  const policy:TrafficRecentTest['policy']=count<12||lastObservedMae===null||lastYearMae===null?null:wins?'adaptive':lastObservedMae<=lastYearMae?'last-observed':'last-year';
  const recentRows:TrafficRecentReplay[]=[];
- if(policy)for(let month='2026-02';month<='2026-07';month=shiftMonth(month,1)){
+ if(policy)for(let month='2026-02';month<='2026-09';month=shiftMonth(month,1)){
   const actual=map.get(month),choice=select(map,month),bench=candidates(map,month);
   if(actual===undefined||!choice||choice.count<8||bench['last-observed']===null||bench['last-year']===null)continue;
   const policyPrediction=policy==='adaptive'?choice.prediction:bench[policy];

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 const base=process.env.TEST_BASE||'http://127.0.0.1:3173';
 (async()=>{const browser=await chromium.launch({args:['--no-sandbox']});try{
@@ -11,6 +12,8 @@ const base=process.env.TEST_BASE||'http://127.0.0.1:3173';
   await page.getByRole('link',{name:'DGCA 2026-09 workbook'}).waitFor();
   await page.getByText('1,07,712',{exact:true}).first().waitFor();
   await page.getByText('Current estimate withheld').waitFor();
+  await page.getByRole('heading',{name:'Later-period check · Feb–Sep 2026'}).waitFor();
+  await page.getByText('Later-sample result:',{exact:false}).waitFor();
   const result=await page.evaluate(()=>({document:document.documentElement.scrollWidth,viewport:innerWidth,main:document.querySelector('main').scrollWidth,client:document.querySelector('main').clientWidth}));
   if(result.document>result.viewport||result.main>result.client)throw Error('overflow '+JSON.stringify(result));
   if(errors.length)throw Error(errors.join('; '));console.log('PASS live DGCA source disclosure, Sep data, stale gate and layout',width);await page.close();
