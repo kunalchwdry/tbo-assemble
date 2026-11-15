@@ -51,6 +51,14 @@ const pages = [
  {href:'/inventory/market',label:'Market context',description:'Review external travel signals',icon:Plane},
  {href:'/inventory/allocation-check',label:'Allocation check',description:'Inspect optimizer and API results',icon:FlaskConical},
 ] as const;
+
+const pageGroups = [
+ {title:'Plan', paths:['/inventory','/inventory/saved-plans']},
+ {title:'Data & demand', paths:['/inventory/data','/inventory/demand-inputs','/inventory/coverage','/inventory/demand-validation']},
+ {title:'Supplier review', paths:['/inventory/supplier-quotes','/inventory/supplier-terms','/inventory/landed-cost']},
+ {title:'Risk analysis', paths:['/inventory/stress-test','/inventory/cancellations']},
+ {title:'Advanced & market', paths:['/inventory/market','/inventory/allocation-check']},
+] as const;
 export default function InventoryWorkspace({children}:{children:ReactNode}){
  const pathname=usePathname(),router=useRouter();const [visited,setVisited]=useState<string[]>(()=>[pathname]);const mainRef=useRef<HTMLElement>(null);const navRef=useRef<HTMLDetailsElement>(null);const headingRef=useRef<HTMLHeadingElement>(null);const previousPath=useRef(pathname);
  const activePage=pages.find(p=>p.href===pathname)??pages[0];const keep=(href:string)=>pathname===href||visited.includes(href);
@@ -98,7 +106,7 @@ export default function InventoryWorkspace({children}:{children:ReactNode}){
   <div className="content">
   <div className="workspace-breadcrumb"><Link href="/inventory" onClick={()=>navigate('/inventory')}><ArrowLeft size={14}/> Inventory overview</Link><span>/</span><span>{activePage.label}</span></div>
   <div className="heading"><div><h1 ref={headingRef} tabIndex={-1}>{pathname==='/inventory'?'Inventory decision workspace':activePage.label}</h1><p>{pathname==='/inventory'?'Evaluate demand, opportunities, budget allocation and risk before you buy.':activePage.description+'. Uses your current inventory plan.'}</p></div>{pathname==='/inventory'&&<button className="outline-button" onClick={download}><ArrowDownToLine size={16}/> Export plan</button>}</div>
-  <details className="workspace-menu" ref={navRef}><summary><span><strong>Workspace pages</strong><small>Go directly to a feature</small></span><span className="workspace-menu-current">{activePage.label} <ChevronDown size={16}/></span></summary><nav aria-label="Inventory workspace pages">{pages.map(p=><Link key={p.href} href={p.href} onClick={()=>navigate(p.href)} aria-current={pathname===p.href?'page':undefined}><p.icon size={17}/><span><strong>{p.label}</strong><small>{p.description}</small></span><ArrowRight size={14}/></Link>)}</nav></details>
+  <details className="workspace-menu" ref={navRef}><summary><span><strong>Workspace pages</strong><small>Browse tools by decision stage</small></span><span className="workspace-menu-current">{activePage.label} <ChevronDown size={16}/></span></summary><nav aria-label="Inventory workspace pages">{pageGroups.map(group=><section className="workspace-nav-group" key={group.title} aria-label={group.title}><h2>{group.title}</h2><div className="workspace-nav-links">{group.paths.map(path=>{const p=pages.find(item=>item.href===path);if(!p)return null;return <Link key={p.href} href={p.href} onClick={()=>navigate(p.href)} aria-current={pathname===p.href?'page':undefined}><p.icon size={17}/><span><strong>{p.label}</strong><small>{p.description}</small></span><ArrowRight size={14}/></Link>})}</div></section>)}</nav><p className="workspace-nav-scroll-hint">Scroll to see more tools</p></details>
   <p className="workspace-memory">Your current plan and opened tools stay in this tab’s memory while you move between inventory pages. Refreshing or leaving the inventory workspace clears unsaved inputs and tool results; use Saved plans to keep plan inputs.</p>
   {asOf!==new Date().toISOString().slice(0,10)&&<p className="coverage-alert" role="alert"><strong>Scenario review date: {asOf} UTC.</strong> Quote eligibility is checked against this selected date, not the current time. Reset it to today on the overview and verify supplier terms before making a decision.</p>}
  {Object.keys(fitScenarios).length>0&&fittedCount===0&&<p className="attention-global" role="status"><strong>Fitted scenarios paused.</strong> The history is stale, no longer matches, or the review date is not today UTC. <Link href="/inventory/demand-validation" onClick={()=>navigate('/inventory/demand-validation')}>Review or clear</Link></p>}

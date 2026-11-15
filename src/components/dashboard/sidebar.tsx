@@ -36,6 +36,7 @@ import {
   Database,
   Ticket,
   PackageSearch,
+  ChevronDown,
 } from "lucide-react";
 
 const navigation = [
@@ -188,10 +189,10 @@ export default function Sidebar() {
           })}
         </ul>
 
-        <p className="mb-2 mt-6 px-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Travel intelligence</p>
+        <p className="mb-2 mt-6 px-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Travel decisions</p>
         <ul className="space-y-1">
-          {navigation.slice(5).map((item) => {
-            const isActive = pathname === item.href || (item.href === "/inventory" && pathname.startsWith("/inventory/"));
+          {navigation.slice(5, 7).map((item) => {
+            const isActive = pathname === item.href || (item.href === "/inventory" && pathname.startsWith("/inventory/")) || (item.href === "/dashboard/flight-predictions" && pathname === "/flight-intelligence");
             return (
               <li key={item.name}>
                 <Link href={item.href} onClick={() => setMobileOpen(false)} aria-current={pathname === item.href ? "page" : isActive ? "location" : undefined} title={item.description} className={itemCls(isActive)}>
@@ -202,6 +203,17 @@ export default function Sidebar() {
             );
           })}
         </ul>
+        <details key={pathname} open={navigation.slice(7).some(item => item.href === pathname)} className="group/travel mt-2">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg px-3 text-[13px] font-medium text-muted-foreground hover:bg-sidebar-accent/70 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
+            <span>More travel tools</span><ChevronDown className="size-4 transition-transform group-open/travel:rotate-180" />
+          </summary>
+          <ul className="space-y-1 border-l border-sidebar-border ml-5 pl-2">
+            {navigation.slice(7).map((item) => {
+              const isActive = pathname === item.href;
+              return <li key={item.name}><Link href={item.href} onClick={() => setMobileOpen(false)} aria-current={isActive ? "page" : undefined} title={item.description} className={itemCls(isActive)}><item.icon className="size-[18px] shrink-0" /><span className="min-w-0 flex-1">{item.name}</span></Link></li>;
+            })}
+          </ul>
+        </details>
 
         {eventId && (
           <>
