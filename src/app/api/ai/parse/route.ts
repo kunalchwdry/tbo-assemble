@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDemoContractData, getDemoInviteData } from "@/lib/ai";
-import { parseContractLocally, parseInviteLocally } from "@/lib/local-parser";
+// Explicit extension avoids the legacy local-parser.js shadowing this maintained parser in webpack.
+import { parseContractLocally, parseInviteLocally } from "@/lib/local-parser.ts";
 
 export async function POST(request: Request) {
   try {
