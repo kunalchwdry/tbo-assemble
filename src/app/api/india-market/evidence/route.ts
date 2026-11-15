@@ -17,6 +17,17 @@ export async function GET(req:NextRequest){
  const records=rows.map(r=>({id:r.id,origin:r.origin,destination:r.destination,capturedAt:new Date(r.captured_at).toISOString(),sourceSha256:r.source_sha256,rows:r.snapshot,forecast:r.forecast,modelVersion:r.model_version}));return reply({records:evidenceOutcomes(records)});
  }catch{return reply({error:'Could not load route evidence.'},503)}
 }
+export async function DELETE(req:NextRequest){
+ if(!sameOrigin(req))return reply({error:'Request origin is not permitted.'},403);
+ try{
+ const u=await user();if(!u)return reply({error:'Sign in before deleting evidence.'},401);
+ const input=await req.json().catch(()=>null),id=input?.id;
+ if(typeof id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id))return reply({error:'Choose a valid snapshot.'},400);
+ const {default:db}=await import('@/lib/db');
+ const removed=await db.$transaction(async tx=>{await tx.$queryRaw`SELECT 1::int AS locked FROM (SELECT pg_advisory_xact_lock(hashtextextended(${u.id},0))) AS acquired`;return tx.$queryRaw<Array<{id:string}>>`DELETE FROM public.route_forecast_evidence WHERE owner_id=${u.id}::uuid AND id=${id}::uuid RETURNING id`});
+ return removed.length?reply({deleted:true}):reply({error:'Snapshot not found.'},404);
+ }catch{return reply({error:'Could not delete evidence.'},503)}
+}
 export async function POST(req:NextRequest){
  if(!sameOrigin(req))return reply({error:'Request origin is not permitted.'},403);
  try{
