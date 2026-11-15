@@ -20,7 +20,7 @@ function StressForm({rows,budget,risk,asOf}:{rows:PlanRow[];budget:number;risk:n
  <p className="stress-disclaimer"><strong>Illustrative only.</strong> Demand and price responses, scenario probabilities, cancellation and recovery are unvalidated assumptions. A selling-price shock shifts the reference and planned price together; relative price elasticity is therefore mostly unchanged apart from rounding. New quote costs affect only the hypothetical replan. Supplied minimums and fixed fees are included; fixed fees remain unchanged by quote shocks. Unsold exposure excludes the fixed fee. These figures exclude refunds, taxes and contractual penalties. A replan is a comparison—not a guaranteed improvement or an actual order. <a href="/research/portfolio-stress.md" target="_blank" rel="noreferrer">Method and limitations</a></p>
  </div>;
 }
-export default function PortfolioStress(props:{rows:PlanRow[];budget:number;risk:number;asOf:string}){
- const [open,setOpen]=useState(false);
- return <section className="panel stress-panel" aria-labelledby="stress-title"><details onToggle={e=>setOpen(e.currentTarget.open)}><summary><div className="control-icon"><Activity size={18}/></div><div><h2 id="stress-title">Stress-test your decision</h2><p>Compare a hypothetical committed plan with a fresh allocation under demand, price and cancellation changes.</p></div><span>{open?'Close':'Open scenario'}</span></summary>{open&&<StressForm {...props}/>}</details></section>;
+export default function PortfolioStress(props:{rows:PlanRow[];budget:number;risk:number;asOf:string;defaultOpen?:boolean}){
+ const [open,setOpen]=useState(!!props.defaultOpen);
+ return <section className="panel stress-panel" aria-labelledby="stress-title"><details open={open} onToggle={e=>setOpen(e.currentTarget.open)}><summary><div className="control-icon"><Activity size={18}/></div><div><h2 id="stress-title">Stress-test your decision</h2><p>Compare a hypothetical committed plan with a fresh allocation under demand, price and cancellation changes.</p></div><span>{open?'Close':'Open scenario'}</span></summary>{open&&<StressForm {...props}/>}</details></section>;
 }

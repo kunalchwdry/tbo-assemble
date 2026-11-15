@@ -191,10 +191,10 @@ export default function Sidebar() {
         <p className="mb-2 mt-6 px-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Travel intelligence</p>
         <ul className="space-y-1">
           {navigation.slice(5).map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href === "/inventory" && pathname.startsWith("/inventory/"));
             return (
               <li key={item.name}>
-                <Link href={item.href} onClick={() => setMobileOpen(false)} aria-current={isActive ? "page" : undefined} title={item.description} className={itemCls(isActive)}>
+                <Link href={item.href} onClick={() => setMobileOpen(false)} aria-current={pathname === item.href ? "page" : isActive ? "location" : undefined} title={item.description} className={itemCls(isActive)}>
                   <item.icon className="size-[18px] shrink-0" />
                   <span className="min-w-0 flex-1">{item.name}</span>
                 </Link>
