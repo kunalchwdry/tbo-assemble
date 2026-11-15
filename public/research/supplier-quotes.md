@@ -1,6 +1,6 @@
 # Manual supplier quote review
 
-The supplier quote review in the inventory workspace is a browser-only, manual workflow. It is **not** a supplier connection and does not send enquiries, retrieve inventory, make bookings, confirm pricing or create purchase commitments. Quotes are not sent to the planner, stored in an account or included when saving a plan. Reloading the page clears them. The existing supplier labels in synthetic planner inputs are descriptive, not API connections.
+The supplier quote review in the inventory workspace is a browser-only, manual workflow. It is **not** a supplier connection and does not send enquiries, retrieve inventory, make bookings, confirm pricing or create purchase commitments. Quotes do not change the planner automatically. The quote list stays only in this tab and is cleared on reload or leaving the inventory workspace; explicitly applied planner inputs can be saved to an account. The existing supplier labels in synthetic planner inputs are descriptive, not API connections.
 
 ## Use
 
@@ -8,7 +8,13 @@ Download the CSV template; the example rows are entirely synthetic and must be r
 
 The panel compares only what was supplied. It flags an unmatched ID, incorrect unit, observation in the future, or expiry at or before the current browser time. Status is checked again periodically and when the tab is shown. The user's device clock must be correct; the supplied timestamps, availability, prices and terms have not been independently verified. A status within validity is **not** a bookable quote. The file import is all-or-nothing: invalid files leave the previous data unchanged. A filter helps review records sharing an ID; verify manually that the flight or hotel, dates, passenger occupancy, room type and rate basis are genuinely equivalent. A lower unit price is not necessarily the better offer: minimum purchases, quantities, taxes, cancellation penalties, allotments, supplier reliability and contractual restrictions matter.
 
-No supplier data automatically affects the allocator. Its other data and forecasts are illustrative and its existing date-based quote gate is not a substitute for live revalidation. Confirm every price, tax, term, quantity and availability directly with the supplier before committing funds. The application does not reserve a quote.
+## Applying a quote to the plan
+
+For an eligible ID and unit, an explicit **Apply to plan** confirmation copies the supplied price, minimum units, a capacity capped at the current planner capacity, and a conservative date. It also records the previous buy price. It never increases the existing capacity; to increase it, re-import appropriate inventory first. A minimum above the resulting capacity is rejected. Quotes below the planner's ₹1 price floor are rejected. The browser checks exact timestamps again at the moment of application, but neither the clock nor the supplier data is independently verified.
+
+The planner accepts dates, not timestamps: it records the **day before the supplied UTC expiry date** as the final eligible day. This may exclude a quote earlier than necessary, and a quote expiring today UTC is not transferable. The planner uses the user-chosen review date, not a running clock; a past review date can show a plan based on a now-expired quote. Recheck the exact supplier deadline and select the appropriate date before any decision. Quote supplier, ID, full expiry timestamp and written terms are not stored in saved plans. Saving records only the applied planner inputs; the quote list itself is not saved.
+
+The existing fixed fee, customer cancellation rate, recovery assumptions and other forecast inputs are **not changed**. Supplier cancellation text and taxes/fees text are not parsed or priced. Ensure each remaining assumption applies to the new quote; do not treat zero fees or retained values as verified. Apply other charges manually where supported. The original capacity, unit price and expiry are overwritten for that row; restore or re-import inventory to undo. No supplier data automatically affects the allocator. Its other data and forecasts are illustrative and its existing date-based quote gate is not a substitute for live revalidation. Confirm every price, tax, term, quantity and availability directly with the supplier before committing funds. The application does not reserve a quote.
 
 ## Future integration
 
