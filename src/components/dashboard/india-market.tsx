@@ -12,6 +12,7 @@ import { FeatureHeader, FeatureMetric, FeatureNotice } from '@/components/dashbo
 import { ComparisonBars } from '@/components/dashboard/data-visuals';
 import TrafficValidation from '@/components/dashboard/traffic-validation';
 import StatsForecastValidation from '@/components/dashboard/statsforecast-validation';
+import TrafficCollection from '@/components/dashboard/traffic-collection';
 import RouteEvidence from '@/components/dashboard/route-evidence';
 
 type Traffic = {
@@ -140,6 +141,7 @@ function RouteData({routeKey,refresh}:{routeKey:string;refresh:()=>void}) {
 
     {data&&<><TrafficValidation rows={data.monthly} retrievedAt={data.retrievedAt} origin={origin} destination={destination}/><RouteEvidence origin={origin} destination={destination}/></>}
     <StatsForecastValidation origin={origin} destination={destination} liveManifest={data?.sourceSha256}/>
+    <TrafficCollection origin={origin} destination={destination}/>
 
     <section className={`${panel} mt-4 overflow-hidden`} aria-labelledby="fare-heading">
       <div className="flex flex-wrap items-start justify-between gap-4 border-b px-5 py-5 sm:px-6"><div><div className="flex items-center gap-2"><span className="flex size-8 items-center justify-center rounded-lg bg-surface text-foreground"><Ticket className="size-4"/></span><h2 id="fare-heading" className="font-display text-lg font-bold">Fare observations</h2></div><p className="mt-2 text-xs leading-relaxed text-muted-foreground">Cached one-way fares · INR · checks at 1, 7 and 30 days ahead</p></div><span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"><Clock3 className="size-3"/> Historical, not live</span></div>
