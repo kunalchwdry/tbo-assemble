@@ -30,9 +30,13 @@ export function forecast(o:Opportunity) { return Math.max(0, (o.bookings*.55 + o
 export function purchaseCost(o:Opportunity,qty:number){return qty>0?qty*o.buy+(o.fixedOrderFee??0):0;}
 export function minimumPurchase(o:Opportunity){return o.minOrderUnits??1;}
 const scenarios = [{mult:-1,prob:.25},{mult:0,prob:.5},{mult:1,prob:.25}];
+/** Shares the planner's exact existing-stock and scenario convention. Not calibrated demand. */
+export function modeledDemandScenarios(o:Opportunity,price:number) {
+ const incremental=Math.max(0,forecast(o)*Math.pow(price/o.referencePrice,-1.2)-(o.existingStock||0));
+ return scenarios.map(s=>({prob:s.prob, incremental:Math.max(0,incremental*(1+s.mult*o.volatility))}));
+}
 export function evaluateAtPrice(o:Opportunity, qty:number, price:number, risk:number) {
- const f=Math.max(0,forecast(o)*Math.pow(price/o.referencePrice,-1.2)-(o.existingStock||0)); // illustrative constant elasticity
- const sold=scenarios.map(s=>Math.min(qty,Math.max(0,f*(1+s.mult*o.volatility))));
+ const sold=modeledDemandScenarios(o,price).map(s=>Math.min(qty,s.incremental));
  const expectedSold=sold.reduce((a,x,i)=>a+x*scenarios[i].prob,0);
  const salvage=o.buy*(o.recoveryPct||0);
  const profits=sold.map(n=>n*price+(qty-n)*salvage-purchaseCost(o,qty));
