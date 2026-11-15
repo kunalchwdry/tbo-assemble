@@ -14,6 +14,6 @@ test('stale, missing, duplicate-quality and future records never create fresh fo
  const duplicate=studyTraffic([...data,data[data.length-1]],'2026-11');assert.equal(duplicate.status,'stale');
  const missing=data.map(r=>r.month==='2026-10'?{...r,passengers:null,quality:'ambiguous' as const}:r);assert.equal(studyTraffic(missing,'2026-11').status,'stale');
  const future=[...data,{month:'2026-11',passengers:999999,quality:'ok' as const},{month:'2026-12',passengers:999999,quality:'ok' as const}];const clean=studyTraffic(data,'2026-11'),withFuture=studyTraffic(future,'2026-11');assert.deepEqual(clean,withFuture);
- const flat=data.map(r=>({...r,passengers:100}));const noBenefit=studyTraffic(flat,'2026-11');assert.equal(noBenefit.status,'baseline-not-beaten');assert.equal(noBenefit.forecast,null);
+ const flat=data.map(r=>({...r,passengers:100}));const noBenefit=studyTraffic(flat,'2026-11');assert.equal(noBenefit.status,'baseline');assert.equal(noBenefit.forecast,100);assert.equal(noBenefit.lower,100);assert.equal(noBenefit.upper,100);
  assert.throws(()=>studyTraffic(data,'2026-13'),/Invalid/);
 });

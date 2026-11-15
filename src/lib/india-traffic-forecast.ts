@@ -4,7 +4,7 @@ import {shiftMonth,type MonthlyTraffic} from './india-market';
  * backtest assumes an optimistic one-month reporting delay and revised data. */
 type Method='last-observed'|'last-year'|'seasonal-ratio';
 export type TrafficReplay={month:string;actual:number;prediction:number;method:Method;lastObserved:number;lastYear:number;selectionCount:number};
-export type TrafficStudy={latestMonth:string|null;targetMonth:string|null;currentMonth:string;forecast:number|null;method:Method|null;status:'available'|'stale'|'insufficient'|'baseline-not-beaten';replays:TrafficReplay[];selectedMae:number|null;lastObservedMae:number|null;lastYearMae:number|null;commonCount:number;};
+export type TrafficStudy={latestMonth:string|null;targetMonth:string|null;currentMonth:string;forecast:number|null;method:Method|null;status:'available'|'baseline'|'stale'|'insufficient';lower:number|null;upper:number|null;replays:TrafficReplay[];selectedMae:number|null;lastObservedMae:number|null;lastYearMae:number|null;commonCount:number;};
 const validMonth=(x:string)=>/^\d{4}-(0[1-9]|1[0-2])$/.test(x);
 const mean=(v:number[])=>v.reduce((a,b)=>a+b,0)/v.length;
 function candidates(series:Map<string,number>,target:string):Record<Method,number|null>{
@@ -42,11 +42,20 @@ export function studyTraffic(rows:MonthlyTraffic[],asOfMonth:string):TrafficStud
  const targetMonth=latestMonth?shiftMonth(latestMonth,2):null;
  // Only a future month and a fully reported last month may be called a forecast.
  const fresh=latestMonth===shiftMonth(asOfMonth,-1)&&targetMonth!==null&&targetMonth>asOfMonth;
- const result:TrafficStudy={latestMonth,targetMonth,currentMonth:asOfMonth,forecast:null,method:null,status:'insufficient',replays,selectedMae,lastObservedMae,lastYearMae,commonCount:count};
+ const result:TrafficStudy={latestMonth,targetMonth,currentMonth:asOfMonth,forecast:null,method:null,status:'insufficient',lower:null,upper:null,replays,selectedMae,lastObservedMae,lastYearMae,commonCount:count};
  if(!latestMonth||!targetMonth)return result;
  if(!fresh){result.status='stale';return result;}
  if(count<12||selectedMae===null||lastObservedMae===null||lastYearMae===null)return result;
- if(!(selectedMae<lastObservedMae*.95&&selectedMae<lastYearMae*.95)){result.status='baseline-not-beaten';return result;}
+ // If the adaptive procedure does not beat both baselines, display the best
+ // baseline on the same retrospective window, not a failed model. This is
+ // selection on these outcomes, so it is not an independent performance test.
+ const wins=selectedMae<lastObservedMae*.95&&selectedMae<lastYearMae*.95;
  const next=select(map,targetMonth);if(!next||next.count<8)return result;
- return {...result,status:'available',forecast:Math.max(0,next.prediction),method:next.method};
+ const fallback:Method=lastObservedMae<=lastYearMae?'last-observed':'last-year';
+ const method:Method=wins?next.method:fallback;
+ const prediction=wins?next.prediction:candidates(map,targetMonth)[fallback];
+ if(prediction===null)return result;
+ const errors=replays.map(r=>Math.abs((wins?r.prediction:method==='last-year'?r.lastYear:r.lastObserved)-r.actual)).sort((a,b)=>a-b);
+ const radius=errors[Math.min(errors.length-1,Math.ceil((errors.length+1)*.8)-1)];
+ return {...result,status:wins?'available':'baseline',forecast:Math.max(0,prediction),method,lower:Math.max(0,prediction-radius),upper:prediction+radius};
 }

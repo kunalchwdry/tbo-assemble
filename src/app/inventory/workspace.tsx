@@ -112,7 +112,7 @@ export default function InventoryWorkspace({children}:{children:ReactNode}){
   <section className="panel readiness-panel" aria-labelledby="readiness-title"><div><h2 id="readiness-title">Input checks before you decide</h2><p>Coverage checks only—not proof that data or forecasts are accurate.</p></div><div className="readiness-grid"><div><strong>{readiness.missingQuoteExpiry}</strong><span>missing quote expiry</span></div><div><strong>{readiness.expiredQuotes}</strong><span>expired quotes excluded</span></div><div><strong>{readiness.missingTrends}</strong><span>missing prior booking or search counts</span></div></div><p>Supplier connections are not live. The optional pageview scenario can adjust the model; other market feeds remain separate. Confirm prices and assumptions before any purchase.</p></section>
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/supplier-quotes'}>{keep('/inventory/supplier-quotes')&&<>
-  <SupplierQuoteReview inventory={inventory} onApply={quote=>{const updated=applySupplierQuote(inventory,quote,new Date());setInventory(updated)}}/>
+  <SupplierQuoteReview inventory={inventory} modelItems={attention.items} rows={optimization.rows} budget={budget} risk={risk} asOf={asOf} onApply={quote=>{const updated=applySupplierQuote(inventory,quote,new Date());setInventory(updated)}}/>
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/supplier-terms'}>{keep('/inventory/supplier-terms')&&<>
   <ProcurementTerms items={inventory} onApply={(id,minOrderUnits,fixedOrderFee)=>setInventory(prev=>prev.map(item=>item.id===id?{...item,minOrderUnits,fixedOrderFee}:item))}/>
