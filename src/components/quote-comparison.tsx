@@ -1,0 +1,24 @@
+'use client';
+import {useState} from 'react';
+import type {QuoteAssessment} from '@/lib/supplier-quotes';
+import type {Opportunity,PlanRow} from '@/lib/procurement-core';
+import {quoteImpact} from '@/lib/quote-impact';
+const cash=(n:number)=>new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:2}).format(n);
+type Impact=ReturnType<typeof quoteImpact>;
+export default function QuoteComparison({assessed,items,rows,budget,risk,asOf,blocked,now}:{assessed:QuoteAssessment[];items:Opportunity[];rows:PlanRow[];budget:number;risk:number;asOf:string;blocked:boolean;now:number}){
+ const [first,setFirst]=useState(''),[second,setSecond]=useState(''),[extraA,setExtraA]=useState('0'),[extraB,setExtraB]=useState('0'),[error,setError]=useState('');
+ const [saved,setSaved]=useState<{signature:string;first:Impact;second:Impact}|null>(null);
+ const a=assessed.find(x=>x.quote.quoteId===first),b=assessed.find(x=>x.quote.quoteId===second),valid=a?.status==='current'&&b?.status==='current';
+ const signature=JSON.stringify({a:a?.quote,b:b?.quote,items,rows,budget,risk,asOf,extraA,extraB});const result=saved&&saved.signature===signature&&valid&&!blocked?saved:null;
+ function compare(){try{
+  if(blocked)throw Error('Apply the current budget and wait for market signals.');
+  if(!a||!b||!valid||a.quote.quoteId===b.quote.quoteId)throw Error('Choose two different quotes within their supplied validity.');
+  if(a.quote.inventoryId!==b.quote.inventoryId)throw Error('Choose quotes for the same inventory item and verify travel periods and terms manually.');
+  if(!extraA.trim()||!extraB.trim())throw Error('Enter additional costs or zero.');
+  const x=quoteImpact(items,rows,budget,risk,asOf,a.quote,new Date(),Number(extraA)),y=quoteImpact(items,rows,budget,risk,asOf,b.quote,new Date(),Number(extraB));
+  setSaved({signature,first:x,second:y});setError('');
+ }catch(e){setSaved(null);setError(e instanceof Error?e.message:'Unable to compare quotes.')}}
+ return <section className="quote-compare" aria-labelledby="quote-compare-title"><h3 id="quote-compare-title">Compare two quotes</h3><p>Compare quotes for the same inventory item against the same current portfolio. Travel dates and written terms still need manual verification.</p><div className="quote-compare-form">{[{id:'first',label:'First quote',value:first,set:setFirst,extra:extraA,setExtra:setExtraA},{id:'second',label:'Second quote',value:second,set:setSecond,extra:extraB,setExtra:setExtraB}].map(x=><div key={x.id}><label htmlFor={`compare-${x.id}`}>{x.label}</label><select id={`compare-${x.id}`} value={x.value} onChange={e=>{x.set(e.target.value);setError('')}}><option value="">Choose quote</option>{assessed.map(q=><option key={q.quote.quoteId} value={q.quote.quoteId} disabled={q.status!=='current'}>{q.quote.supplier} · {q.quote.quoteId} · {q.itemName??q.quote.inventoryId} {q.status!=='current'?'(unavailable)':''}</option>)}</select><label htmlFor={`compare-extra-${x.id}`}>Additional non-recoverable cost per unit (₹)</label><input id={`compare-extra-${x.id}`} type="number" min="0" max="1000000" step="0.01" value={x.extra} onChange={e=>{x.setExtra(e.target.value);setError('')}}/></div>)}</div><button type="button" className="outline-button" onClick={compare} disabled={blocked}>Compare quote scenarios</button>{error&&<p role="alert" className="import-error">{error}</p>}{saved&&!result&&!error&&<p>Quote, plan or comparison inputs changed. Compare again.</p>}
+ {result&&a&&b&&<div className="quote-compare-results" aria-live="polite"><p><strong>Current plan:</strong> {result.first.before.qty} {a.quote.unit}s · portfolio spend {cash(result.first.baseline.spend)} · expected profit {cash(result.first.baseline.profit)} · low-case profit {cash(result.first.baseline.downside)} · unsold exposure {cash(result.first.baseline.unsold)}.</p>{[{a,impact:result.first},{a:b,impact:result.second}].map(({a,impact})=><article key={a.quote.quoteId}><h4>{a.quote.supplier} · {a.quote.quoteId}</h4><p>Supplier travel dates: {a.quote.travelPeriod||'Not supplied — verify separately'}</p><p>Modeled unit cost <strong>{cash(impact.landed)}</strong> · quantity <strong>{impact.after.qty} {a.quote.unit}s</strong></p><p>Portfolio spend {cash(impact.scenario.spend)} · expected profit {cash(impact.scenario.profit)}</p><p>Low-case profit {cash(impact.scenario.downside)} · unsold exposure {cash(impact.scenario.unsold)}</p><p>Cancellation: {a.quote.cancellationTerms} · taxes/fees: {a.quote.taxesFees}</p></article>)}<p>Separate modeled scenarios—not a supplier confirmation, approval or order. The additional costs above do not change the individual review; enter the chosen cost there before applying. Current validity is checked at {new Date(now).toISOString().slice(0,19).replace('T',' ')} UTC.</p></div>}
+ </section>
+}

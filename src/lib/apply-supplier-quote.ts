@@ -3,7 +3,8 @@ import type {Opportunity} from './procurement-core';
 
 /** Explicit, manual transfer. The model has date-only expiry, so never grant the
  * partial UTC expiry day; the last modeled date is the preceding UTC day. */
-export function applySupplierQuote(items:Opportunity[],quote:SupplierQuote,now:Date):Opportunity[]{
+export function applySupplierQuote(items:Opportunity[],quote:SupplierQuote,now:Date,extraPerUnit=0):Opportunity[]{
+ if(!Number.isFinite(extraPerUnit)||extraPerUnit<0||extraPerUnit>1000000||Math.abs(extraPerUnit*100-Math.round(extraPerUnit*100))>1e-6||quote.unitPrice+extraPerUnit>10000000)throw new Error('Invalid additional per-unit cost.');
  const timestamp=(s:string)=>{const t=Date.parse(s);return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(s)&&Number.isFinite(t)&&new Date(t).toISOString().replace('.000Z','Z')===s?t:NaN};
  const observed=timestamp(quote.observedAt),expiry=timestamp(quote.expiresAt);
  if(!Number.isFinite(observed)||!Number.isFinite(expiry)||expiry<=observed)throw new Error('Quote timestamps are invalid.');
@@ -19,5 +20,6 @@ export function applySupplierQuote(items:Opportunity[],quote:SupplierQuote,now:D
  const today=now.toISOString().slice(0,10);
  if(lastFullDay<today)throw new Error('The quote expires today UTC. The planner uses whole dates, so it cannot safely apply this quote.');
  if(lastFullDay<'1900-01-01'||lastFullDay>'2100-12-31')throw new Error('Quote expiry is outside the supported planner date range.');
- return items.map(x=>x.id===item.id?{...x,previousBuy:x.buy,buy:quote.unitPrice,capacity,minOrderUnits:quote.minimumUnits,quoteExpiry:lastFullDay}:x);
+ const landed=Math.round((quote.unitPrice+extraPerUnit)*100)/100;
+ return items.map(x=>x.id===item.id?{...x,previousBuy:x.buy,buy:landed,recoveryPct:extraPerUnit===0?x.recoveryPct:quote.unitPrice*(x.recoveryPct??0)/landed,capacity,minOrderUnits:quote.minimumUnits,quoteExpiry:lastFullDay}:x);
 }
