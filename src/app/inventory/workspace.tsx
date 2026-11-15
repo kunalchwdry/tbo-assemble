@@ -10,6 +10,7 @@ import { inventoryReadiness } from '@/lib/inventory-readiness';
 import '../procurement.css';
 import './inventory.css';
 import LiveMarket from '@/components/live-market';
+import GoogleTrendsScenario from '@/components/google-trends-scenario';
 import LiveDemandScenario from '@/components/live-demand-scenario';
 import {applyAttentionSignals,marketDestinations} from '@/lib/live-demand-signal';
 import {applyDemandScenarios,type DemandScenario} from '@/lib/validated-demand-scenario';
@@ -140,6 +141,7 @@ export default function InventoryWorkspace({children}:{children:ReactNode}){
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/market'}>{keep('/inventory/market')&&<>
   <LiveDemandScenario enabled={marketOn} setEnabled={v=>{setMarketOn(v);if(!v){setMarketSamples({});setMarketLoading(false)}}} refresh={()=>setMarketTick(t=>t+1)} loading={marketLoading} items={inventory} details={attention.details} asOf={asOf} baseline={baselineOptimization?.rows??[]} scenario={optimization.rows}/>
+  <GoogleTrendsScenario items={attention.items} rows={optimization.rows} budget={budget} risk={risk} asOf={asOf} attentionOn={marketOn}/>
   <LiveMarket/>
 </>}</div>
 <div className="workspace-view" hidden={pathname!=='/inventory/allocation-check'}>{keep('/inventory/allocation-check')&&<>
