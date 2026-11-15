@@ -1,7 +1,7 @@
 'use client';
 import {useActionState} from 'react';
-import {saveEvent,deleteEvent,saveRoom,deleteRoom} from './actions';
-import type {PrivateEvent,PrivateRoom,WorkspaceState} from '@/lib/private-event-workspace';
+import {saveEvent,deleteEvent,saveRoom,deleteRoom,saveGuest,deleteGuest} from './actions';
+import type {PrivateEvent,PrivateRoom,PrivateGuest,WorkspaceState} from '@/lib/private-event-workspace';
 const initial:WorkspaceState={ok:false,message:''};
 const field='mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20';
 const button='inline-flex min-h-10 items-center justify-center rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white disabled:opacity-50';
@@ -16,7 +16,7 @@ export function EventForm({event}:{event?:PrivateEvent}){
   <button className={button} disabled={pending}>{pending?'Saving…':event?'Save event changes':'Create private event'}</button><Message state={state}/>
  </form>;
 }
-export function EventDelete({event}:{event:PrivateEvent}){const [state,action,pending]=useActionState(deleteEvent,initial);return <form action={action} onSubmit={e=>{if(!window.confirm(`Delete “${event.title}” and all its private room blocks? This cannot be undone.`))e.preventDefault()}}><input type="hidden" name="id" value={event.id}/><button className={minor} disabled={pending}>{pending?'Deleting…':'Delete event'}</button><Message state={state}/></form>}
+export function EventDelete({event}:{event:PrivateEvent}){const [state,action,pending]=useActionState(deleteEvent,initial);return <form action={action} onSubmit={e=>{if(!window.confirm(`Delete “${event.title}” and all its private room blocks and guests? This cannot be undone.`))e.preventDefault()}}><input type="hidden" name="id" value={event.id}/><button className={minor} disabled={pending}>{pending?'Deleting…':'Delete event'}</button><Message state={state}/></form>}
 export function RoomForm({eventId,room}:{eventId:string;room?:PrivateRoom}){
  const [state,action,pending]=useActionState(saveRoom,initial);const prefix=room?.id??eventId;
  return <form action={action} className="space-y-3"><input type="hidden" name="event_id" value={eventId}/>{room&&<input type="hidden" name="id" value={room.id}/>}
@@ -25,3 +25,11 @@ export function RoomForm({eventId,room}:{eventId:string;room?:PrivateRoom}){
  </form>;
 }
 export function RoomDelete({room}:{room:PrivateRoom}){const [state,action,pending]=useActionState(deleteRoom,initial);return <form action={action} onSubmit={e=>{if(!window.confirm(`Delete ${room.room_type} at ${room.hotel_name}?`))e.preventDefault()}}><input type="hidden" name="id" value={room.id}/><input type="hidden" name="event_id" value={room.event_id}/><button className={minor} disabled={pending}>{pending?'Deleting…':'Delete room block'}</button><Message state={state}/></form>}
+export function GuestForm({eventId,guest}:{eventId:string;guest?:PrivateGuest}){
+ const [state,action,pending]=useActionState(saveGuest,initial);const prefix=guest?.id??eventId;
+ return <form action={action} className="space-y-3"><input type="hidden" name="event_id" value={eventId}/>{guest&&<input type="hidden" name="id" value={guest.id}/>}
+ <div className="grid gap-3 sm:grid-cols-2"><label htmlFor={`guest-name-${prefix}`} className="block text-sm font-medium">Name<input id={`guest-name-${prefix}`} name="name" className={field} defaultValue={guest?.name} required maxLength={120}/></label><label htmlFor={`guest-email-${prefix}`} className="block text-sm font-medium">Email (optional)<input id={`guest-email-${prefix}`} name="email" type="email" className={field} defaultValue={guest?.email??''} maxLength={254}/></label><label htmlFor={`guest-phone-${prefix}`} className="block text-sm font-medium">Phone (optional)<input id={`guest-phone-${prefix}`} name="phone" type="tel" className={field} defaultValue={guest?.phone??''} maxLength={40}/></label><label htmlFor={`guest-status-${prefix}`} className="block text-sm font-medium">Status<select id={`guest-status-${prefix}`} name="status" className={field} defaultValue={guest?.status??'invited'}><option value="invited">Invited</option><option value="confirmed">Confirmed</option><option value="declined">Declined</option></select></label></div>
+ <button className={button} disabled={pending}>{pending?'Saving…':guest?'Save guest changes':'Add guest'}</button><Message state={state}/>
+ </form>;
+}
+export function GuestDelete({guest}:{guest:PrivateGuest}){const [state,action,pending]=useActionState(deleteGuest,initial);return <form action={action} onSubmit={e=>{if(!window.confirm(`Delete “${guest.name}” from this private event?`))e.preventDefault()}}><input type="hidden" name="id" value={guest.id}/><input type="hidden" name="event_id" value={guest.event_id}/><button className={minor} disabled={pending}>{pending?'Deleting…':'Delete guest'}</button><Message state={state}/></form>}

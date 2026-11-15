@@ -1,6 +1,15 @@
 export type PrivateEvent={id:string;title:string;location:string;starts_on:string;ends_on:string};
 export type PrivateRoom={id:string;event_id:string;hotel_name:string;room_type:string;total_qty:number;rate:number};
+export type PrivateGuest={id:string;event_id:string;name:string;email:string;phone:string;status:'invited'|'confirmed'|'declined'};
 export type WorkspaceState={ok:boolean;message:string};
+export function parsePrivateGuest(form:FormData):{value:{name:string;email:string;phone:string;status:'invited'|'confirmed'|'declined'};error:null}|{value:null;error:string}{
+ const name=form.get('name'),email=form.get('email'),phone=form.get('phone'),status=form.get('status');
+ if(typeof name!=='string'||!name.trim()||name.trim().length>120)return {value:null,error:'Enter a guest name of up to 120 characters.'};
+ if(typeof email!=='string'||email.trim().length>254||(email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())))return {value:null,error:'Enter a valid email address or leave it empty.'};
+ if(typeof phone!=='string'||phone.trim().length>40||(phone.trim()&&!/^[+\d() .-]+$/.test(phone.trim())))return {value:null,error:'Enter a valid phone number or leave it empty.'};
+ if(status!=='invited'&&status!=='confirmed'&&status!=='declined')return {value:null,error:'Select a valid guest status.'};
+ return {value:{name:name.trim(),email:email.trim(),phone:phone.trim(),status},error:null};
+}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function validWorkspaceId(value:FormDataEntryValue|null):value is string{return typeof value==='string'&&uuid.test(value)}
 export function parsePrivateRoom(form:FormData):{value:{hotel_name:string;room_type:string;total_qty:number;rate:number};error:null}|{value:null;error:string}{
