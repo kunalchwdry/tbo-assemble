@@ -203,7 +203,10 @@ export default function VenueMap({
               attributionControl={false}
               className="h-full w-full z-0"
             >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <TileLayer
+                url="/api/tiles/{z}/{x}/{y}.png"
+                maxZoom={19}
+              />
               <Marker position={effectiveCoords} icon={miniIcon} />
               <MapResizer />
               <MapRecenter center={effectiveCoords} zoom={13} />
@@ -290,7 +293,7 @@ export default function VenueMap({
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  url="/api/tiles/{z}/{x}/{y}.png"
                   maxZoom={19}
                 />
                 <ZoomControl position="bottomright" />
