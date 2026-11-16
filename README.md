@@ -29,7 +29,7 @@ Demo inventory inputs are synthetic, and forecasts are heuristic even when using
 
 ## Production build note
 
-The legacy API routes require `DATABASE_URL` at build time, even though the inventory demo does not use the database. A webpack build was verified with a placeholder PostgreSQL URL; legacy database-backed routes still require a real configured database at runtime. The inherited dependency tree currently reports security vulnerabilities; audit and remediate it before production use.
+The build does not need `DATABASE_URL`: `src/lib/db.ts` creates the Prisma client on first use, so `next build` and Vercel preview deployments work without database secrets. Database-backed legacy routes still need a real `DATABASE_URL` at runtime and return an error without one; the inventory demo does not use the database. The inherited dependency tree currently reports security vulnerabilities; audit and remediate it before production use.
 
 ## Real inputs and external APIs
 
