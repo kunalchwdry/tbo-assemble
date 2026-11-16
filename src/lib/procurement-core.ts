@@ -5,6 +5,13 @@ export type Opportunity = { id:string; name:string; destination:string; kind:'Ho
  priceElasticity?:number;
  /** Optional monthly history (risk-cvar-v5 learned demand): seasonality, growth, signal effect, price sensitivity and forecast risk are learned from it. */
  history?:DemandHistoryPoint[];
+ /**
+  * Data cutoff for `history` (risk-cvar-v5): only rows AVAILABLE by this moment are used (see forecast-cutoff.ts). Set
+  * from the plan's `forecastAsOf`; it is never derived from the quote review date `asOf`. Undefined: every row is used.
+  */
+ forecastAsOf?:string;
+ /** Assumed publication lag (days after month end) for history rows without `availableAt` (default 0). */
+ availabilityLagDays?:number;
  /** 'product' (default): the history is this product's own bookings. 'market': a market-level series (e.g. public air traffic into the destination) used for seasonality, growth and the backtest; the planner then keeps at least the typed volatility, because one product is noisier than its market. */
  historyScope?:'product'|'market';
  /** Where the inputs came from (shown with the plan), e.g. the public series behind the history. */
@@ -31,7 +38,7 @@ export type PlanRow = Opportunity & { forecast:number; price:number; qty:number;
  engine?:PlanEngine; /** risk-cvar-v5: where the forecast came from and the price elasticity used. */ demandSource?:{kind:'learned'|'seasonal-naive'|'formula';label:string;detail:string}; priceElasticity?:number; budgetBasis?:BudgetBasis; /** risk-cvar-v5: why the engine chose this selling price, in plain English. */ priceReason?:string; /** risk-cvar-v5 availability target (0–0.99) the plan was built with; what-if re-plans reuse it. */ serviceTarget?:number; prepaidQty?:number; allotQty?:number; prepaidSpend?:number; allotSpend?:number; pLoss?:number; tailProfit?:number; lostDemand?:number; servedShare?:number;
  coverage?:{need:number;served:number;unmet:number;highUnmet:number};
  buyWindow?:{leadDays:number;optimalLead:number;windowStart:number;windowEnd:number;status:'early'|'in-window'|'late'|'past';label:string;reason:string} };
-export type PlanOptions = { asOf?:string; engine?:PlanEngine; scenarioCount?:number; evaluationCount?:number; seed?:number; /** risk-cvar-v5: also score the legacy v4 plan on the same scenarios (used by the risk panel). */ compareLegacy?:boolean; /** risk-cvar-v5: minimum expected share (0–0.99) of modelled demand to serve; 0/undefined = off. */ serviceTarget?:number; /** risk-cvar-v5: choose selling prices jointly with quantities (default true). */ jointPricing?:boolean; /** risk-cvar-v5: what the budget caps (default 'cash'). */ budgetBasis?:BudgetBasis };
+export type PlanOptions = { /** Supplier quote review date (YYYY-MM-DD): quote expiry and days to travel. Not a forecast data cutoff. */ asOf?:string; /** Forecast data cutoff (date or timestamp with offset): history rows not available by then are ignored (risk-cvar-v5). Never derived from `asOf`. */ forecastAsOf?:string; engine?:PlanEngine; scenarioCount?:number; evaluationCount?:number; seed?:number; /** risk-cvar-v5: also score the legacy v4 plan on the same scenarios (used by the risk panel). */ compareLegacy?:boolean; /** risk-cvar-v5: minimum expected share (0–0.99) of modelled demand to serve; 0/undefined = off. */ serviceTarget?:number; /** risk-cvar-v5: choose selling prices jointly with quantities (default true). */ jointPricing?:boolean; /** risk-cvar-v5: what the budget caps (default 'cash'). */ budgetBasis?:BudgetBasis };
 const dayMs=86400000;
 export function timingFor(o:Opportunity, asOf:string) {
  if (!o.quoteExpiry) return {purchaseTiming:'Verify quote', timingReason:'No expiry date supplied; confirm the quote before buying.', expired:false};

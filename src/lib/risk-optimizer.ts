@@ -3,6 +3,7 @@ import { buildScenarioSet, type ScenarioAssumptions, type ScenarioSet } from './
 import { forecastUnconstrained, lostBookings } from './demand-unconstraining';
 import { buyWindowFor } from './buy-window';
 import { demandSourceOf, elasticityOf, priceResponse, volatilityOf } from './learned-demand';
+import { withForecastCutoff } from './forecast-cutoff';
 
 /**
  * Portfolio risk engine (risk-cvar-v5).
@@ -1264,7 +1265,8 @@ function settings(options: RiskPlanOptions) {
 }
 
 /** Scores fixed decisions (e.g. a committed plan under stress, or in a mismatched world) on the out-of-sample scenario set. */
-export function evaluateDecisions(items: Opportunity[], decisions: Decision[], risk: number, options: RiskPlanOptions = {}) {
+export function evaluateDecisions(inputItems: Opportunity[], decisions: Decision[], risk: number, options: RiskPlanOptions = {}) {
+  const items = withForecastCutoff(inputItems, options.forecastAsOf);
   if (items.length !== decisions.length) throw new Error('Each item needs one decision.');
   const o = settings(options);
   if (!items.length) return { rows: [] as PlanRow[], metrics: emptyMetrics() };
@@ -1277,7 +1279,9 @@ function emptyMetrics(): RiskMetrics {
   return { spend: 0, expectedProfit: 0, cvar: 0, valueAtRisk: 0, pLoss: 0, p05: 0, p95: 0, servedShare: 0, expectedUnsold: 0 };
 }
 
-export function optimizePortfolioRisk(items: Opportunity[], budget: number, risk: number, options: RiskPlanOptions = {}): RiskOptimizedPlan {
+export function optimizePortfolioRisk(inputItems: Opportunity[], budget: number, risk: number, options: RiskPlanOptions = {}): RiskOptimizedPlan {
+  // The forecast data cutoff travels on each product, so every forecast below (scenarios, prices, volatility) uses it.
+  const items = withForecastCutoff(inputItems, options.forecastAsOf);
   const o = settings(options);
   const r = clamp(risk, 0, 1), B = Math.max(0, Number.isFinite(budget) ? budget : 0);
   const target = clamp(options.serviceTarget ?? 0, 0, 0.99), jointPricing = options.jointPricing !== false;

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import type { DemandHistoryPoint } from '@/lib/learned-demand';
+import { forecastCutoffReport, type DemandHistoryPoint } from '@/lib/learned-demand';
+import { parseInstant, REVISION_NOTE, type CutoffReport } from '@/lib/forecast-cutoff';
+import type { Opportunity } from '@/lib/procurement-core';
 import { columns, optionalColumns, readInventoryCSV } from '@/lib/inventory-csv';
 import { optimizePortfolio } from '@/lib/portfolio-optimizer';
 import { checkModelRisk } from '@/lib/model-risk';
@@ -12,7 +14,7 @@ export async function POST(request:Request){
   const tooLarge=()=>NextResponse.json({error:`Request is too large (maximum ${formatLimit(INPUT_LIMITS.maxRequestBytes/1e6)} MB).`},{status:413});
   if(Number(request.headers.get('content-length')||0)>INPUT_LIMITS.maxRequestBytes)return tooLarge();
   const text=await request.text();if(new TextEncoder().encode(text).length>INPUT_LIMITS.maxRequestBytes)return tooLarge();
-  const body=JSON.parse(text);const {items,budget,risk,asOf,engine:requestedEngine,serviceTarget,jointPricing,modelRisk,budgetBasis}=body;
+  const body=JSON.parse(text);const {items,budget,risk,asOf,forecastAsOf,engine:requestedEngine,serviceTarget,jointPricing,modelRisk,budgetBasis}=body;
   if(requestedEngine!==undefined&&requestedEngine!=='scenario-grid-v4'&&requestedEngine!=='risk-cvar-v5')return NextResponse.json({error:'engine must be scenario-grid-v4 or risk-cvar-v5.'},{status:400});
   // Default engine: scenario-grid-v4 for up to 100 items (unchanged behaviour), risk-cvar-v5 above (v4 does not scale).
   const engine:'scenario-grid-v4'|'risk-cvar-v5'=requestedEngine??(Array.isArray(items)&&items.length>INPUT_LIMITS.maxItemsLegacyEngine?'risk-cvar-v5':'scenario-grid-v4');
@@ -25,10 +27,12 @@ export async function POST(request:Request){
   if(engine==='scenario-grid-v4'&&items.length>INPUT_LIMITS.maxItemsLegacyEngine)return NextResponse.json({error:`engine scenario-grid-v4 supports up to ${INPUT_LIMITS.maxItemsLegacyEngine} items; use risk-cvar-v5 for larger portfolios.`},{status:400});
   if(modelRisk&&items.length>INPUT_LIMITS.maxItemsLegacyEngine)return NextResponse.json({error:`modelRisk compares against scenario-grid-v4 and supports up to ${INPUT_LIMITS.maxItemsLegacyEngine} items.`},{status:400});
   if(typeof asOf!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(asOf)||!Number.isFinite(Date.parse(asOf+'T00:00:00Z'))||new Date(asOf+'T00:00:00Z').toISOString().slice(0,10)!==asOf)return NextResponse.json({error:'asOf must be a valid YYYY-MM-DD date.'},{status:400});
+  // forecastAsOf is the forecast DATA cutoff; asOf above is only the supplier-quote review date. Never derived from asOf.
+  if(forecastAsOf!==undefined&&forecastAsOf!==null){const parsed=parseInstant(forecastAsOf);if(!parsed.ok)return NextResponse.json({error:`forecastAsOf ${parsed.error}.`},{status:400});}
   const keys=[...columns,...optionalColumns];
   const lines=items.map((item:unknown)=>{if(!item||typeof item!=='object'||Array.isArray(item))throw new Error('Each item must be an object.');return keys.map(key=>{const v=(item as Record<string,unknown>)[key];if(v!==undefined&&v!==null&&typeof v!=='string'&&typeof v!=='number')throw new Error(`Invalid ${key}.`);return `"${String(v??'').replaceAll('"','""')}"`;}).join(',')});
-  const inventory=readInventoryCSV([keys.join(','),...lines].join('\n'));for(let i=0;i<inventory.length;i++){const weight=items[i].bookingWeight;if(weight!==undefined&&weight!==null){if(typeof weight!=='number'||!Number.isFinite(weight)||weight<0||weight>1)throw new Error('bookingWeight must be a number between 0 and 1.');inventory[i].bookingWeight=weight;}const extras=readLearningInputs(items[i],i);if(extras.priceElasticity!==undefined)inventory[i].priceElasticity=extras.priceElasticity;if(extras.history)inventory[i].history=extras.history;if(extras.historyScope)inventory[i].historyScope=extras.historyScope;}const optimization=optimizePortfolio(inventory,budget,risk,{asOf,engine,serviceTarget,jointPricing,budgetBasis});const robustness=modelRisk?checkModelRisk(inventory,budget,risk,{asOf,jointPricing,budgetBasis,planRows:optimization.rows}):undefined;const plan=optimization.rows;const riskSummary=optimization.risk;
-  return NextResponse.json({asOf,budget,risk,summary:{spend:plan.reduce((s,r)=>s+r.spend,0),expectedProfit:plan.reduce((s,r)=>s+r.expectedProfit,0),lowProfit:plan.reduce((s,r)=>s+r.downsideProfit,0),units:plan.reduce((s,r)=>s+r.qty,0),...(riskSummary?{cvar10:riskSummary.cvar,lossProbability:riskSummary.pLoss,demandServedShare:riskSummary.servedShare,demandServedShareBefore:riskSummary.servedShareBefore,prepaidUnits:riskSummary.prepaidUnits,allotmentUnits:riskSummary.allotmentUnits}:{})},recommendations:plan,optimization:{objective:optimization.objective,upperBound:optimization.upperBound,gap:optimization.gap,baselineObjective:optimization.baselineObjective,algorithm:optimization.algorithm,bucketCount:optimization.bucketCount,engine,...(riskSummary?{risk:riskSummary}:{}),...(optimization.service?{service:optimization.service,pricing:optimization.pricing}:{})},...(robustness?{modelRisk:robustness}:{}),model:inventory.some(o=>o.bookingWeight!==undefined)?`${engine}-experimental-blend`:engine}, {headers:{'Cache-Control':'no-store'}});
+  const inventory=readInventoryCSV([keys.join(','),...lines].join('\n'));for(let i=0;i<inventory.length;i++){const weight=items[i].bookingWeight;if(weight!==undefined&&weight!==null){if(typeof weight!=='number'||!Number.isFinite(weight)||weight<0||weight>1)throw new Error('bookingWeight must be a number between 0 and 1.');inventory[i].bookingWeight=weight;}const extras=readLearningInputs(items[i],i);if(extras.priceElasticity!==undefined)inventory[i].priceElasticity=extras.priceElasticity;if(extras.history)inventory[i].history=extras.history;if(extras.historyScope)inventory[i].historyScope=extras.historyScope;if(extras.availabilityLagDays!==undefined)inventory[i].availabilityLagDays=extras.availabilityLagDays;}const dataCutoff:string|undefined=typeof forecastAsOf==='string'?forecastAsOf:undefined;const optimization=optimizePortfolio(inventory,budget,risk,{asOf,forecastAsOf:dataCutoff,engine,serviceTarget,jointPricing,budgetBasis});const robustness=modelRisk?checkModelRisk(inventory,budget,risk,{asOf,forecastAsOf:dataCutoff,jointPricing,budgetBasis,planRows:optimization.rows}):undefined;const forecastData=describeForecastData(inventory,dataCutoff,engine);const plan=optimization.rows;const riskSummary=optimization.risk;
+  return NextResponse.json({asOf,budget,risk,summary:{spend:plan.reduce((s,r)=>s+r.spend,0),expectedProfit:plan.reduce((s,r)=>s+r.expectedProfit,0),lowProfit:plan.reduce((s,r)=>s+r.downsideProfit,0),units:plan.reduce((s,r)=>s+r.qty,0),...(riskSummary?{cvar10:riskSummary.cvar,lossProbability:riskSummary.pLoss,demandServedShare:riskSummary.servedShare,demandServedShareBefore:riskSummary.servedShareBefore,prepaidUnits:riskSummary.prepaidUnits,allotmentUnits:riskSummary.allotmentUnits}:{})},recommendations:plan,optimization:{objective:optimization.objective,upperBound:optimization.upperBound,gap:optimization.gap,baselineObjective:optimization.baselineObjective,algorithm:optimization.algorithm,bucketCount:optimization.bucketCount,engine,...(riskSummary?{risk:riskSummary}:{}),...(optimization.service?{service:optimization.service,pricing:optimization.pricing}:{})},...(robustness?{modelRisk:robustness}:{}),...(forecastData?{forecastData}:{}),model:inventory.some(o=>o.bookingWeight!==undefined)?`${engine}-experimental-blend`:engine}, {headers:{'Cache-Control':'no-store'}});
  }catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Invalid request.'},{status:400,headers:{'Cache-Control':'no-store'}})}
 }
 
@@ -37,8 +41,13 @@ export async function POST(request:Request){
  * alongside the CSV columns: a supplied price elasticity, a monthly history (≤ 120 months; rows may set `exclude` for
  * shock or imputed months) and `historyScope` ('product' or 'market').
  */
-function readLearningInputs(item: Record<string, unknown>, index: number): { priceElasticity?: number; history?: DemandHistoryPoint[]; historyScope?: 'product' | 'market' } {
-  const out: { priceElasticity?: number; history?: DemandHistoryPoint[]; historyScope?: 'product' | 'market' } = {};
+function readLearningInputs(item: Record<string, unknown>, index: number): { priceElasticity?: number; history?: DemandHistoryPoint[]; historyScope?: 'product' | 'market'; availabilityLagDays?: number } {
+  const out: { priceElasticity?: number; history?: DemandHistoryPoint[]; historyScope?: 'product' | 'market'; availabilityLagDays?: number } = {};
+  const lag = item.availabilityLagDays;
+  if (lag !== undefined && lag !== null) {
+    if (typeof lag !== 'number' || !Number.isInteger(lag) || lag < 0 || lag > 3650) throw new Error(`Item ${index + 1}: availabilityLagDays must be a whole number of days from 0 to 3650.`);
+    out.availabilityLagDays = lag;
+  }
   const scope = item.historyScope;
   if (scope !== undefined && scope !== null) {
     if (scope !== 'product' && scope !== 'market') throw new Error(`Item ${index + 1}: historyScope must be "product" or "market".`);
@@ -69,8 +78,61 @@ function readLearningInputs(item: Record<string, unknown>, index: number): { pri
         if (typeof v.exclude !== 'boolean') throw new Error(`Item ${index + 1}, history row ${r + 1}: exclude must be true or false.`);
         if (v.exclude) point.exclude = true;
       }
+      if (v.availableAt !== undefined && v.availableAt !== null) {
+        const parsed = parseInstant(v.availableAt);
+        if (!parsed.ok) throw new Error(`Item ${index + 1}, history row ${r + 1}: availableAt ${parsed.error}.`);
+        point.availableAt = v.availableAt as string;
+      }
       return point;
     });
   }
   return out;
+}
+
+type ForecastData = {
+  /** The forecast data cutoff used, or null when none was given (every supplied history row was used). */
+  forecastAsOf: string | null;
+  /** The supplier-quote review date is a different input (`asOf`) and never acts as the data cutoff. */
+  quoteReviewDateIsCutoff: false;
+  itemsWithHistory: number;
+  /** Items whose every history row used has a recorded `availableAt` at or before the cutoff. */
+  strictAsOfItems: number;
+  rowsSupplied: number;
+  rowsUsed: number;
+  rowsAfterCutoff: number;
+  rowsAtOrAfterTarget: number;
+  rowsAssumedAvailability: number;
+  invalidRows: number;
+  /** Rows replaced by a later vintage of the same month available by the cutoff. */
+  supersededVintages: number;
+  note: string;
+  revisionNote: string;
+};
+
+/** Summary (counts only) of which history rows the forecasts could use; undefined when no item has a history. */
+function describeForecastData(items: Opportunity[], forecastAsOf: string | undefined, engine: string): ForecastData | undefined {
+  const withHistory = items.filter(item => item.history?.length);
+  if (!withHistory.length) return undefined;
+  const supplied = withHistory.reduce((s, item) => s + item.history!.length, 0);
+  const engineNote = engine === 'risk-cvar-v5' ? '' : ' scenario-grid-v4 does not use monthly history (only risk-cvar-v5 learns from it).';
+  if (forecastAsOf === undefined) {
+    return {
+      forecastAsOf: null, quoteReviewDateIsCutoff: false, itemsWithHistory: withHistory.length, strictAsOfItems: 0,
+      rowsSupplied: supplied, rowsUsed: supplied, rowsAfterCutoff: 0, rowsAtOrAfterTarget: 0, rowsAssumedAvailability: supplied, invalidRows: 0, supersededVintages: 0,
+      note: `No forecastAsOf: every supplied history row was used, so this is not an as-of forecast. Send forecastAsOf to use only data available by a cutoff.${engineNote}`,
+      revisionNote: REVISION_NOTE,
+    };
+  }
+  const reports = withHistory.map(item => forecastCutoffReport({ ...item, forecastAsOf })).filter((r): r is CutoffReport => !!r && !('error' in r));
+  const sum = (key: keyof CutoffReport) => reports.reduce((s, r) => s + (r[key] as number), 0);
+  const strict = reports.filter(r => r.strictAsOf).length;
+  return {
+    forecastAsOf, quoteReviewDateIsCutoff: false, itemsWithHistory: withHistory.length, strictAsOfItems: strict,
+    rowsSupplied: supplied, rowsUsed: sum('eligible'), rowsAfterCutoff: sum('droppedAfterCutoff'), rowsAtOrAfterTarget: sum('droppedAtOrAfterTarget'),
+    rowsAssumedAvailability: sum('assumedAvailability'), invalidRows: sum('invalid'), supersededVintages: sum('supersededVintages'),
+    note: (strict === withHistory.length
+      ? 'Strict as-of: every history row used has a recorded availableAt at or before the cutoff.'
+      : `Not a strict as-of forecast for ${withHistory.length - strict} of ${withHistory.length} items: rows without availableAt were assumed available at month end plus availabilityLagDays.`) + engineNote,
+    revisionNote: REVISION_NOTE,
+  };
 }

@@ -1,5 +1,6 @@
 import { bestAtQuantity, createGreedyPlan, planRow, timingFor, purchaseCost, minimumPurchase, type Opportunity, type PlanEngine, type PlanOptions, type PlanRow,type BudgetBasis} from './procurement-core';
 import { optimizePortfolioRisk, RISK_ENGINE_VERSION, type RiskSummary, type ServiceSummary } from './risk-optimizer';
+import { withForecastCutoff } from './forecast-cutoff';
 
 type Choice={qty:number;cost:number;value:number};
 export type OptimizedPlan={rows:PlanRow[]; objective:number; upperBound:number; gap:number; baselineObjective:number; algorithm:'discrete-budget'|'greedy-fallback'|'risk-cvar-local-search'|'risk-cvar-decomposition'; bucketCount:number; engine?:PlanEngine; risk?:RiskSummary; pricing?:'joint'|'fixed'; service?:ServiceSummary};
@@ -14,7 +15,9 @@ export function planOptionsOf(rows:PlanRow[]):{engine:PlanEngine;serviceTarget?:
  * Entry point for every planner in the app. `engine: 'risk-cvar-v5'` runs the portfolio risk engine
  * (correlated scenarios, CVaR, flexible allotments); the default remains scenario-grid-v4 below.
  */
-export function optimizePortfolio(items:Opportunity[], budget:number, risk:number, options:PlanOptions={}):OptimizedPlan {
+export function optimizePortfolio(inputItems:Opportunity[], budget:number, risk:number, options:PlanOptions={}):OptimizedPlan {
+ // Forecast data cutoff (never the quote review date): carried on each product so every forecast honours it.
+ const items=withForecastCutoff(inputItems,options.forecastAsOf);
  if(options.engine===RISK_ENGINE_VERSION){
   const legacyRows=options.compareLegacy?optimizeScenarioGrid(items,budget,risk,{asOf:options.asOf}).rows:undefined;
   return optimizePortfolioRisk(items,budget,risk,{...options,legacyRows});

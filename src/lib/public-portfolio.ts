@@ -1,5 +1,6 @@
 import type { Opportunity } from './procurement-core';
-import type { DemandHistoryPoint } from './learned-demand';
+import { targetMonthIndex, type DemandHistoryPoint } from './learned-demand';
+import { monthEndInstant, parseInstant, selectAvailableHistory, type CutoffReport } from './forecast-cutoff';
 import snapshot from '../data/public-portfolio.json';
 
 /**
@@ -14,9 +15,18 @@ import snapshot from '../data/public-portfolio.json';
  * and contract terms are illustrative assumptions, not TBO data. Market series are smoother than a single product,
  * so the planner uses the larger of the learned error spread and the product's typed volatility
  * (`historyScope: 'market'`).
+ *
+ * As-of use (`forecastAsOf`): the snapshot has no per-month release dates and holds the latest revision of each month.
+ * A month is treated as available `lagDays` after it ends, where the default lag per source is the lag of the latest
+ * month in the snapshot when it was built (`impliedLagDays`) — an upper bound for that month, applied to every month as
+ * an assumption. Rows not available by the cutoff are dropped BEFORE scaling, so no later data shapes the history.
+ * Results are therefore pseudo-out-of-sample: availability is assumed, and earlier vintages are not reconstructed.
+ * Imputed months (gaps in the source) were filled using the FOLLOWING month too, so at a cutoff where that following
+ * month is not yet available an imputed month is dropped (the gap was simply unknown then). COVID shock windows are
+ * defined with hindsight (their end dates); they only decide which months are left out of fitting, never values.
  */
 export type PublicSeriesPoint = { month: string; value: number; imputed?: boolean };
-type Snapshot = {
+export type Snapshot = {
   schema: string; builtAt: string;
   sources: { id: string; name: string; url: string; sha256: string; note: string; licenseUrl?: string }[];
   anomalies: { source: string; from: string; to: string; reason: string }[];
@@ -49,16 +59,92 @@ const PRODUCTS: ProductSpec[] = [
 ];
 
 const CONVERSION = 0.04;
+const nextMonth = (ym: string) => { const y = Number(ym.slice(0, 4)), m = Number(ym.slice(5, 7)); return m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`; };
 
-/** The public-data portfolio as planner inputs (histories scaled to product size; economics are assumptions). */
-export function publicPortfolio(): Opportunity[] {
-  return PRODUCTS.map(spec => {
+/**
+ * Days between the end of the latest month of a source's series and the snapshot's build time: that month was
+ * available within this lag. Used (rounded up) as the assumed publication lag for every month of the source.
+ */
+export function impliedLagDays(snap: Snapshot, source: string): number {
+  const built = parseInstant(snap.builtAt);
+  let latest = '';
+  for (const [key, src] of Object.entries(snap.seriesSource)) if (src === source) for (const p of snap.series[key] ?? []) if (p.month > latest) latest = p.month;
+  if (!built.ok || !latest) return 0;
+  return Math.max(0, Math.ceil((built.instant - monthEndInstant(latest)) / 86_400_000));
+}
+
+export type PublicPortfolioOptions = {
+  /** Data cutoff (YYYY-MM-DD or timestamp with offset). Rows not available by then are dropped before scaling. */
+  forecastAsOf?: string;
+  /** Assumed publication lag in days after month end, per source id (default: `impliedLagDays`). */
+  lagDays?: Partial<Record<string, number>>;
+};
+
+/** Per-product availability report of the last `publicPortfolioFrom` call with a cutoff (for docs and the API). */
+export type PublicCutoff = { id: string; source: string; lagDays: number; report: CutoffReport; imputedDroppedLookAhead: number };
+
+/**
+ * The public-data portfolio as planner inputs (histories scaled to product size; economics are assumptions).
+ * Without `forecastAsOf` every snapshot month is used (unchanged behaviour).
+ */
+export function publicPortfolio(options: PublicPortfolioOptions = {}): Opportunity[] {
+  return publicPortfolioFrom(data, options);
+}
+
+export function publicPortfolioFrom(snap: Snapshot, options: PublicPortfolioOptions = {}): Opportunity[] {
+  return publicPortfolioWithCutoff(snap, options).items;
+}
+
+type AvailableSeries = { series: PublicSeriesPoint[]; lagDays?: number; report: CutoffReport | null; imputedDroppedLookAhead: number };
+
+/** The snapshot months of one series available at the cutoff (all months without one). Shared by every public-data path. */
+function availableSeries(snap: Snapshot, key: string, forecastAsOf: string | undefined, lagDays: number | undefined, target: number | undefined): AvailableSeries {
+  const source = snap.seriesSource[key];
+  const series = snap.series[key] ?? [];
+  if (forecastAsOf === undefined) return { series, report: null, imputedDroppedLookAhead: 0 };
+  const lag = lagDays ?? impliedLagDays(snap, source);
+  const picked = selectAvailableHistory(series.map(p => ({ month: p.month, bookings: p.value })), forecastAsOf, { lagDays: lag, targetMonthIndex: target !== undefined && Number.isFinite(target) ? target : undefined });
+  if (!picked.ok) throw new Error(picked.error);
+  const keep = new Set(picked.history.map(h => h.month));
+  // An imputed month used its next month's value: drop it unless that month is also available at the cutoff.
+  const lookAhead = series.filter(p => p.imputed && keep.has(p.month) && !keep.has(nextMonth(p.month)));
+  for (const p of lookAhead) keep.delete(p.month);
+  return { series: series.filter(p => keep.has(p.month)), lagDays: lag, report: picked.report, imputedDroppedLookAhead: lookAhead.length };
+}
+
+/** True for months inside a documented shock window of the series' source (left out of fitting and scoring). */
+export function shockMonth(snap: Snapshot, key: string): (month: string) => boolean {
+  const windows = snap.anomalies.filter(a => a.source === snap.seriesSource[key]);
+  return (month: string) => windows.some(a => month >= a.from && month <= a.to);
+}
+
+/**
+ * One public series as an UNSCALED planner history at a data cutoff, with the same availability, look-ahead and
+ * exclusion rules as `publicPortfolio` (used by the rolling-origin research script).
+ */
+export function publicSeriesHistory(snap: Snapshot, key: string, options: { forecastAsOf?: string; lagDays?: number; targetMonthIndex?: number } = {}) {
+  const available = availableSeries(snap, key, options.forecastAsOf, options.lagDays, options.targetMonthIndex);
+  const shocked = shockMonth(snap, key);
+  const history: DemandHistoryPoint[] = available.series.slice(-PUBLIC_HISTORY_MONTHS).map(p => ({ month: p.month, bookings: p.value, ...(p.imputed || shocked(p.month) ? { exclude: true } : {}) }));
+  return { history, report: available.report, lagDays: available.lagDays, imputedDroppedLookAhead: available.imputedDroppedLookAhead };
+}
+
+export function publicPortfolioWithCutoff(snap: Snapshot, options: PublicPortfolioOptions = {}): { items: Opportunity[]; cutoffs: PublicCutoff[] } {
+  const cutoffs: PublicCutoff[] = [];
+  const items = PRODUCTS.map(spec => {
     const { series: key, level, seriesLabel, ...rest } = spec;
-    const raw = (data.series[key] ?? []).slice(-PUBLIC_HISTORY_MONTHS);
+    const source = snap.seriesSource[key];
+    const available = availableSeries(snap, key, options.forecastAsOf, options.lagDays?.[source], targetMonthIndex(spec.period));
+    const series = available.series, lag = available.lagDays;
+    let asOfNote = '';
+    if (available.report) {
+      cutoffs.push({ id: spec.id, source, lagDays: lag!, report: available.report, imputedDroppedLookAhead: available.imputedDroppedLookAhead });
+      asOfNote = ` As of ${options.forecastAsOf}: ${series.length} of ${available.report.supplied} months available (assumed ${lag} days after month end; latest revision values).`;
+    }
+    const raw = series.slice(-PUBLIC_HISTORY_MONTHS);
     const recent = raw.slice(-12), mean = recent.reduce((s, p) => s + p.value, 0) / Math.max(1, recent.length);
     const scale = mean > 0 ? level / mean : 0;
-    const windows = data.anomalies.filter(a => a.source === data.seriesSource[key]);
-    const shocked = (month: string) => windows.some(a => month >= a.from && month <= a.to);
+    const shocked = shockMonth(snap, key);
     // Shock months and months imputed for gaps in the source stay in the series but are left out of fitting and validation.
     const history: DemandHistoryPoint[] = raw.map(p => ({ month: p.month, bookings: Math.round(p.value * scale * 10) / 10, ...(p.imputed || shocked(p.month) ? { exclude: true } : {}) }));
     const excluded = history.filter(h => h.exclude).length;
@@ -69,12 +155,14 @@ export function publicPortfolio(): Opportunity[] {
       previousBookings: Math.round(yearAgo), previousSearches: Math.round(yearAgo / CONVERSION),
       seasonal: 1, signal: 1, soldOut: 0,
       history, historyScope: 'market' as const,
-      dataSource: `${seriesLabel}, ${raw[0]?.month ?? '?'} to ${raw[raw.length - 1]?.month ?? '?'} (${raw.length} months; ${excluded} COVID or imputed months left out of fitting); scaled ×${scale.toPrecision(3)} to product size.`,
+      dataSource: `${seriesLabel}, ${raw[0]?.month ?? '?'} to ${raw[raw.length - 1]?.month ?? '?'} (${raw.length} months; ${excluded} COVID or imputed months left out of fitting); scaled ×${scale.toPrecision(3)} to product size.${asOfNote}`,
+      ...(options.forecastAsOf !== undefined ? { forecastAsOf: options.forecastAsOf, availabilityLagDays: lag } : {}),
     };
   });
+  return { items, cutoffs };
 }
 
 /** Sources of the public series and the shock windows left out of fitting, for citations in the UI and docs. */
 export function publicPortfolioSources() {
-  return { builtAt: data.builtAt, sources: data.sources, anomalies: data.anomalies };
+  return { builtAt: data.builtAt, sources: data.sources, anomalies: data.anomalies, impliedLagDays: Object.fromEntries(data.sources.map(s => [s.id, impliedLagDays(data, s.id)])) };
 }

@@ -2,6 +2,7 @@ import type { Opportunity, PlanOptions, PlanRow } from './procurement-core';
 import { optimizePortfolio } from './portfolio-optimizer';
 import { evaluateDecisions, optimizePortfolioRisk, type Decision, type RiskMetrics } from './risk-optimizer';
 import type { ScenarioAssumptions } from './risk-scenarios';
+import { withForecastCutoff } from './forecast-cutoff';
 
 /**
  * Model-risk check ("mismatched worlds").
@@ -81,7 +82,9 @@ function decisionsFrom(items: Opportunity[], rows: PlanRow[], allotments: boolea
   });
 }
 
-export function checkModelRisk(items: Opportunity[], budget: number, risk: number, options: ModelRiskOptions = {}): ModelRiskReport {
+export function checkModelRisk(inputItems: Opportunity[], budget: number, risk: number, options: ModelRiskOptions = {}): ModelRiskReport {
+  // Every world re-scores the same forecasts, so the data cutoff is applied once to the products themselves.
+  const items = withForecastCutoff(inputItems, options.forecastAsOf);
   const r = Math.min(1, Math.max(0, Number.isFinite(risk) ? risk : 0));
   const { planRows, legacyRows, worlds = MODEL_RISK_WORLDS, oracle = true, ...planOptions } = options;
   const base = { asOf: planOptions.asOf, scenarioCount: planOptions.scenarioCount, evaluationCount: planOptions.evaluationCount, seed: planOptions.seed, budgetBasis: planOptions.budgetBasis };

@@ -51,6 +51,7 @@ The model is refitted at every rolling origin using only data available then. It
 
 **Results**
 - Five of eight series pass the gate, beating "same month last year" by 13–36% MAE. The other three fall back to it, exactly as designed. A model that cannot beat the naive benchmark is not used.
+- These scores are the gate's **selection** evidence: the same backtest chooses the method, so they are optimistic as a performance estimate. A separate as-of check, where every forecast uses only the months available on its date and the choice never sees the outcome, is in `docs/forecasting/README.md`. It assumes publication lags because the snapshot has no release dates. With the snapshot-implied lag (DGCA 108 days), the planner's MAE is 1.07× (3 months ahead) and 1.34× (6 months ahead) that of "same month last year" on 2024–2026 targets. Its 80% band covers 59% and 53%. With fresh data (no lag), it is 0.92× at 3 months ahead.
 - Goa's December index (about ×1.4 over the July monsoon month) is learned from the data, not typed.
 - The planner's demand for each product is this validated forecast × (1 − cancellations).
 
@@ -74,6 +75,7 @@ The planner's 80% range for each product is built from the 10th and 90th percent
 | Pooled coverage | **293 of 360 forecasts = 81.4%** (target 80%) |
 | Typical range width | ±9–23% of the forecast |
 | Using the textbook conformal order statistic instead | over-covers (88%), so the interpolated percentile is kept |
+| Protocol | No publication lag, the learned model always, data up to the origin month. Under the as-of protocol in `docs/forecasting/README.md` (calendar dates, publication lags, the planner's chosen method), the band under-covers: 53–73% depending on lag and horizon. |
 | Exception | Srinagar (11/24): air arrivals fell from 218k in May 2024 to 79k in May 2025 and stayed below 2024 levels into 2026. A range built on past errors cannot anticipate a shock like that; for Srinagar the planner falls back to "same month last year", which follows the new level. |
 
 ## Limits

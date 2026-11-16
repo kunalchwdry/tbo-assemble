@@ -1,5 +1,6 @@
 import type { Opportunity } from './procurement-core';
 import { stayDate } from './buy-window';
+import { selectAvailableHistory, type CutoffReport } from './forecast-cutoff';
 
 /**
  * Learned demand (risk-cvar-v5).
@@ -24,6 +25,14 @@ import { stayDate } from './buy-window';
  * origin of a rolling-origin backtest using only data available at that origin. The learned forecast is used only if
  * it beats seasonal-naive ("same month last year") by more than 5% MAE over at least 6 of the latest 36 origins; otherwise the planner
  * uses seasonal-naive. Either way the planner uses exactly the forecast that was validated (`LearnedDemand.forecast`).
+ *
+ * That rolling backtest is MODEL SELECTION (in-sample evidence): its MAE and skill choose the method and set the error
+ * spread, so they are optimistic as a performance estimate. Holdout performance must come from a separate, nested
+ * evaluation (scripts/forecast-rolling-origin.ts), where the choice at each origin uses only earlier outcomes.
+ *
+ * Data cutoff: when the product carries `forecastAsOf` (set from the plan's `forecastAsOf`, never from the quote review
+ * date `asOf`), only history rows available by that moment are used for everything above (see forecast-cutoff.ts).
+ * Without `forecastAsOf`, every supplied row is used, as before.
  */
 
 export type DemandHistoryPoint = {
@@ -43,6 +52,12 @@ export type DemandHistoryPoint = {
   signal?: number;
   /** Average selling price achieved for that month (same currency as `referencePrice`). */
   price?: number;
+  /**
+   * When this month's figure became available to the planner: a date `YYYY-MM-DD` (read as the end of that UTC day)
+   * or an ISO timestamp with an explicit offset. Optional; without it, availability is assumed to be the month end plus
+   * the product's `availabilityLagDays` (and the forecast is reported as not strictly as-of). See forecast-cutoff.ts.
+   */
+  availableAt?: string;
   /**
    * Leave this month out of fitting and validation: a known shock (e.g. a lockdown) or a value imputed for a gap in the
    * source. The month still keeps the series consecutive; seasonal-naive skips it and uses the same month a year earlier.
@@ -91,6 +106,8 @@ export type LearnedDemand = {
   upper80: number;
   /** Learned seasonal indices, January first (mean 1). */
   seasonal: number[];
+  /** Data cutoff applied (null when the product has no `forecastAsOf`: every supplied row was used). */
+  cutoff: CutoffReport | null;
 };
 
 export const PRIOR_PRICE_ELASTICITY = { Hotel: -3.0, Flight: -3.5 } as const;
@@ -308,14 +325,35 @@ function quantile(values: number[], p: number): number {
 
 const cache = new WeakMap<DemandHistoryPoint[], Map<string, LearnedDemand | null>>();
 
+/**
+ * The history rows the model may use for this product: every row, or — when the product carries `forecastAsOf` — only
+ * rows available by that cutoff and before the target month. `report` is null without a cutoff; `history` is null when
+ * the cutoff is invalid (fail closed: no learned forecast).
+ */
+export function historyForForecast(item: Opportunity): { history: DemandHistoryPoint[] | null; report: CutoffReport | null; error: string | null } {
+  const history = item.history ?? [];
+  if (item.forecastAsOf === undefined || item.forecastAsOf === null) return { history, report: null, error: null };
+  const target = targetMonthIndex(item.period);
+  const selected = selectAvailableHistory(history, item.forecastAsOf, { lagDays: item.availabilityLagDays ?? 0, targetMonthIndex: Number.isFinite(target) ? target : undefined });
+  return selected.ok ? { history: selected.history, report: selected.report, error: null } : { history: null, report: null, error: selected.error };
+}
+
+/** The data cutoff applied to this product's history (null without `forecastAsOf`), for plan outputs and the API. */
+export function forecastCutoffReport(item: Opportunity): CutoffReport | { error: string } | null {
+  if (!item.history?.length) return null;
+  const h = historyForForecast(item);
+  return h.error ? { error: h.error } : h.report;
+}
+
 /** Learns the product's demand model from its monthly history; null when there is no usable history. */
 export function learnDemand(item: Opportunity): LearnedDemand | null {
   const history = item.history;
   if (!history || history.length < MIN_MONTHS) return null;
-  const key = `${item.period}|${item.signal}|${item.kind}|${item.priceElasticity ?? ''}|${item.conversion}|${item.referencePrice}|${item.buy}`;
+  const key = `${item.period}|${item.signal}|${item.kind}|${item.priceElasticity ?? ''}|${item.conversion}|${item.referencePrice}|${item.buy}|${item.forecastAsOf ?? ''}|${item.availabilityLagDays ?? ''}`;
   let byKey = cache.get(history);
   if (byKey?.has(key)) return byKey.get(key)!;
-  const result = computeLearned(item, history);
+  const usable = historyForForecast(item);
+  const result = usable.history && usable.history.length >= MIN_MONTHS ? computeLearned(item, usable.history, usable.report) : null;
   if (!byKey) { byKey = new Map(); cache.set(history, byKey); }
   byKey.set(key, result);
   return result;
@@ -329,7 +367,7 @@ function project(series: Series, f: Fit, origin: number, t: number, priceRatio: 
   return Math.exp(log);
 }
 
-function computeLearned(item: Opportunity, history: DemandHistoryPoint[]): LearnedDemand | null {
+function computeLearned(item: Opportunity, history: DemandHistoryPoint[], cutoff: CutoffReport | null): LearnedDemand | null {
   const series = seriesOf(history, Math.max(0, Math.min(1, item.conversion || 0)));
   if (!series || series.U.length < MIN_MONTHS) return null;
   const n = series.U.length, lastMonth = series.start + n - 1;
@@ -378,6 +416,7 @@ function computeLearned(item: Opportunity, history: DemandHistoryPoint[]): Learn
     volatility: Math.min(0.8, Math.max(0.05, sd)), naiveForecast,
     lower80, upper80,
     seasonal: Array.from({ length: 12 }, (_, m) => final.S[m]),
+    cutoff,
   };
 }
 
@@ -476,7 +515,13 @@ export type DemandSource = { kind: 'learned' | 'seasonal-naive' | 'formula'; lab
 /** Human-readable description of where the planner's forecast for this product comes from. */
 export function demandSourceOf(item: Opportunity): DemandSource {
   const learned = learnDemand(item);
-  if (!learned) return { kind: 'formula', label: 'Typed inputs', detail: 'No monthly history: seasonality and the external signal are typed multipliers.' };
-  if (learned.gate === 'passed') return { kind: 'learned', label: 'Learned from history', detail: `${learned.months} months. ${learned.reason} Seasonality ×${learned.seasonalRatio.toFixed(2)}, growth ×${learned.growthFactor.toFixed(2)}${learned.signalBeta !== null ? `, signal β ${learned.signalBeta.toFixed(2)}` : ''}${learned.priceElasticity !== null ? `, price elasticity ${learned.priceElasticity.toFixed(1)}` : ''}.` };
-  return { kind: 'seasonal-naive', label: 'Same month last year', detail: `${learned.months} months. ${learned.reason}` };
+  if (!learned) {
+    const cut = item.history?.length && item.forecastAsOf !== undefined ? historyForForecast(item) : null;
+    if (cut?.error) return { kind: 'formula', label: 'Typed inputs', detail: `History not used: ${cut.error}` };
+    if (cut?.report) return { kind: 'formula', label: 'Typed inputs', detail: `History not used at the data cutoff ${item.forecastAsOf}: ${cut.report.eligible} of ${cut.report.supplied} months were available, not enough consecutive usable months (at least ${MIN_MONTHS}) to fit and validate the model.` };
+    return { kind: 'formula', label: 'Typed inputs', detail: 'No monthly history: seasonality and the external signal are typed multipliers.' };
+  }
+  const asOf = learned.cutoff ? ` Data as of ${learned.cutoff.forecastAsOf}: ${learned.cutoff.eligible} of ${learned.cutoff.supplied} months available${learned.cutoff.assumedAvailability ? ` (${learned.cutoff.assumedAvailability} with assumed availability)` : ''}.` : '';
+  if (learned.gate === 'passed') return { kind: 'learned', label: 'Learned from history', detail: `${learned.months} months. ${learned.reason} Seasonality ×${learned.seasonalRatio.toFixed(2)}, growth ×${learned.growthFactor.toFixed(2)}${learned.signalBeta !== null ? `, signal β ${learned.signalBeta.toFixed(2)}` : ''}${learned.priceElasticity !== null ? `, price elasticity ${learned.priceElasticity.toFixed(1)}` : ''}.${asOf}` };
+  return { kind: 'seasonal-naive', label: 'Same month last year', detail: `${learned.months} months. ${learned.reason}${asOf}` };
 }
