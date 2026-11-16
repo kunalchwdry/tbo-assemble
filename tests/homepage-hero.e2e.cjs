@@ -10,7 +10,11 @@ const base = process.env.TEST_BASE || 'http://127.0.0.1:3000';
   try {
     const response = await page.goto(base);
     if (!response.ok()) throw Error('Homepage HTTP ' + response.status());
-    await page.getByRole('heading', { level: 1, name: /Make every inventory decision count/ }).waitFor();
+    await page.getByRole('heading', { level: 1, name: /The operating system for group travel/ }).waitFor();
+    await page.getByText('Illustrative wedding · 3 nights').waitFor();
+    await page.getByRole('heading', { level: 2, name: /Make every inventory decision count/ }).waitFor();
+    const order = await page.evaluate(() => Array.from(document.querySelectorAll('main > section[id]')).map(section => section.id));
+    if (order.indexOf('group-travel') >= order.indexOf('inventory-optimization')) throw Error('Group travel must appear before inventory');
     await page.getByText(/Starts with synthetic data. No purchases are made/).waitFor();
     await page.getByText(/Illustration only—not a forecast of actual profit/).waitFor();
     for (const width of [320, 390, 768, 1440]) {

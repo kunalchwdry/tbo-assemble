@@ -56,7 +56,7 @@ function HeroVisual() {
   return (
     <div className="relative mx-auto w-full max-w-lg">
       <PhotoFrame src={p.src} alt={p.alt} className="aspect-[4/5] rounded-[28px]">
-        <p className="text-xs font-medium uppercase tracking-wider text-white/75">Destination wedding · 3 nights</p>
+        <p className="text-xs font-medium uppercase tracking-wider text-white/75">Illustrative wedding · 3 nights</p>
         <p className="mt-1 font-display text-2xl font-bold">Sharma–Patel Wedding</p>
         <p className="mt-1 flex items-center gap-1 text-sm text-white/85"><MapPin className="size-3.5" /> The Grand Hyatt, Udaipur</p>
       </PhotoFrame>
@@ -165,49 +165,16 @@ export default function Home() {
       </header>
 
       <main>
-        {/* ─── VoyageHack 4.0: Inventory Optimization for TBO.com ───────────── */}
-        <section id="inventory-optimization" aria-labelledby="hero-title" className="landing-inventory">
-          <div className="landing-hero-grid">
-            <div className="landing-hero-copy">
-              <span className="landing-kicker"><span /> VOYAGEHACK 4.0 <i /> INVENTORY DECISIONS</span>
-              <h1 id="hero-title">Make every inventory<br className="landing-desktop-break" /> decision <em>count.</em></h1>
-              <p className="landing-lede">Turn demand signals into a clearer plan for hotel rooms and flight seats—within your budget, with risk in view.</p>
-              <div className="landing-actions">
-                <Button asChild size="lg"><Link href="/inventory">Explore the planner <ArrowRight /></Link></Button>
-                <Button asChild size="lg" variant="outline"><Link href="/research/risk-engine.md">See how it works <ArrowRight /></Link></Button>
-              </div>
-              <div className="landing-trust"><span className="landing-trust-icon"><Check size={14} /></span><p><strong>Decision-support demo.</strong> Starts with synthetic data. No purchases are made.</p></div>
-            </div>
-            <figure className="landing-visual" aria-labelledby="landing-visual-title">
-              <div className="visual-top"><span><i /> THE BIGGER PICTURE</span><span className="visual-tag">ILLUSTRATIVE</span></div>
-              <div className="visual-heading"><div><p>RISK-AWARE PLANNING</p><h2 id="landing-visual-title">See beyond<br/><em>the average.</em></h2></div><div className="visual-orbit" aria-hidden="true"><span>↗</span></div></div>
-              <div className="visual-chart" aria-hidden="true"><div className="visual-chart-head"><span>SEASON PROFIT</span><span>ILLUSTRATIVE DISTRIBUTION</span></div><svg viewBox="0 0 400 145" preserveAspectRatio="none"><line x1="0" y1="130" x2="400" y2="130" stroke="#6b625c" strokeWidth="1"/>{[7,11,18,28,43,61,78,96,111,120,123,119,108,94,77,61,45,31,21,13,8,4].map((h,i)=><rect key={i} x={i*18.1+3} y={130-h} width="11" height={h} rx="3" fill={i<4?'#e8a28a':'#f26929'} opacity={i<4?.8:1}/>)}</svg><div className="visual-chart-axis"><span>LOWER OUTCOMES</span><span>HIGHER OUTCOMES</span></div></div>
-              <figcaption className="visual-note"><span className="visual-note-dot"/><span>Understand potential downside across simulated seasons. <strong>Illustration only—not a forecast of actual profit.</strong></span></figcaption>
-            </figure>
-          </div>
-          <div className="landing-features-head"><span>BUILT FOR BETTER DECISIONS</span><span>FROM DATA TO REVIEW <ArrowRight size={14}/></span></div>
-          <ul className="landing-features" aria-label="What the planner does">
-            {[
-              ["01", "Predict demand", "Explore demand estimates informed by your inputs and available history."],
-              ["02", "Shape your investment", "Allocate a budget across inventory, contract types and supplier capacity."],
-              ["03", "Consider profitability", "Review proposed quantities, selling prices and modeled returns."],
-              ["04", "Understand risk", "Explore downside scenarios and review supplier terms before acting."],
-            ].map(([number, title, body]) => (
-              <li key={title}><span className="landing-feature-number">{number}</span><h3>{title}</h3><p>{body}</p></li>
-            ))}
-          </ul>
-        </section>
-
         {/* ─── VoyageHack 3.0 (same team): TBO Assemble, group travel ───────── */}
-        <section id="group-travel" aria-labelledby="group-travel-title" className="mx-auto grid max-w-6xl items-center gap-16 px-6 pb-24 pt-10 lg:grid-cols-[1.1fr_1fr]">
+        <section id="group-travel" aria-labelledby="group-travel-title" className="mx-auto grid max-w-6xl items-center gap-16 px-6 pb-12 pt-16 lg:grid-cols-[1.1fr_1fr] lg:pt-20">
           <div>
             <Link href="/event/techconnect-summit-2026" className="inline-flex items-center gap-2 rounded-full border border-[rgba(255,200,26,0.35)] bg-[rgba(255,200,26,0.14)] px-3.5 py-1.5 text-xs font-semibold transition-colors hover:bg-[rgba(255,200,26,0.24)]">
-              Also from Team IIITDards · VoyageHack 3.0 · TBO Assemble <ChevronRight className="size-3.5" />
+              Team IIITDards · VoyageHack 3.0 · TBO Assemble <ChevronRight className="size-3.5" />
             </Link>
-            <h2 id="group-travel-title" className="mt-6 text-4xl font-bold leading-[1.04] sm:text-5xl">
+            <h1 id="group-travel-title" className="mt-6 text-4xl font-bold leading-[1.04] sm:text-5xl">
               The operating system for{" "}
               <span className="bg-[linear-gradient(transparent_62%,var(--ill-yellow)_62%,var(--ill-yellow)_92%,transparent_92%)] px-1 [box-decoration-break:clone]">group travel</span>
-            </h2>
+            </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
               Transform hotel room block management from spreadsheet chaos into an intelligent, automated workflow. Parse contracts with AI, allocate guests visually, and protect your revenue — all in one platform.
             </p>
@@ -223,6 +190,39 @@ export default function Home() {
             </div>
           </div>
           <HeroVisual />
+        </section>
+
+        {/* ─── VoyageHack 4.0: Inventory Optimization for TBO.com ───────────── */}
+        <section id="inventory-optimization" aria-labelledby="hero-title" className="landing-inventory">
+          <div className="landing-hero-grid">
+            <div className="landing-hero-copy">
+              <span className="landing-kicker"><span /> VOYAGEHACK 4.0 <i /> INVENTORY DECISIONS</span>
+              <h2 id="hero-title">Make every inventory<br className="landing-desktop-break" /> decision <em>count.</em></h2>
+              <p className="landing-lede">Turn demand signals into a clearer plan for hotel rooms and flight seats—within your budget, with risk in view.</p>
+              <div className="landing-actions">
+                <Button asChild size="lg"><Link href="/inventory">Explore the planner <ArrowRight /></Link></Button>
+                <Button asChild size="lg" variant="outline"><Link href="/research/risk-engine.md">See how it works <ArrowRight /></Link></Button>
+              </div>
+              <div className="landing-trust"><span className="landing-trust-icon"><Check size={14} /></span><p><strong>Decision-support demo.</strong> Starts with synthetic data. No purchases are made.</p></div>
+            </div>
+            <figure className="landing-visual" aria-labelledby="landing-visual-title">
+              <div className="visual-top"><span><i /> THE BIGGER PICTURE</span><span className="visual-tag">ILLUSTRATIVE</span></div>
+              <div className="visual-heading"><div><p>RISK-AWARE PLANNING</p><h3 id="landing-visual-title">See beyond<br/><em>the average.</em></h3></div><div className="visual-orbit" aria-hidden="true"><span>↗</span></div></div>
+              <div className="visual-chart" aria-hidden="true"><div className="visual-chart-head"><span>SEASON PROFIT</span><span>ILLUSTRATIVE DISTRIBUTION</span></div><svg viewBox="0 0 400 145" preserveAspectRatio="none"><line x1="0" y1="130" x2="400" y2="130" stroke="#6b625c" strokeWidth="1"/>{[7,11,18,28,43,61,78,96,111,120,123,119,108,94,77,61,45,31,21,13,8,4].map((h,i)=><rect key={i} x={i*18.1+3} y={130-h} width="11" height={h} rx="3" fill={i<4?'#e8a28a':'#f26929'} opacity={i<4?.8:1}/>)}</svg><div className="visual-chart-axis"><span>LOWER OUTCOMES</span><span>HIGHER OUTCOMES</span></div></div>
+              <figcaption className="visual-note"><span className="visual-note-dot"/><span>Understand potential downside across simulated seasons. <strong>Illustration only—not a forecast of actual profit.</strong></span></figcaption>
+            </figure>
+          </div>
+          <div className="landing-features-head"><span>BUILT FOR BETTER DECISIONS</span><span>FROM DATA TO REVIEW <ArrowRight size={14}/></span></div>
+          <ul className="landing-features" aria-label="What the planner does">
+            {[
+              ["01", "Predict demand", "Explore demand estimates informed by your inputs and available history."],
+              ["02", "Shape your investment", "Allocate a budget across inventory, contract types and supplier capacity."],
+              ["03", "Consider profitability", "Review proposed quantities, selling prices and modeled returns."],
+              ["04", "Understand risk", "Explore downside scenarios and review supplier terms before acting."],
+            ].map(([number, title, body]) => (
+              <li key={title}><span className="landing-feature-number">{number}</span><h3>{title}</h3><p>{body}</p></li>
+            ))}
+          </ul>
         </section>
 
         {/* Flight intelligence uses the same design language as the original site. */}
