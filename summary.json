@@ -1,7 +1,7 @@
 {
   "capacity": 104,
   "lastRun": {
-    "startedAt": "2026-11-15T18:29:21Z",
+    "startedAt": "2026-11-16T17:04:49Z",
     "statuses": {
       "BLR-DEL": "stale-or-missing",
       "BOM-DEL": "stale-or-missing",
@@ -13,7 +13,7 @@
   },
   "routes": {
     "BLR-DEL": {
-      "captureCount": 1,
+      "captureCount": 2,
       "comparison": {
         "count": 0,
         "mae": {
@@ -29,14 +29,14 @@
       "lastCapture": {
         "forecastStatus": "stale-or-missing",
         "latestUsableMonth": "2026-09",
-        "recordedAt": "2026-11-15T18:29:22Z",
+        "recordedAt": "2026-11-16T17:04:53Z",
         "rowsSha256": "751a189c227c796e3367152d3cb4df4f5b421a20bc752ba3af341b38097341f3",
         "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
         "sourceRetrievedAt": "2026-11-15T13:55:09.065Z"
       }
     },
     "BOM-DEL": {
-      "captureCount": 1,
+      "captureCount": 2,
       "comparison": {
         "count": 0,
         "mae": {
@@ -52,14 +52,14 @@
       "lastCapture": {
         "forecastStatus": "stale-or-missing",
         "latestUsableMonth": "2026-09",
-        "recordedAt": "2026-11-15T18:29:21Z",
+        "recordedAt": "2026-11-16T17:04:50Z",
         "rowsSha256": "23e7c88f771cc5a61ea592ee4ed1453d598ca6d67ac0a7d712587fff105152d4",
         "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
         "sourceRetrievedAt": "2026-11-15T13:55:07.037Z"
       }
     },
     "DEL-BLR": {
-      "captureCount": 1,
+      "captureCount": 2,
       "comparison": {
         "count": 0,
         "mae": {
@@ -75,14 +75,14 @@
       "lastCapture": {
         "forecastStatus": "stale-or-missing",
         "latestUsableMonth": "2026-09",
-        "recordedAt": "2026-11-15T18:29:22Z",
+        "recordedAt": "2026-11-16T17:04:53Z",
         "rowsSha256": "689d4878af09e4b3045230dfc68bc65c5ac7789b96282aff3771fd48460ad68b",
         "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
         "sourceRetrievedAt": "2026-11-15T13:55:11.384Z"
       }
     },
     "DEL-BOM": {
-      "captureCount": 1,
+      "captureCount": 2,
       "comparison": {
         "count": 0,
         "mae": {
@@ -98,14 +98,14 @@
       "lastCapture": {
         "forecastStatus": "stale-or-missing",
         "latestUsableMonth": "2026-09",
-        "recordedAt": "2026-11-15T18:29:22Z",
+        "recordedAt": "2026-11-16T17:04:51Z",
         "rowsSha256": "d99d64cf5147c23d102187b8353c087e56745f946d21065e074d8cb34e222e79",
         "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
         "sourceRetrievedAt": "2026-11-15T13:55:04.564Z"
       }
     },
     "DEL-PNQ": {
-      "captureCount": 1,
+      "captureCount": 2,
       "comparison": {
         "count": 0,
         "mae": {
@@ -121,14 +121,14 @@
       "lastCapture": {
         "forecastStatus": "stale-or-missing",
         "latestUsableMonth": "2026-09",
-        "recordedAt": "2026-11-15T18:29:22Z",
+        "recordedAt": "2026-11-16T17:04:51Z",
         "rowsSha256": "69f97c1446d301c674cf67ed91555123dc5fefd7c9d3bc6fc287ad91a1275c1f",
         "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
         "sourceRetrievedAt": "2026-11-15T13:54:59.143Z"
       }
     },
     "PNQ-DEL": {
-      "captureCount": 1,
+      "captureCount": 2,
       "comparison": {
         "count": 0,
         "mae": {
@@ -144,7 +144,7 @@
       "lastCapture": {
         "forecastStatus": "stale-or-missing",
         "latestUsableMonth": "2026-09",
-        "recordedAt": "2026-11-15T18:29:22Z",
+        "recordedAt": "2026-11-16T17:04:52Z",
         "rowsSha256": "57194fb356665b14efc70fd33508b0025a13d4f33258f95260fc7dfcfe2ed3da",
         "sourceManifestSha256": "08428d1a80e74586e07b229dac922cb9d886cf6609230950ffc1f7dd1fbd1e3f",
         "sourceRetrievedAt": "2026-11-15T13:55:01.614Z"
