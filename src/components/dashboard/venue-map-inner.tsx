@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -103,6 +104,11 @@ export default function VenueMap({
   const [geocodedCoords, setGeocodedCoords] = useState<[number, number] | null>(null);
   const [loading, setLoading] = useState(!hasInitialCoords);
   const [modalOpen, setModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const coords = useMemo<[number, number] | null>(() => {
     return hasInitialCoords ? [initialLat, initialLng] : geocodedCoords;
@@ -223,7 +229,7 @@ export default function VenueMap({
       </div>
 
       {/* 2. Full-featured Modal / Dialog displaying large interactive OpenStreetMap */}
-      {modalOpen && (
+      {modalOpen && mounted && typeof document !== "undefined" && createPortal(
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 animate-fade-in"
           role="dialog"
@@ -359,7 +365,8 @@ export default function VenueMap({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
