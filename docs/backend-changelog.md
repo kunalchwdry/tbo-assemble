@@ -101,3 +101,33 @@ products 4.07 s.
 **Findings (documented, not changed):** without `asOf` the library uses today's date for quote expiry, so callers
 needing reproducibility must pass it (the API requires it). The background-plan hook keeps an old error visible when
 budget or risk change after a failure (frontend-owned; fix suggested).
+
+## 4. Multi-user and API: owner-scoped replacement (disabled), plan rate limit, endpoint review
+
+**Problem:** the legacy event, guest and booking routes have no authentication (production probe, counts only: 7
+events, 142 guests). Prisma bypasses Supabase RLS, so the RLS policies in `docs/security` do not protect them. The
+plan API had no burst limit, although `routeLimiters.plan` already existed.
+
+**Change:**
+- `src/lib/access/event-access.ts`: one pure authorization decision.
+  - 401 without a session; 404 for missing or other users' resources (identical, no enumeration).
+  - Unclaimed (ownerless) events are never exposed by the new API.
+  - Narrow public and booking-holder views.
+- `src/lib/access/owner-scope-handlers.ts` + `owner-scope-deps.ts` + `src/app/api/v2/{events,events/[eventId],guests,bookings/[bookingId]}`:
+  - owner-scoped read API, **off unless `OWNER_SCOPE_API=1`** (503 otherwise);
+  - the real wiring is loaded only when enabled. It uses Supabase `getUser()` and code-scoped Prisma queries, and reads
+    the draft `Agent."authUserId"` column with parameterised SQL (Prisma schema unchanged).
+- Plan API: `routeLimiters.plan` wired in. 20 valid plans per minute per client and instance, then 429 with
+  `Retry-After`. Invalid requests are rejected first and do not count.
+- `docs/security/owner-scoped-migration.md`: exposure, design, migration steps with approval gates (the 7 ownerless
+  events stay as they are by default), shared-link compatibility, public-endpoint resource review.
+
+**Not changed:** legacy routes, public pages, Prisma schema, database, Supabase or Vercel settings.
+
+**Verified:**
+- `tests/owner-scope.test.ts`: 7/7 with local mocks. Five deliberate policy and handler breaks are each caught.
+- `tests/plan-rate-limit.test.ts`: 2/2.
+- Existing plan API tests still pass: risk-v5-extensions 11/11, public-portfolio 5/5, forecast-cutoff 14/14.
+- `tsc` 0; eslint clean on changed files.
+- The real Supabase/Prisma wiring is **not** tested against a database: no accessible project, and the column does
+  not exist yet.
