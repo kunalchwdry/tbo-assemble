@@ -74,3 +74,30 @@ the same 2 environment-dependent failures as the baseline. `tsc` 0 errors; eslin
 **Findings (not fixed here, documented):** under the as-of protocol the planner is no better than "same month last
 year" except with fresh data at 3 months ahead, and its 80% band under-covers (53–73%). The backtest uses the target
 month's recorded signal (look-ahead if the signal is contemporaneous; the public portfolio has no signal column).
+
+## 3. Optimisation audit: invariants, exhaustive check, bound scope, benchmark (no maths changed)
+
+**Change:** tests and documentation only.
+- `tests/optimizer-invariants.test.ts` (9 tests):
+  - every row's spend recomputed from its own terms (fixed fee, allotment basis) on both budget bases;
+  - an exact-fit minimum order;
+  - the quote-expiry boundary (UTC);
+  - degenerate and extreme inputs (NaN, negative or infinite budgets, NaN risk, zero capacity or demand, volatility
+    0/3, very large capacities);
+  - identical plans for identical seeds (both solvers);
+  - unreachable service targets (small or zero budget, all quotes expired);
+  - plan API vs library consistency;
+  - an exhaustive enumeration on 40 three-product instances with allotments, minimums and fees;
+  - the scope of objective, bound and gap (optimisation scenarios only).
+- `scripts/benchmark-optimizer.ts`: fresh process per size, cold and warm runs, peak RSS, environment and command;
+  results in `docs/optimisation/benchmark.{md,json}`.
+- `docs/optimisation/README.md`: audit table, independent check, bound scope, modelled vs observed, benchmark, states.
+
+**Verified:** 9/9 pass. The default solver matched the enumerated optimum on all 40 instances (worst shortfall
+2 × 10⁻¹⁶); the bound was never below it but can be loose on tiny instances. Benchmark (2 vCPU sandbox): 1,000
+products 3.00 s cold / 2.87 s warm, peak RSS 191 MB; 2,000 products 7.77 s, 259 MB; plan API handler at 1,000
+products 4.07 s.
+
+**Findings (documented, not changed):** without `asOf` the library uses today's date for quote expiry, so callers
+needing reproducibility must pass it (the API requires it). The background-plan hook keeps an old error visible when
+budget or risk change after a failure (frontend-owned; fix suggested).
