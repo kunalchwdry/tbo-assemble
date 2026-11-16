@@ -311,5 +311,7 @@ POST /api/procurement/plan
 - `jointPricing` (v5 only; default `true`) can switch off the joint price search. `optimization.pricing` says which mode ran.
 - `modelRisk: true` (v5 only) adds the mismatched-world report as `modelRisk` (about 3–5 s).
 - Sending any of these three options without `engine: "risk-cvar-v5"` returns 400.
+- `forecastAsOf` (optional; `YYYY-MM-DD` = end of that UTC day, or an ISO timestamp with offset) is the forecast data cutoff. It is separate from `asOf`, the quote review date, and is never derived from it. Each history row may carry `availableAt`; rows without it count as available `availabilityLagDays` (per item, default 0) after the month ends. When items carry history, the response adds `forecastData`: rows supplied, used, after the cutoff and with assumed availability, plus a note. Rules and the rolling-origin check: `docs/forecasting/README.md` in the repository.
+- Bursts above 20 valid plans a minute per client (per server instance) get 429 with `Retry-After`.
 - `model` reports the engine (with `-experimental-blend` when a fitted blend is applied).
 - Saved private plans record the model version. Projects created before v5 must apply [`docs/security/allow-risk-cvar-v5.sql`](../../docs/security/allow-risk-cvar-v5.sql) before v5 plans can be saved.

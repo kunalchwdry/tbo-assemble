@@ -131,3 +131,19 @@ plan API had no burst limit, although `routeLimiters.plan` already existed.
 - `tsc` 0; eslint clean on changed files.
 - The real Supabase/Prisma wiring is **not** tested against a database: no accessible project, and the column does
   not exist yet.
+
+## 5. Verification at the branch tip, and API docs
+
+The branch was rebased onto `origin/main` 58b2275 (three frontend commits: homepage and inventory workspace; no file
+overlaps with this branch). Checks ran on 276b782, the code tip; this commit changes docs only.
+
+| Check | Baseline (d9ff229) | Branch tip |
+|---|---|---|
+| Unit files (`tsx`, one at a time) | 65 files: 63 pass, 2 fail | 69 files: 67 pass, 2 fail (the same 2: `plan-api.test.ts` needs a server on :3000; `booking-capacity.integration` needs an isolated database) |
+| Unit test cases in passing files | not recorded | 226 pass, 0 fail (48 new: geocode 16, forecast-cutoff 14, optimizer-invariants 9, owner-scope 7, plan-rate-limit 2) |
+| `tsc --noEmit` | 0 errors | 0 errors |
+| `eslint .` | 433 files, 49 errors, 40 warnings | 453 files, 49 errors, 40 warnings (identical per file; all new files clean) |
+| `next build` (2 GB RAM + 3 GB swap) | exit 0, 49 s, 44/44 static pages | exit 0, 43 s, 44/44 static pages; `/api/v2/*` dynamic |
+
+Docs: the README and `public/research/risk-engine.md` describe `forecastAsOf`/`forecastData` and the plan API's 429
+burst limit (per instance; not a substitute for authentication).
