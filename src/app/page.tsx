@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import "./home-hero.css";
 import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Badge } from "@/components/ui/badge";
@@ -165,52 +166,36 @@ export default function Home() {
 
       <main>
         {/* ─── VoyageHack 4.0: Inventory Optimization for TBO.com ───────────── */}
-        <section id="inventory-optimization" aria-labelledby="hero-title" className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-16 lg:grid-cols-[1.15fr_1fr] lg:pt-20">
-          <div>
-            <Link href="/inventory" className="inline-flex items-center gap-2 rounded-full border border-[rgba(37,99,235,0.35)] bg-[rgba(37,99,235,0.08)] px-3.5 py-1.5 text-xs font-semibold transition-colors hover:bg-[rgba(37,99,235,0.14)]">
-              VoyageHack 4.0 · Inventory Optimization for TBO.com · Team IIITDards <ChevronRight className="size-3.5" />
-            </Link>
-            <h1 id="hero-title" className="mt-6 text-4xl font-bold leading-[1.04] sm:text-5xl lg:text-[3.6rem]">
-              Buy the right inventory, at the right time,{" "}
-              <span className="bg-[linear-gradient(transparent_62%,var(--ill-yellow)_62%,var(--ill-yellow)_92%,transparent_92%)] px-1 [box-decoration-break:clone]">within the right budget</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              A procurement planner for hotel and flight pre-buys and allotments. It forecasts unconstrained demand from bookings, searches and sold-outs, then chooses quantities, contract mix, timing and selling prices that maximise risk-adjusted profit, and it never spends more than the maximum budget.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Button asChild size="lg"><Link href="/inventory">Open the planner <ArrowRight /></Link></Button>
-              <Button asChild size="lg" variant="outline"><Link href="/research/risk-engine.md">How it decides</Link></Button>
+        <section id="inventory-optimization" aria-labelledby="hero-title" className="landing-inventory">
+          <div className="landing-hero-grid">
+            <div className="landing-hero-copy">
+              <span className="landing-kicker"><span /> VOYAGEHACK 4.0 <i /> INVENTORY DECISIONS</span>
+              <h1 id="hero-title">Make every inventory<br className="landing-desktop-break" /> decision <em>count.</em></h1>
+              <p className="landing-lede">Turn demand signals into a clearer plan for hotel rooms and flight seats—within your budget, with risk in view.</p>
+              <div className="landing-actions">
+                <Button asChild size="lg"><Link href="/inventory">Explore the planner <ArrowRight /></Link></Button>
+                <Button asChild size="lg" variant="outline"><Link href="/research/risk-engine.md">See how it works <ArrowRight /></Link></Button>
+              </div>
+              <div className="landing-trust"><span className="landing-trust-icon"><Check size={14} /></span><p><strong>Decision-support demo.</strong> Starts with synthetic data. No purchases are made.</p></div>
             </div>
-            <ul className="mt-10 grid gap-3 sm:grid-cols-2" aria-label="What the planner does">
-              {[
-                ["Predict demand", "Seasonality, growth, signals and price sensitivity learned from history and checked against \u201csame month last year\u201d before the planner may use them."],
-                ["Optimise investment", "A hard maximum budget across hotels, flights, destinations and travel periods, with pre-paid versus allotment contracts, supplier capacity and minimum orders."],
-                ["Maximise profitability", "Quantities, buy timing and selling prices, including stock already held, chosen together."],
-                ["Manage risk", "Worst-10% profit (CVaR) over 500 correlated seasons, an availability target, and a check against 11 \u201cwhat if the model is wrong\u201d worlds."],
-              ].map(([title, body]) => (
-                <li key={title} className="rounded-2xl border bg-surface/60 p-4">
-                  <p className="text-sm font-semibold">{title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{body}</p>
-                </li>
-              ))}
-            </ul>
+            <figure className="landing-visual" aria-labelledby="landing-visual-title">
+              <div className="visual-top"><span><i /> THE BIGGER PICTURE</span><span className="visual-tag">ILLUSTRATIVE</span></div>
+              <div className="visual-heading"><div><p>RISK-AWARE PLANNING</p><h2 id="landing-visual-title">See beyond<br/><em>the average.</em></h2></div><div className="visual-orbit" aria-hidden="true"><span>↗</span></div></div>
+              <div className="visual-chart" aria-hidden="true"><div className="visual-chart-head"><span>SEASON PROFIT</span><span>ILLUSTRATIVE DISTRIBUTION</span></div><svg viewBox="0 0 400 145" preserveAspectRatio="none"><line x1="0" y1="130" x2="400" y2="130" stroke="#6b625c" strokeWidth="1"/>{[7,11,18,28,43,61,78,96,111,120,123,119,108,94,77,61,45,31,21,13,8,4].map((h,i)=><rect key={i} x={i*18.1+3} y={130-h} width="11" height={h} rx="3" fill={i<4?'#e8a28a':'#f26929'} opacity={i<4?.8:1}/>)}</svg><div className="visual-chart-axis"><span>LOWER OUTCOMES</span><span>HIGHER OUTCOMES</span></div></div>
+              <figcaption className="visual-note"><span className="visual-note-dot"/><span>Understand potential downside across simulated seasons. <strong>Illustration only—not a forecast of actual profit.</strong></span></figcaption>
+            </figure>
           </div>
-          <figure className="rounded-[24px] border bg-surface/60 p-6" aria-label="Illustration: profit across simulated seasons, with the worst 10% highlighted">
-            <svg viewBox="0 0 360 220" role="img" aria-hidden="true" className="h-auto w-full">
-              <line x1="20" y1="180" x2="344" y2="180" stroke="currentColor" strokeOpacity=".25" />
-              {[6, 10, 16, 24, 36, 52, 70, 88, 104, 118, 126, 128, 122, 110, 94, 76, 58, 42, 28, 18, 11, 6].map((h, i) => (
-                <rect key={i} x={24 + i * 14.6} y={180 - h} width="11" height={h} rx="2" fill={i < 4 ? "#ef4444" : "#2563eb"} fillOpacity={i < 4 ? 0.85 : 0.75} />
-              ))}
-              <line x1="83" y1="40" x2="83" y2="184" stroke="#ef4444" strokeDasharray="4 4" />
-              <text x="26" y="34" fontSize="11" fill="#ef4444">Worst 10% of seasons (CVaR)</text>
-              <text x="200" y="34" fontSize="11" fill="currentColor" fillOpacity=".7">Typical season</text>
-              <text x="24" y="204" fontSize="11" fill="currentColor" fillOpacity=".6">Loss</text>
-              <text x="300" y="204" fontSize="11" fill="currentColor" fillOpacity=".6">Profit</text>
-            </svg>
-            <figcaption className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Every plan is scored on simulated seasons with correlated demand, price and cancellation shocks. The risk slider trades expected profit for a better worst case. Illustration; open the planner for live numbers.
-            </figcaption>
-          </figure>
+          <div className="landing-features-head"><span>BUILT FOR BETTER DECISIONS</span><span>FROM DATA TO REVIEW <ArrowRight size={14}/></span></div>
+          <ul className="landing-features" aria-label="What the planner does">
+            {[
+              ["01", "Predict demand", "Explore demand estimates informed by your inputs and available history."],
+              ["02", "Shape your investment", "Allocate a budget across inventory, contract types and supplier capacity."],
+              ["03", "Consider profitability", "Review proposed quantities, selling prices and modeled returns."],
+              ["04", "Understand risk", "Explore downside scenarios and review supplier terms before acting."],
+            ].map(([number, title, body]) => (
+              <li key={title}><span className="landing-feature-number">{number}</span><h3>{title}</h3><p>{body}</p></li>
+            ))}
+          </ul>
         </section>
 
         {/* ─── VoyageHack 3.0 (same team): TBO Assemble, group travel ───────── */}
