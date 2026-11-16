@@ -4,7 +4,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 const fs=require('node:fs/promises');
 const base=process.env.TEST_BASE||'http://127.0.0.1:3102';
 (async()=>{const browser=await chromium.launch({args:['--no-sandbox']});const p=await browser.newPage({viewport:{width:390,height:900}});const errors=[];p.on('pageerror',e=>errors.push(e.message));try{
- await p.goto(base+'/inventory');const section=p.locator('.decision-export');await section.getByRole('button',{name:'Download review'}).waitFor();
+ await p.goto(base+'/inventory');await p.locator('#review-detail > summary').click();const section=p.locator('.decision-export');await section.getByRole('button',{name:'Download review'}).waitFor();
  const initial=await Promise.all([p.waitForEvent('download'),section.getByRole('button',{name:'Download review'}).click()]);const initialRecord=JSON.parse(await fs.readFile(await initial[0].path(),'utf8'));
  if(initialRecord.source!=='synthetic'||initialRecord.originalInventory.length!==initialRecord.result.rows.length||initialRecord.settings.budgetInr!==5000000)throw Error('Initial review does not match the model');
  await p.locator('#budget').fill('0');if(!await section.getByRole('button',{name:'Download review'}).isDisabled())throw Error('Unapplied budget export was not blocked');await p.locator('.budget-input').getByRole('button',{name:'Apply'}).click();

@@ -2,7 +2,7 @@
 const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 const base=process.env.TEST_BASE||'http://127.0.0.1:3102';
 (async()=>{const browser=await chromium.launch({args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:390,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));try{
- await page.goto(base+'/inventory');const s=page.locator('.budget-compare');await s.getByRole('heading',{name:'What if your budget changes?'}).waitFor();
+ await page.goto(base+'/inventory');await page.locator('#budget-detail > summary').click();const s=page.locator('.budget-compare');await s.getByRole('heading',{name:'What if your budget changes?'}).waitFor();
  const input=s.locator('#comparison-budget'),compare=s.getByRole('button',{name:'Compare allocations'});await input.fill('0');await compare.click();await s.getByRole('heading',{name:/Alternative:/}).waitFor();
  if(!await s.getByText('Hotel room-nights').isVisible()||!await s.getByText('Flight seats').isVisible()||await page.locator('#budget').inputValue()!=='5000000')throw Error('Scenario preview or non-application failed');
  await s.locator('summary').click();if(!await s.getByText(/room-nights|seats/).first().isVisible())throw Error('Allocation changes not visible');
