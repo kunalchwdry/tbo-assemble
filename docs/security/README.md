@@ -3,13 +3,16 @@
 Branch `security/owner-scope-s1`, based on `main` at `195fd1c`. Last updated 17 Nov 2026.
 Implements the security implementation plan in stages. **The application code here is not deployed.**
 
-- Production runs `195fd1c`; this branch has not been pushed.
+- Production runs `195fd1c`.
+- This branch was pushed to GitHub (a public repo) on 17 Nov. Its Vercel preview built successfully (deployment
+  `B4mYDw…`). Previews sit behind Vercel login, so the preview was not smoke-tested from outside.
 - The new API is off (`OWNER_SCOPE_API` unset → 503).
 - **Production database (approved by the project owner, 17 Nov 2026):**
   - the additive ownership migration is applied;
   - the 8 events are assigned to one approved account;
-  - the running app does not use either yet;
+  - the Data API grants on 20 server-only tables are revoked;
   - see "Production changes".
+  - The running app does not use the ownership records yet.
 
 **This branch does not make the application secure.** The legacy routes and dashboard pages listed below still expose
 private data to anyone until the cutover steps are approved and done.
@@ -67,7 +70,7 @@ afterwards are listed under "Production changes".
 |---|---|
 | Where the data lives | The 17 legacy Prisma tables are in this project, with real data (exact counts on 17 Nov: 8 events, 142 guests, 107 bookings). Schema changes are recorded as Supabase migrations (13 before this work), and there is no Prisma migration history |
 | RLS | **On for all 28 public tables.** The active event trigger `ensure_rls` (function `rls_auto_enable`) turns RLS on for every new table created in `public`, so future Prisma tables get it too. None of the 17 legacy tables has a policy, so the Data API returns no rows to `anon` or `authenticated`. Neither role can bypass RLS. The owner role `postgres` can, which is why the app (Prisma) still reads the tables |
-| Grants | `anon` and `authenticated` hold **full privileges** (select, insert, update, delete, truncate, …) on the 17 legacy tables, `market_fare_observations` and the two `serpapi_*` tables, through the schema's default privileges. Today only RLS stands in the way; one mistaken permissive policy would open a table. The research tables (`route_forecast_evidence`, `traffic_research_*`) have no grants |
+| Grants | At the time of this check, `anon` and `authenticated` held **full privileges** (select, insert, update, delete, truncate, …) on the 17 legacy tables, `market_fare_observations` and the two `serpapi_*` tables, through the schema's default privileges, so only RLS stood in the way. **Revoked later that day** (see "Production changes"). The research tables (`route_forecast_evidence`, `traffic_research_*`) have no grants |
 | Saved plans and quote reviews | **Deployed exactly as `private-inventory-plans.sql` / `private-quote-reviews.sql`.** RLS on; owner-only select, insert and delete via `auth.uid()`; no update; insert limited to the same columns; no anonymous access. The same pattern holds for the private drafts, guests and room blocks, with owner-only update on the allowed columns |
 | Views and functions | No views or materialised views in `public`. The two quota trigger functions run with owner rights (`SECURITY DEFINER`) but cannot be executed by `anon`/`authenticated`. `rls_auto_enable` is an event-trigger function and cannot be called through the API |
 | Ownership migration | Not applied at the time of this check; applied later that day (see "Production changes") |
@@ -86,7 +89,21 @@ afterwards are listed under "Production changes".
 | Snapshot after the mapping | Identical to the snapshot before | 17:36:54 UTC |
 | Live site | `/`, `/dashboard`, `/event/{slug}`: 200. `/api/v2/events`: 503 (flag off). The legacy API still lists 8 events | behaviour unchanged |
 
+**Data API grants revoked (same day, approved by the owner).**
+
+| Step | What was done | Evidence |
+|---|---|---|
+| Nothing uses them | Code search on all 8 branches of both GitHub repos: Supabase client `.from()` calls target only the `private_*` tables. `market_fare_observations` and `serpapi_*` are reached through Prisma raw SQL (database owner role). No `.rpc()`, live updates, REST/GraphQL calls or service keys. The project has no edge functions, no tables in a live-update publication and no GraphQL extension | `pg_stat_statements` since 13 Nov: the public roles ran only the 17 queries of the earlier read-only check (`authenticated`: none) |
+| Snapshot before | Every grant on every public table | 20 target tables × 8 privileges × 2 roles = 320 grant rows; 490 other grant rows (checksum recorded) |
+| Change | `migrations/2026-11-17-revoke-data-api-grants.up.sql` (one `REVOKE ALL … FROM anon, authenticated`), applied as Supabase migration `20261117174546 revoke_data_api_grants_server_only_tables` | 0 grant rows and no effective privilege left for `anon`/`authenticated` on the 20 tables. The other 490 grants, all RLS flags and all policies are unchanged (checksums equal) |
+| From outside | Data API with the site's public key | Legacy and server-only tables: `401 permission denied` (previously `200` with 0 rows). `private_inventory_plans`: 401, as before |
+| Live site | Pages; fare routes that read `market_fare_observations`; legacy API | `/`, `/dashboard`, `/event/{slug}`: 200. `/api/india-market/fares` and `/api/flight/seven-day`: 200 (15 fare rows). `/api/events`: 8 events. `/api/v2/events`: 503 |
+
+Default privileges are **unchanged**: tables created in `public` from now on still receive full `anon`/`authenticated`
+grants. The `ensure_rls` trigger still turns RLS on for them.
+
 Undo (each needs the same kind of approval):
+- Data API grants: `migrations/2026-11-17-revoke-data-api-grants.down.sql`.
 - Ownership only: `UPDATE "EventMember" SET "revokedAt" = now() WHERE "grantedBy" = 'R14-owner-mapping-2026-11-17';`
 - The whole schema change: `migrations/2026-11-17-event-ownership.down.sql` (drops only the two tables).
 
@@ -112,9 +129,9 @@ Notes:
    endpoints that return the whole event.
 5. **Public event page.** It shows the organiser's email address as a contact link. This may be intended; it is the
    project owner's decision.
-6. **Data API grants.** RLS (with no policies) is the only barrier. `anon` and `authenticated` still hold full grants on
-   the legacy tables, and new tables receive them by default. This was checked in the catalog, not with a real signed-in
-   token.
+6. **Data API defaults.** The grants on the 20 server-only tables are revoked. Tables created from now on still receive
+   full `anon`/`authenticated` grants by default, so for them RLS is the only barrier. The logged-in (`authenticated`)
+   side was checked in the catalog, not with a real signed-in token.
 7. **Open sign-up without email confirmation.** This is your setting and was left unchanged. Any account is
    unverified, so emails can never be used for authorization.
 
@@ -147,18 +164,21 @@ Notes:
 
 ## Decisions needed (nothing below happens without an explicit yes)
 
-Done on 17 Nov 2026 with the owner's approval: the up migration on production and the ownership mapping (see
-"Production changes").
+Done on 17 Nov 2026 with the owner's approval (see "Production changes"):
+- the up migration on production and the ownership mapping;
+- revoking the Data API grants on the 20 server-only tables;
+- pushing this branch, with a Vercel preview (flag off).
 
-1. Push this branch, or create a Vercel preview (flag off).
-2. Name the approved synthetic accounts, then turn the flag on **for the preview only**.
+1. Check the preview in a browser while logged in to Vercel. It is behind Vercel login, so it could not be checked from
+   outside. In Vercel's environment-variable settings, check whether **Preview** uses the production `DATABASE_URL`.
+2. Name the approved synthetic accounts, then turn the flag on **for the preview only** (and only once item 1 is known).
 3. Run a production backup and restore drill before any change that alters existing tables or rows. The dump contains
    personal data, so it must stay on an approved, encrypted machine. The owner chose to skip it for the additive
    migration.
 4. Decide owners for events created from now on. The legacy dashboard creates them unclaimed. v2 has no endpoint for
    creating events yet; when one is built, it should make the creator the owner in the same transaction.
-5. Approve or decline revoking the Data API grants (`anon`, `authenticated`) on the legacy, `market_fare_observations`
-   and `serpapi_*` tables, and the matching default privileges for new tables. The app does not use them: Supabase client
-   code only touches the `private_*` tables. The deployed RLS check itself is done (read-only).
+5. Optional: change the schema's default privileges so new tables no longer grant `anon`/`authenticated` anything
+   automatically. Any future table meant for the Data API would then need explicit `GRANT`s in its migration (the
+   `private_*` migrations already do this).
 6. Later, separately: move the booking page and dashboard to v2, switch off the legacy bridge, and restrict the
    legacy routes.

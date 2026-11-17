@@ -127,6 +127,20 @@ What was done:
 - The application code is still not deployed.
 - Undo queries: `README.md`, "Production changes".
 
+## 11. Branch pushed; Data API grants revoked (approved by the project owner)
+
+- **Push.** The branch was pushed to GitHub with the owner's key after a secrets and personal-data scan of the whole
+  diff (only synthetic `@example.test` addresses and fixtures were found). The Vercel preview (`B4mYDw…`) built
+  successfully. It sits behind Vercel login, so it was not smoke-tested from outside.
+- **Grants.** Revoked on the 17 legacy tables, `market_fare_observations` and `serpapi_*` (Supabase migration
+  `20261117174546`).
+  - No code on any branch, and no recorded query, used those grants.
+  - Grant rows on the 20 tables: 320 before, 0 after. The other 490 grants, RLS and policies are unchanged.
+  - The Data API now answers `401 permission denied`.
+  - Live site and fare routes still work.
+  - Default privileges for new tables are unchanged.
+- Files: `migrations/2026-11-17-revoke-data-api-grants.{up,down}.sql`.
+
 ## Verification at the end of this branch (17 Nov 2026)
 
 | Check | Result |
