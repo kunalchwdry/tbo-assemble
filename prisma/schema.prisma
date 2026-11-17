@@ -45,6 +45,7 @@ model Event {
   discountRules   DiscountRule[]
   rfps            RFP[]
   scheduleItems   ScheduleItem[]
+  members         EventMember[]
   status          String          @default("draft")
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @default(now()) @updatedAt
@@ -122,6 +123,7 @@ model Booking {
   status      String         @default("confirmed")
   addOns      BookingAddOn[]
   occupants   RoomOccupant[] // Additional guests in this room
+  access      BookingAccess[]
   checkedIn   Boolean        @default(false)
   checkedInAt DateTime?
   createdAt   DateTime       @default(now())
@@ -296,4 +298,43 @@ model RoomOccupant {
 
   @@index([bookingId])
   @@index([guestId])
+}
+
+/// Event-level ownership (docs/security/event-ownership.md). A row grants one Supabase Auth user (auth.users.id) access
+/// to one event. Events without an active row are UNCLAIMED: the owner-scoped API never shows them. Rows are created
+/// only by the approved mapping script (scripts/security-ownership-mapping.ts) or, later, by the event's owner.
+/// role: owner (read, write, manage access) | editor (read, write) | viewer (read). The migration adds a CHECK.
+model EventMember {
+  id         String    @id @default(uuid())
+  eventId    String
+  event      Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  authUserId String    @db.Uuid
+  role       String    @default("owner")
+  /// Approval reference recorded by the mapping script (a ticket or note, never an email address).
+  grantedBy  String?
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+
+  @@unique([eventId, authUserId])
+  @@index([authUserId])
+}
+
+/// Booking capabilities (docs/security/booking-capabilities.md). Only a SHA-256 hash of each token is stored.
+/// kind "link": a token in a URL that the owner issues and can revoke; kind "session": the HttpOnly cookie a link
+/// (or, during the transition, a legacy booking URL) is exchanged for. scope: view | upgrade.
+model BookingAccess {
+  id         String    @id @default(uuid())
+  bookingId  String
+  booking    Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  kind       String
+  scope      String    @default("view")
+  tokenHash  String    @unique
+  /// issued | legacy-booking-url
+  source     String    @default("issued")
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+
+  @@index([bookingId])
 }
