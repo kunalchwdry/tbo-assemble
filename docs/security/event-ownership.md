@@ -130,5 +130,12 @@ Ownership is never inferred from an email that resembles the agent's. Tested in 
 5. **Move the dashboard and booking page to v2** behind a reversible switch. Compare aggregate counts and errors.
 6. **Restrict the legacy routes** (separate approval).
 
+Production facts (read-only check, 17 Nov 2026):
+- Production has no `_prisma_migrations` table, so the schema is managed with `prisma db push`.
+- After the up migration, run `db push` only from a branch whose `schema.prisma` contains the two new models. An older
+  schema would offer to drop them (behind a data-loss prompt).
+- The project's `ensure_rls` event trigger also turns RLS on for the new tables. The migration's explicit
+  `ENABLE ROW LEVEL SECURITY` and `REVOKE` remain the source of truth.
+
 Rollback: switch `OWNER_SCOPE_API` off, then optionally run the down migration. Rolling back never means re-opening the
 legacy routes silently.

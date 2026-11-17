@@ -96,6 +96,19 @@ route handlers' own `no-referrer`. Config headers win, and among config entries 
   residual risk, decisions), and this log.
 - `owner-scoped-migration.md` and `ownership-migration.sql` (the agent-level draft) are marked **superseded**.
 
+## 9. Deployed Supabase configuration check (read-only)
+
+- The Supabase connector (organisation `tbo`) reached the production project. It ran SELECT queries on the system
+  catalog and read the auth settings: no table rows, no changes.
+- RLS is on for all 28 public tables, and the `ensure_rls` event trigger covers new ones. The legacy tables have no
+  policies, and `anon`/`authenticated` cannot bypass RLS.
+- Those roles still hold full grants on 20 tables through the default privileges. Revoking them needs approval.
+- Saved plans and quote reviews are deployed exactly as the repo SQL (this closes the plan's "verify deployed RLS"
+  item).
+- The ownership migration is not applied.
+- Sign-ups are open with email confirmation off (left unchanged).
+- Details: `README.md`, "Deployed configuration".
+
 ## Verification at the end of this branch (17 Nov 2026)
 
 | Check | Result |
