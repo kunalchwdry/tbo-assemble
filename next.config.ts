@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
         { key: 'Referrer-Policy', value: 'same-origin' },
       ] },
       ...['/api/events/:path*', '/api/guests/:path*', '/api/bookings/:path*', '/event/:path*', '/secure-account/:path*', '/dashboard/:path*'].map(source => ({ source, headers: noStore })),
+      // Owner-scoped API and booking links: never cached, never send a Referer (must come after the '/:path*' entry,
+      // because the last matching entry wins and config headers override the route handler's own headers).
+      ...['/api/v2/:path*', '/booking/:path*'].map(source => ({ source, headers: [...noStore, { key: 'Referrer-Policy', value: 'no-referrer' }] })),
     ];
   },
 };

@@ -42,16 +42,17 @@ export default async function MicrositePage({
     include: {
       roomBlocks: { orderBy: { hotelName: "asc" } },
       addOns: true,
-      guests: true,
-      agent: true,
+      // Public page: load only what it renders. No guest records, and no agent fields beyond the contact email.
+      agent: { select: { email: true } },
       discountRules: { orderBy: { minRooms: "asc" } },
       attritionRules: { orderBy: { releaseDate: "asc" } },
+      _count: { select: { guests: { where: { status: "confirmed" } } } },
     },
   });
 
   if (!event) return notFound();
 
-  const confirmedGuests = event.guests.filter((g) => g.status === "confirmed").length;
+  const confirmedGuests = event._count.guests;
   const totalRoomsAvailable = event.roomBlocks.reduce((s, r) => s + r.totalQty - r.bookedQty, 0);
   const totalRooms = event.roomBlocks.reduce((s, r) => s + r.totalQty, 0);
   const includedPerks = event.addOns.filter((a) => a.isIncluded).length;
