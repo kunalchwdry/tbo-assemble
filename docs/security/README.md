@@ -176,11 +176,17 @@ Done on 17 Nov 2026 with the owner's approval (see "Production changes"):
      configured". The same build was run locally: it failed the same way without a database and worked normally with
      one. The branch does not touch those pages. Production's dashboard renders normally.
    - So previews never touch production data, but a v2 test on a preview needs a separate preview database first.
-2. Choose where to test v2 with real sign-in:
-   - a separate free preview database (recommended);
-   - a one-off run in the work sandbox against synthetic data;
-   - production data (not recommended).
-   Then name the approved test accounts and turn the flag on **for that environment only**.
+2. **Owner's choice (17 Nov): previews use the production database.** The owner chose this knowingly over a separate
+   preview database. It means a flag-on preview acts on real events, so the preview checks are read-only. The owner
+   sets the variables in Vercel; the work sandbox has no Vercel access.
+   - `OWNER_SCOPE_API=1`: **Preview, branch `security/owner-scope-s1` only. Never Production.**
+     - `main` (production, and every other branch's preview) still contains the superseded v2 code.
+     - That code needs an `Agent."authUserId"` column that does not exist, so it would switch on and fail.
+   - `DATABASE_URL`: recommended for the same branch only. All previews would also work, at the cost of real data in
+     every preview.
+   - Keep Vercel's preview login on; previews will show real data.
+   - Test accounts: the owner's account for the owner checks. A second, non-owner account is optional but needed for
+     the "another user sees nothing" check.
 3. Run a production backup and restore drill before any change that alters existing tables or rows. The dump contains
    personal data, so it must stay on an approved, encrypted machine. The owner chose to skip it for the additive
    migration.
