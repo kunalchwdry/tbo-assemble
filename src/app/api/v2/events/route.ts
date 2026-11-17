@@ -2,7 +2,7 @@ import { listEventsHandler, ownerScopeDisabled, ownerScopeEnabled } from '@/lib/
 
 export const dynamic = 'force-dynamic';
 
-/** Owner-scoped event list (disabled until OWNER_SCOPE_API=1; see docs/security/owner-scoped-migration.md). */
+/** The signed-in user's events (disabled until OWNER_SCOPE_API=1). */
 export async function GET(request: Request) {
   if (!ownerScopeEnabled()) return ownerScopeDisabled();
   const { ownerScopeDeps } = await import('@/lib/access/owner-scope-deps');

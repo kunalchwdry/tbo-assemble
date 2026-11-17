@@ -1,155 +1,185 @@
 /**
- * Owner-scoped replacement for the legacy event/guest/booking API: authorization and denial with local mocks only.
- * No database, no Supabase, no network. Synthetic ids and names.
+ * Owner-scoped (v2) access: policy, allowlists, request guards and capability helpers, with local mocks only.
+ * No database, no Supabase, no network; synthetic ids. The same handlers run against an isolated PostgreSQL
+ * database in tests/owner-scope-db.test.ts.
  */
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { decide, publicEventView, bookingHolderView, type EventLike, type Principal } from '../src/lib/access/event-access';
-import { listEventsHandler, getEventHandler, listGuestsHandler, getBookingHandler, type OwnerScopeDeps } from '../src/lib/access/owner-scope-handlers';
+import { decide, publicEventView, bookingHolderView, type Principal, type Role } from '../src/lib/access/event-access';
+import { validateEventPatch, validateGuestCreate, validateGuestPatch, validateStatusChange, canTransition, readJsonBody, EVENT_STATUS_TRANSITIONS } from '../src/lib/access/validate';
+import { sameOriginCheck, audit, pseudonym } from '../src/lib/access/request-guards';
+import { hashToken, newToken, readSessionCookie, sessionCookie, TOKEN_FORMAT } from '../src/lib/access/booking-capability';
+import { getEventHandler, patchEventHandler, listEventsHandler, getBookingHandler, type OwnerScopeDeps } from '../src/lib/access/owner-scope-handlers';
+import type { OwnerRepo } from '../src/lib/access/owner-repo';
+import type { CapabilityStore } from '../src/lib/access/booking-capability';
+import { readFileSync } from 'node:fs';
 
-const ALICE = '11111111-1111-4111-8111-111111111111', BOB = '22222222-2222-4222-8222-222222222222';
-const EV_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', EV_UNCLAIMED = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', EV_MISSING = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
-const BK_A = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', BK_UNCLAIMED = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
-const alice: Principal = { kind: 'user', authUserId: ALICE }, bob: Principal = { kind: 'user', authUserId: BOB }, anon: Principal = { kind: 'anonymous' };
+const ALICE = '11111111-1111-4111-8111-111111111111';
+const EV = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+const user = (id = ALICE): Principal => ({ kind: 'user', authUserId: id });
+const anon: Principal = { kind: 'anonymous' };
 
-const event = (id: string, slug: string): EventLike => ({
-  id, name: `Synthetic offsite ${slug}`, slug, type: 'conference', venue: 'Test venue', location: 'Goa', checkIn: '2027-01-10', checkOut: '2027-01-12', status: 'published',
-  roomBlocks: [{ id: 'rb-1', roomType: 'Deluxe', rate: 9000, totalQty: 10, bookedQty: 4 }], addOns: [{ id: 'ad-1', name: 'Airport transfer', price: 1200 }],
-  guests: [{ id: 'g-1', name: 'Guest One', email: 'one@example.test', phone: '+910000000001' }, { id: 'g-2', name: 'Guest Two', email: 'two@example.test' }],
-  bookings: [{ id: 'other-booking', guestId: 'g-2', totalAmount: 18000 }], attritionRules: [{ id: 'ar-1', cutoff: '2026-12-01' }], agentId: 'agent-1', activityLogs: [{ id: 'log' }],
-});
-const EVENTS: Record<string, { event: EventLike; ownerAuthUserId: string | null }> = {
-  [EV_A]: { event: event(EV_A, 'alice-offsite'), ownerAuthUserId: ALICE },
-  [EV_UNCLAIMED]: { event: event(EV_UNCLAIMED, 'legacy-demo'), ownerAuthUserId: null },
-};
-const BOOKINGS: Record<string, { booking: { id: string; eventId: string; totalAmount: number; status: string; guestId: string; roomBlockId: string; guest: { name: string; email: string; phone: string } }; eventId: string }> = {
-  [BK_A]: { booking: { id: BK_A, eventId: EV_A, totalAmount: 18000, status: 'confirmed', guestId: 'g-1', roomBlockId: 'rb-1', guest: { name: 'Guest One', email: 'one@example.test', phone: '+910000000001' } }, eventId: EV_A },
-  [BK_UNCLAIMED]: { booking: { id: BK_UNCLAIMED, eventId: EV_UNCLAIMED, totalAmount: 9000, status: 'confirmed', guestId: 'g-1', roomBlockId: 'rb-1', guest: { name: 'Guest One', email: 'one@example.test', phone: '+910000000001' } }, eventId: EV_UNCLAIMED },
-};
-
-function mockDeps(who: Principal | Error, enabled = true) {
-  const calls: string[] = [];
-  const deps: OwnerScopeDeps = {
-    enabled: () => enabled,
-    principal: async () => { calls.push('principal'); if (who instanceof Error) throw who; return who; },
-    listOwnedEvents: async id => { calls.push(`listOwnedEvents:${id}`); return Object.values(EVENTS).filter(e => e.ownerAuthUserId === id).map(e => ({ id: e.event.id, name: e.event.name, slug: e.event.slug } as EventLike)); },
-    getEvent: async id => { calls.push(`getEvent:${id}`); return EVENTS[id] ?? null; },
-    listGuests: async id => { calls.push(`listGuests:${id}`); return (EVENTS[id]?.event.guests as Record<string, unknown>[]) ?? []; },
-    getBooking: async id => { calls.push(`getBooking:${id}`); const b = BOOKINGS[id]; return b ? { booking: b.booking, event: EVENTS[b.eventId] } : null; },
-  };
-  return { deps, calls };
-}
-const req = (path: string) => new Request(`http://localhost${path}`);
-const body = async (r: Response) => ({ status: r.status, json: await r.json(), cache: r.headers.get('cache-control') });
-const PRIVATE_KEYS = ['guests', 'bookings', 'attritionRules', 'agentId', 'activityLogs'];
-
-test('policy: owner-only actions need a session (401) and ownership (404 otherwise); unclaimed events have no owner', () => {
-  for (const action of ['event:read', 'event:write', 'guest:list', 'guest:write', 'booking:write'] as const) {
-    assert.deepEqual(decide(action, anon, { exists: true, ownerAuthUserId: ALICE }), { allow: false, status: 401, reason: 'Sign in to manage events.' });
-    assert.equal(decide(action, anon, { exists: false }).allow, false, 'anonymous gets 401 whether or not it exists');
-    assert.equal((decide(action, anon, { exists: false }) as { status: number }).status, 401);
-    assert.deepEqual(decide(action, alice, { exists: true, ownerAuthUserId: ALICE }), { allow: true, scope: 'owner' });
-    const cross = decide(action, bob, { exists: true, ownerAuthUserId: ALICE }), missing = decide(action, bob, { exists: false });
-    assert.deepEqual(cross, missing, 'another user\'s resource is indistinguishable from a missing one');
-    assert.equal((cross as { status: number }).status, 404);
-    const signedIn: Principal[] = [alice, bob];
-    for (const who of signedIn) assert.equal((decide(action, who, { exists: true, ownerAuthUserId: null }) as { status: number }).status, 404, 'unclaimed: nobody owns it');
-    assert.equal(decide(action, { kind: 'user', authUserId: '' }, { exists: true, ownerAuthUserId: '' }).allow, false, 'empty ids never match');
-  }
-  assert.deepEqual(decide('event:list', alice), { allow: true, scope: 'owner' });
-  assert.equal((decide('event:list', anon) as { status: number }).status, 401);
-});
-
-test('policy: share links and booking links grant only their narrow view', () => {
-  assert.deepEqual(decide('event:read-public', anon, { exists: true, ownerAuthUserId: null, slugMatches: true }), { allow: true, scope: 'public' });
-  assert.equal((decide('event:read-public', anon, { exists: true, slugMatches: false }) as { status: number }).status, 404);
-  assert.deepEqual(decide('booking:read', anon, { exists: true, ownerAuthUserId: ALICE, bookingMatches: true }), { allow: true, scope: 'booking-holder' });
-  assert.deepEqual(decide('booking:read', bob, { exists: true, ownerAuthUserId: ALICE, bookingMatches: true }), { allow: true, scope: 'booking-holder' }, 'another signed-in user with the link is still only a holder');
-  assert.deepEqual(decide('booking:read', alice, { exists: true, ownerAuthUserId: ALICE, bookingMatches: false }), { allow: true, scope: 'owner' });
-  assert.equal((decide('booking:read', anon, { exists: true, bookingMatches: false }) as { status: number }).status, 404);
-  assert.equal((decide('booking:create', anon, { exists: true, slugMatches: true, eventStatus: 'cancelled' }) as { status: number }).status, 403);
-  assert.equal(decide('booking:create', anon, { exists: true, slugMatches: true, eventStatus: 'published' }).allow, true);
-  const view = publicEventView(EVENTS[EV_A].event);
-  for (const k of PRIVATE_KEYS) assert.ok(!(k in view), `public view leaks ${k}`);
-  assert.deepEqual((view.roomBlocks as { available: number }[]).map(r => r.available), [6]);
-  const holder = bookingHolderView(BOOKINGS[BK_A].booking, EVENTS[EV_A].event);
-  assert.deepEqual(holder.guest, { name: 'Guest One' }, 'holder view drops email and phone');
-  assert.ok(!JSON.stringify(holder).includes('two@example.test') && !JSON.stringify(holder).includes('other-booking'), 'no other guests or bookings');
-});
-
-test('handlers: disabled by default answer 503 without touching identity or data', async () => {
-  const { deps, calls } = mockDeps(alice, false);
-  for (const r of [await listEventsHandler(deps)(req('/api/v2/events')), await getEventHandler(deps)(req('/x'), EV_A), await listGuestsHandler(deps)(req(`/api/v2/guests?eventId=${EV_A}`)), await getBookingHandler(deps)(req('/x'), BK_A)]) {
-    assert.equal(r.status, 503);
-    assert.equal(r.headers.get('cache-control'), 'no-store, max-age=0');
-  }
-  assert.deepEqual(calls, []);
-});
-
-test('handlers: anonymous and failed sessions are denied (401); malformed identities count as anonymous', async () => {
-  for (const who of [anon, new Error('auth service down'), { kind: 'user', authUserId: 'not-a-uuid' } as Principal]) {
-    const { deps, calls } = mockDeps(who);
-    assert.equal((await listEventsHandler(deps)(req('/api/v2/events'))).status, 401);
-    assert.equal((await getEventHandler(deps)(req('/x'), EV_A)).status, 401);
-    assert.equal((await listGuestsHandler(deps)(req(`/api/v2/guests?eventId=${EV_A}`))).status, 401);
-    assert.ok(calls.every(c => c === 'principal'), `no data read for ${JSON.stringify(who)}: ${calls}`);
+test('policy: anonymous gets 401 on every owner action, whether or not the event exists', () => {
+  for (const action of ['event:list', 'event:read', 'event:write', 'guest:list', 'guest:write', 'booking:access-admin'] as const) {
+    for (const exists of [true, false]) assert.deepEqual(decide(action, anon, { exists, role: 'owner' }), { allow: false, status: 401, reason: 'Sign in to manage events.' });
   }
 });
 
-test('handlers: owners see their own data; other users get the same 404 as for a missing event, and no data is read', async () => {
-  const a = mockDeps(alice);
-  const list = await body(await listEventsHandler(a.deps)(req('/api/v2/events')));
-  assert.equal(list.status, 200);
-  assert.deepEqual(list.json.events.map((e: EventLike) => e.id), [EV_A], 'only the user\'s events; unclaimed legacy events are not listed');
-  const detail = await body(await getEventHandler(a.deps)(req('/x'), EV_A));
-  assert.equal(detail.status, 200);
-  assert.equal(detail.json.event.guests.length, 2, 'owner view includes guests');
-  assert.equal(detail.cache, 'no-store, max-age=0');
-  assert.equal((await listGuestsHandler(a.deps)(req(`/api/v2/guests?eventId=${EV_A}`))).status, 200);
-
-  const b = mockDeps(bob);
-  const cross = await body(await getEventHandler(b.deps)(req('/x'), EV_A));
-  const missing = await body(await getEventHandler(b.deps)(req('/x'), EV_MISSING));
-  assert.equal(cross.status, 404);
-  assert.deepEqual(cross, missing, 'no enumeration: same status and body');
-  assert.equal((await getEventHandler(b.deps)(req('/x'), EV_UNCLAIMED)).status, 404, 'unclaimed legacy events are not exposed by the new API');
-  const guests = await listGuestsHandler(b.deps)(req(`/api/v2/guests?eventId=${EV_A}`));
-  assert.equal(guests.status, 404);
-  assert.ok(!b.calls.some(c => c.startsWith('listGuests')), 'guests are never loaded for a non-owner');
-  assert.equal((await listGuestsHandler(b.deps)(req('/api/v2/guests?eventId=../../etc'))).status, 400);
-  assert.equal((await getEventHandler(b.deps)(req('/x'), "1' OR '1'='1")).status, 404);
-  assert.ok(!b.calls.some(c => c.includes("'")), 'malformed ids never reach the data layer');
+test('policy: role matrix (no role or missing -> 404; viewer write -> 403; editor cannot administer access)', () => {
+  const cases: [string, Role | null, number | 'allow'][] = [
+    ['event:read', 'viewer', 'allow'], ['event:read', 'editor', 'allow'], ['event:read', 'owner', 'allow'], ['event:read', null, 404],
+    ['event:write', 'viewer', 403], ['event:write', 'editor', 'allow'], ['event:write', 'owner', 'allow'], ['event:write', null, 404],
+    ['guest:list', 'viewer', 'allow'], ['guest:write', 'viewer', 403], ['guest:write', 'editor', 'allow'], ['guest:write', null, 404],
+    ['booking:access-admin', 'owner', 'allow'], ['booking:access-admin', 'editor', 403], ['booking:access-admin', 'viewer', 403], ['booking:access-admin', null, 404],
+  ];
+  for (const [action, role, want] of cases) {
+    const d = decide(action as Parameters<typeof decide>[0], user(), { exists: true, role });
+    assert.equal(d.allow ? 'allow' : d.status, want, `${action} as ${role}`);
+  }
+  // A missing resource is indistinguishable from someone else's.
+  assert.deepEqual(decide('event:read', user(), { exists: false, role: null }), decide('event:read', user(), { exists: true, role: null }));
 });
 
-test('handlers: a booking link keeps working for its holder (narrow view), including for unclaimed legacy events', async () => {
-  const holder = mockDeps(anon);
-  const own = await body(await getBookingHandler(holder.deps)(req('/x'), BK_A));
-  assert.equal(own.status, 200);
-  assert.equal(own.json.scope, 'booking-holder');
-  assert.equal(own.json.booking.id, BK_A);
-  assert.deepEqual(own.json.booking.guest, { name: 'Guest One' });
-  assert.equal(own.json.booking.event.roomBlocks[0].available, 6, 'room availability for the upgrade flow');
-  for (const k of PRIVATE_KEYS) assert.ok(!(k in own.json.booking.event), `holder view leaks ${k}`);
-  assert.ok(!JSON.stringify(own.json).includes('one@example.test'), 'no contact details in the holder view');
-  const legacy = await body(await getBookingHandler(holder.deps)(req('/x'), BK_UNCLAIMED));
-  assert.equal(legacy.status, 200, 'existing booking links for unclaimed events keep working');
-  assert.equal((await getBookingHandler(holder.deps)(req('/x'), 'ffffffff-ffff-4fff-8fff-ffffffffffff')).status, 404);
-  assert.equal((await getBookingHandler(holder.deps)(req('/x'), 'guessable-1')).status, 404);
-  const owner = await body(await getBookingHandler(mockDeps(alice).deps)(req('/x'), BK_A));
-  assert.equal(owner.json.scope, 'owner');
-  assert.equal(owner.json.booking.guest.email, 'one@example.test', 'the event owner sees the full booking');
+test('policy: bookings need a role on the event or a session bound to that booking; a bare id is not enough', () => {
+  assert.equal(decide('booking:read', anon, { exists: true }).allow, false);
+  assert.equal((decide('booking:read', anon, { exists: true }) as { status: number }).status, 401);
+  assert.equal((decide('booking:read', user(), { exists: true, role: null }) as { status: number }).status, 404);
+  assert.deepEqual(decide('booking:read', anon, { exists: true, bookingSession: true }), { allow: true, scope: 'booking-holder' });
+  assert.deepEqual(decide('booking:read', user(), { exists: true, role: 'viewer' }), { allow: true, scope: 'owner' });
 });
 
-test('routes: the v2 endpoints answer 503 while OWNER_SCOPE_API is unset, without loading the database or Supabase', async () => {
-  const before = process.env.OWNER_SCOPE_API;
-  delete process.env.OWNER_SCOPE_API;
-  const events = await import('../src/app/api/v2/events/route');
-  const detail = await import('../src/app/api/v2/events/[eventId]/route');
-  const guests = await import('../src/app/api/v2/guests/route');
-  const booking = await import('../src/app/api/v2/bookings/[bookingId]/route');
-  assert.equal((await events.GET(req('/api/v2/events'))).status, 503);
-  assert.equal((await detail.GET(req('/x'), { params: Promise.resolve({ eventId: EV_A }) })).status, 503);
-  assert.equal((await guests.GET(req(`/api/v2/guests?eventId=${EV_A}`))).status, 503);
-  assert.equal((await booking.GET(req('/x'), { params: Promise.resolve({ bookingId: BK_A }) })).status, 503);
-  if (before !== undefined) process.env.OWNER_SCOPE_API = before;
+test('policy: public event reads only for active or published events', () => {
+  for (const [status, allow] of [['active', true], ['published', true], ['draft', false], ['cancelled', false], ['completed', false], [undefined, false]] as const) {
+    assert.equal(decide('event:read-public', anon, { exists: true, eventStatus: status }).allow, allow, String(status));
+  }
+});
+
+test('public view is an allowlist: no id, guests, bookings, rules, agent or raw capacity', () => {
+  const view = publicEventView({
+    id: EV, name: 'Synthetic offsite', slug: 'synthetic', type: 'conference', venue: 'Hall', location: 'Pune', checkIn: '2027-01-10', checkOut: '2027-01-12', status: 'active',
+    agentId: 'x', agent: { email: 'owner@example.test', password: 'hash' }, guests: [{ email: 'g@example.test' }], bookings: [{}], attritionRules: [{}], internalNote: 'secret',
+    roomBlocks: [{ id: 'r1', roomType: 'Deluxe', rate: 100, totalQty: 10, bookedQty: 4 }], addOns: [{ id: 'a1', name: 'Dinner', price: 20, isIncluded: true }],
+  });
+  const text = JSON.stringify(view);
+  for (const leaked of ['agent', 'guests', 'bookings', 'attrition', 'internalNote', 'secret', '@', 'password', EV, 'totalQty', 'bookedQty']) assert.ok(!text.includes(leaked), leaked);
+  assert.equal((view.roomBlocks as { available: number }[])[0].available, 6);
+});
+
+test('booking-holder view shows the guest name only and lists the allowed actions', () => {
+  const v = bookingHolderView({ id: 'b1', eventId: EV, totalAmount: 100, status: 'confirmed', guest: { name: 'Guest One', email: 'one@example.test', phone: '+91 1' } }, { name: 'E', slug: 's', type: 't', venue: 'v', location: 'l', checkIn: '2027-01-01', checkOut: '2027-01-02' });
+  assert.deepEqual(v.guest, { name: 'Guest One' });
+  assert.deepEqual(v.allowedActions, ['view']);
+  assert.ok(!JSON.stringify(v).includes('@') && !JSON.stringify(v).includes('+91'));
+});
+
+test('event patch: allowlist rejects identity, linkage and status fields; validates values', () => {
+  for (const field of ['id', 'slug', 'agentId', 'status', 'members', 'createdAt']) assert.equal(validateEventPatch({ [field]: 'x' }).ok, false, field);
+  assert.equal(validateEventPatch({}).ok, false);
+  assert.equal(validateEventPatch({ primaryColor: 'red' }).ok, false);
+  assert.equal(validateEventPatch({ heroImageUrl: 'javascript:alert(1)' }).ok, false);
+  assert.equal(validateEventPatch({ heroImageUrl: 'http://example.test/a.png' }).ok, false);
+  assert.equal(validateEventPatch({ checkIn: '2027-02-10', checkOut: '2027-02-01' }).ok, false);
+  assert.equal(validateEventPatch({ checkIn: '2027-02-10T10:00:00' }).ok, false, 'timestamps need a time zone');
+  assert.equal(validateEventPatch({ name: 'a\u0000b' }).ok, false);
+  assert.equal(validateEventPatch({ name: 'x'.repeat(201) }).ok, false);
+  const good = validateEventPatch({ name: '  Offsite  ', primaryColor: '#1E40AF', heroImageUrl: 'https://example.test/a.png', expectedPax: 120 });
+  assert.ok(good.ok && good.value.name === 'Offsite' && good.value.primaryColor === '#1e40af');
+});
+
+test('status: same transition table as the legacy route', () => {
+  const legacy = readFileSync('src/app/api/events/[eventId]/status/route.ts', 'utf8');
+  for (const [from, tos] of Object.entries(EVENT_STATUS_TRANSITIONS)) assert.ok(legacy.includes(`${from}: [${tos.map(t => `"${t}"`).join(', ')}]`), from);
+  assert.equal(canTransition('draft', 'completed'), false);
+  assert.equal(validateStatusChange({ status: 'archived' }).ok, false);
+  assert.equal(validateStatusChange({ status: 'active', extra: 1 }).ok, false);
+});
+
+test('guest create/patch: eventId required on create, read-only fields refused, contact fields validated', () => {
+  assert.equal(validateGuestCreate({ name: 'A' }).ok, false);
+  assert.equal(validateGuestCreate({ eventId: EV, name: 'A', id: 'x' }).ok, false);
+  assert.equal(validateGuestCreate({ eventId: EV, name: 'A', email: 'not-an-email' }).ok, false);
+  assert.equal(validateGuestCreate({ eventId: EV, name: 'A', phone: '<script>' }).ok, false);
+  assert.equal(validateGuestPatch({ eventId: 'nope', name: 'A' }).ok, false);
+  const g = validateGuestCreate({ eventId: EV, name: 'Guest', email: 'Guest@Example.TEST', status: 'confirmed' });
+  assert.ok(g.ok && g.value.guest.email === 'guest@example.test');
+});
+
+test('same-origin check: cross-site and header-less writes refused; same origin and listed origins accepted', () => {
+  const req = (h: Record<string, string>) => new Request('https://tbo-assemble.example.test/api/v2/guests', { method: 'POST', headers: h });
+  assert.equal(sameOriginCheck(req({ 'sec-fetch-site': 'cross-site', origin: 'https://evil.test' })).ok, false);
+  assert.equal(sameOriginCheck(req({ origin: 'https://evil.test' })).ok, false);
+  assert.equal(sameOriginCheck(req({})).ok, false);
+  assert.equal(sameOriginCheck(req({ 'sec-fetch-site': 'same-site', origin: 'https://sub.tbo-assemble.example.test' })).ok, false);
+  assert.equal(sameOriginCheck(req({ origin: 'https://tbo-assemble.example.test' })).ok, true);
+  assert.equal(sameOriginCheck(req({ 'sec-fetch-site': 'same-origin' })).ok, true);
+  assert.equal(sameOriginCheck(req({ origin: 'https://preview.example.test' }), 'https://preview.example.test').ok, true);
+});
+
+test('JSON bodies: content type required, size capped while streaming (even without Content-Length)', async () => {
+  const big = new ReadableStream({ start(c) { for (let i = 0; i < 100; i++) c.enqueue(new TextEncoder().encode('"' + 'x'.repeat(1000) + '",')); c.close(); } });
+  const r = await readJsonBody(new Request('https://x.test', { method: 'POST', headers: { 'content-type': 'application/json' }, body: big, duplex: 'half' } as RequestInit), 10_000);
+  assert.deepEqual(r, { ok: false, error: 'The request body is too large.' });
+  assert.equal((await readJsonBody(new Request('https://x.test', { method: 'POST', headers: { 'content-type': 'text/plain' }, body: '{}' }))).ok, false);
+  assert.equal((await readJsonBody(new Request('https://x.test', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{bad' }))).ok, false);
+  assert.deepEqual(await readJsonBody(new Request('https://x.test', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{"a":1}' })), { ok: true, value: { a: 1 } });
+});
+
+test('capability tokens: 256-bit, url-safe, hashed; cookie is HttpOnly, SameSite=Lax, scoped to /api/v2', () => {
+  const t = newToken();
+  assert.match(t, TOKEN_FORMAT);
+  assert.notEqual(newToken(), t);
+  assert.match(hashToken(t), TOKEN_FORMAT);
+  assert.notEqual(hashToken(t), t);
+  const c = sessionCookie(t, new Date('2027-01-01T00:00:00Z'), true);
+  for (const part of ['HttpOnly', 'SameSite=Lax', 'Path=/api/v2', 'Secure']) assert.ok(c.includes(part), part);
+  assert.equal(readSessionCookie(new Request('https://x.test', { headers: { cookie: `a=1; tbo_booking_session=${t}` } })), t);
+  assert.equal(readSessionCookie(new Request('https://x.test', { headers: { cookie: 'tbo_booking_session=short' } })), null);
+});
+
+test('audit lines carry pseudonyms, never raw user ids, booking ids or tokens', () => {
+  const lines: string[] = [];
+  audit({ action: 'booking.read', result: 'denied', status: 401, actor: ALICE, resource: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' }, l => lines.push(l));
+  assert.ok(!lines[0].includes(ALICE) && !lines[0].includes('bbbbbbbb'));
+  assert.ok(lines[0].includes(pseudonym(ALICE)));
+});
+
+/** Handler-level checks with a mock repository (no database). */
+const mockDeps = (over: Partial<OwnerScopeDeps> = {}): OwnerScopeDeps => ({
+  enabled: () => true,
+  principal: async req => { const id = req.headers.get('x-test-user'); return id ? user(id) : anon; },
+  repo: {
+    listEvents: async () => [{ id: EV, role: 'owner' }],
+    getEvent: async (_u: string, id: string) => (id === EV ? { event: { id: EV }, role: 'owner' } : null),
+    updateEvent: async () => { throw new Error('must not be reached'); },
+    roleOnBooking: async () => null,
+  } as unknown as OwnerRepo,
+  capabilities: { resolveSession: async () => null } as unknown as CapabilityStore,
+  now: () => new Date('2026-11-17T00:00:00Z'),
+  limit: () => ({ allowed: true, retryAfterSeconds: 0 }),
+  legacyBookingLinks: () => true,
+  auditSink: () => {},
+  ...over,
+});
+
+test('handlers: switch off -> 503; malformed or failing identity -> 401 (fail closed)', async () => {
+  const off = await listEventsHandler(mockDeps({ enabled: () => false }))(new Request('https://x.test/api/v2/events'));
+  assert.equal(off.status, 503);
+  const throwing = await listEventsHandler(mockDeps({ principal: async () => { throw new Error('auth down'); } }))(new Request('https://x.test/api/v2/events'));
+  assert.equal(throwing.status, 401);
+  const malformed = await getEventHandler(mockDeps({ principal: async () => ({ kind: 'user', authUserId: 'not-a-uuid' }) }))(new Request('https://x.test'), EV);
+  assert.equal(malformed.status, 401);
+  assert.equal(off.headers.get('cache-control'), 'no-store, max-age=0');
+});
+
+test('handlers: cross-site write is refused before identity or data access', async () => {
+  const r = await patchEventHandler(mockDeps())(new Request(`https://x.test/api/v2/events/${EV}`, { method: 'PATCH', headers: { 'x-test-user': ALICE, origin: 'https://evil.test', 'content-type': 'application/json' }, body: '{"name":"x"}' }), EV);
+  assert.equal(r.status, 403);
+});
+
+test('handlers: anonymous booking read gets the same 401 for existing and random ids', async () => {
+  const h = getBookingHandler(mockDeps());
+  const a = await h(new Request('https://x.test'), 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');
+  const b = await h(new Request('https://x.test'), 'cccccccc-cccc-4ccc-8ccc-cccccccccccc');
+  assert.equal(a.status, 401);
+  assert.deepEqual(await a.json(), await b.json());
 });
