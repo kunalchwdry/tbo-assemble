@@ -5,7 +5,8 @@ Implements the security implementation plan in stages. **The application code he
 
 - Production runs `195fd1c`.
 - This branch was pushed to GitHub (a public repo) on 17 Nov. Its Vercel preview built successfully (deployment
-  `B4mYDw…`). Previews sit behind Vercel login, so the preview was not smoke-tested from outside.
+  `B4mYDw…`). Previews sit behind Vercel login. The owner opened it: database-backed pages fail there because
+  `DATABASE_URL` is set for Production only (see "Decisions needed", item 1).
 - The new API is off (`OWNER_SCOPE_API` unset → 503).
 - **Production database (approved by the project owner, 17 Nov 2026):**
   - the additive ownership migration is applied;
@@ -136,10 +137,9 @@ Notes:
    unverified, so emails can never be used for authorization.
 
 **Gaps in what this branch builds:**
-1. **Not wired to real sign-in.** v2 has never run with real Supabase sign-in. That needs a preview with approved
-   synthetic accounts.
-   - Check first whether Vercel previews share the production `DATABASE_URL`. If they do, a preview with the flag on
-     works on production data.
+1. **Not wired to real sign-in.** v2 has never run with real Supabase sign-in. That needs an environment with a
+   database and approved test accounts.
+   - Vercel previews have no database (`DATABASE_URL` is Production-only), so they cannot run it as configured today.
 2. **Owner coverage.** Owner-side booking changes, allocation, rooming lists, QR, nudges, vendors, RFPs and schedule
    have no v2 equivalent yet. Those legacy routes cannot be restricted until replacements exist.
 3. **Frontend not built.**
@@ -169,9 +169,18 @@ Done on 17 Nov 2026 with the owner's approval (see "Production changes"):
 - revoking the Data API grants on the 20 server-only tables;
 - pushing this branch, with a Vercel preview (flag off).
 
-1. Check the preview in a browser while logged in to Vercel. It is behind Vercel login, so it could not be checked from
-   outside. In Vercel's environment-variable settings, check whether **Preview** uses the production `DATABASE_URL`.
-2. Name the approved synthetic accounts, then turn the flag on **for the preview only** (and only once item 1 is known).
+1. **Answered on 17 Nov.**
+   - From the owner's Vercel settings: `DATABASE_URL` exists for Production only, so previews have no database. The
+     Supabase URL and public key apply to all environments, so previews do use the real sign-in service.
+   - Database-backed pages (dashboard, event pages, legacy API) fail on previews with "DATABASE_URL must be
+     configured". The same build was run locally: it failed the same way without a database and worked normally with
+     one. The branch does not touch those pages. Production's dashboard renders normally.
+   - So previews never touch production data, but a v2 test on a preview needs a separate preview database first.
+2. Choose where to test v2 with real sign-in:
+   - a separate free preview database (recommended);
+   - a one-off run in the work sandbox against synthetic data;
+   - production data (not recommended).
+   Then name the approved test accounts and turn the flag on **for that environment only**.
 3. Run a production backup and restore drill before any change that alters existing tables or rows. The dump contains
    personal data, so it must stay on an approved, encrypted machine. The owner chose to skip it for the additive
    migration.
