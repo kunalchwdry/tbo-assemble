@@ -1,0 +1,48 @@
+.inventory-page .opportunity-view-switch { display:flex; gap:4px; margin:0 24px 16px; padding:4px; width:max-content; max-width:calc(100% - 48px); background:var(--secondary); border:1px solid var(--border); border-radius:12px; }
+.inventory-page .opportunity-view-switch button { border:0; border-radius:9px; padding:9px 15px; background:transparent; color:var(--muted-foreground); font-size:12px; font-weight:700; cursor:pointer; }
+.inventory-page .opportunity-view-switch button[aria-pressed=true] { background:var(--card); color:var(--foreground); box-shadow:0 1px 5px #00000014; }
+.inventory-page .opportunity-view-switch button span { color:#e95e16; margin-left:3px; }
+.inventory-page .opportunity-view-switch button:focus-visible,.inventory-page .destination-list button:focus-visible { outline:2px solid #ec641d; outline-offset:-2px; }
+.inventory-page .destination-loading { min-height:300px; display:grid; place-items:center; color:var(--muted-foreground); font-size:13px; }
+.inventory-page .destination-explorer { margin:0 24px 24px; border:1px solid var(--border); border-radius:16px; overflow:hidden; background:var(--card); }
+.inventory-page .destination-intro { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:22px; background:#1a1918; color:#fff; }
+.inventory-page .destination-kicker { display:flex; align-items:center; gap:6px; color:#f58c55; font-size:10px; font-weight:800; letter-spacing:.12em; }
+.inventory-page .destination-intro h3 { margin:8px 0 3px; font-family:var(--font-iosevka),sans-serif; color:#fff; font-size:23px; line-height:1.15; }
+.inventory-page .destination-intro p { margin:0; font-size:12px; color:#c8bfb9; line-height:1.5; }
+.inventory-page .destination-source { flex:none; border:1px solid #6e4d3c; border-radius:30px; padding:6px 9px; font-size:10px; letter-spacing:.07em; font-weight:700; color:#f2c4aa; }
+.inventory-page .destination-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(270px,1fr); align-items:stretch; min-width:0; }
+.inventory-page .destination-map-frame { position:relative; min-width:0; min-height:480px; background:#e9e6dc; }
+.inventory-page .destination-map { position:absolute; inset:0; width:100%; height:100%; z-index:0; background:#e9e6dc; }
+.inventory-page .map-label { position:absolute; top:14px; right:14px; z-index:400; display:flex; align-items:center; gap:5px; background:#fff; color:#423a35; border-radius:8px; box-shadow:0 2px 8px #0002; padding:8px 10px; font-size:9px; font-weight:800; letter-spacing:.06em; pointer-events:none; }
+.inventory-page .destination-pin-wrap { background:none; border:0; }
+.inventory-page .destination-pin { display:grid; place-items:center; width:38px; height:38px; border:3px solid #fff; border-radius:50%; color:#fff; background:#e55c19; box-shadow:0 0 0 6px #e35e1940,0 3px 9px #0005; font:700 13px system-ui,sans-serif; }
+.inventory-page .destination-pin.active { background:#171513; box-shadow:0 0 0 7px #17151335,0 3px 9px #0005; }
+.inventory-page .destination-side { padding:20px; min-width:0; border-left:1px solid var(--border); }
+.inventory-page .destination-side-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:15px; }
+.inventory-page .destination-side-head div>span { display:block; color:var(--muted-foreground); font-size:9px; font-weight:800; letter-spacing:.09em; }
+.inventory-page .destination-side-head strong { display:block; margin-top:5px; font-size:16px; color:var(--foreground); }
+.inventory-page .destination-side-icon { display:grid; place-items:center; width:38px; height:38px; background:#fff0e7; color:#e55c19; border-radius:11px; }
+.inventory-page .destination-list { display:grid; gap:4px; max-height:192px; overflow:auto; }
+.inventory-page .destination-list button { display:flex; align-items:center; gap:10px; width:100%; text-align:left; min-width:0; padding:10px; border:1px solid transparent; border-radius:10px; background:transparent; color:var(--foreground); cursor:pointer; }
+.inventory-page .destination-list button:hover { background:var(--secondary); }
+.inventory-page .destination-list button[aria-pressed=true] { background:var(--secondary); border-color:var(--border); }
+.inventory-page .destination-list-dot { flex:none; width:8px; height:8px; border-radius:50%; background:#f47635; }
+.inventory-page .destination-list-name { flex:1; min-width:0; overflow-wrap:anywhere; font-size:12px; font-weight:700; }
+.inventory-page .destination-list-name small { display:block; margin-top:2px; color:var(--muted-foreground); font-size:10px; font-weight:400; }
+.inventory-page .destination-list button>strong { flex:none; font-size:11px; }
+.inventory-page .destination-selected { margin-top:16px; padding:15px; border-radius:12px; background:var(--secondary); }
+.inventory-page .destination-selected-kicker { color:#d35317; font-size:9px; font-weight:800; letter-spacing:.1em; }
+.inventory-page .destination-selected h4 { margin:6px 0 14px; color:var(--foreground); font-size:18px; }
+.inventory-page .destination-stats { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.inventory-page .destination-stats small { display:block; color:var(--muted-foreground); font-size:9px; font-weight:700; letter-spacing:.05em; }
+.inventory-page .destination-stats strong { display:block; margin-top:4px; color:var(--foreground); font-size:13px; overflow-wrap:anywhere; }
+.inventory-page .destination-products>div { display:flex; justify-content:space-between; gap:8px; margin-top:12px; color:var(--foreground); font-size:11px; line-height:1.4; }
+.inventory-page .destination-products>div small { display:block; color:var(--muted-foreground); margin-top:2px; }
+.inventory-page .destination-products>div b { flex:none; }
+.inventory-page .destination-products p,.inventory-page .destination-note,.inventory-page .destination-empty { font-size:11px; line-height:1.5; color:var(--muted-foreground); margin:12px 0 0; }
+.inventory-page .destination-foot { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:13px 20px; border-top:1px solid var(--border); color:var(--muted-foreground); font-size:11px; line-height:1.5; }
+.inventory-page .destination-foot a { display:flex; align-items:center; gap:3px; flex:none; color:#c74a10; font-weight:700; text-decoration:none; }
+.inventory-page .destination-privacy { margin:0; padding:0 20px 13px; color:var(--muted-foreground); font-size:10px; line-height:1.5; }
+@media(max-width:800px) { .inventory-page .destination-layout { grid-template-columns:1fr; } .inventory-page .destination-map-frame { min-height:330px; } .inventory-page .destination-side { border-left:0; border-top:1px solid var(--border); } }
+@media(max-width:700px) { .inventory-page .opportunity-view-switch { margin:0 20px 14px; } .inventory-page .destination-explorer { margin:0 12px 16px; } .inventory-page .destination-intro { padding:18px; flex-wrap:wrap; } .inventory-page .destination-intro h3 { font-size:21px; } .inventory-page .destination-map-frame { min-height:300px; } .inventory-page .destination-side { padding:16px; } .inventory-page .destination-foot { flex-direction:column; } }
+.inventory-page .map-error { position:absolute; left:14px; right:14px; bottom:28px; z-index:400; background:#fff; color:#423a35; border-radius:9px; padding:10px 12px; box-shadow:0 2px 8px #0003; font-size:11px; line-height:1.4; pointer-events:none; }

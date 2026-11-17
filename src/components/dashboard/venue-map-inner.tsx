@@ -102,6 +102,8 @@ export default function VenueMap({
 }: VenueMapProps) {
   const hasInitialCoords = initialLat != null && initialLng != null;
   const [geocodedCoords, setGeocodedCoords] = useState<[number, number] | null>(null);
+  // Provenance from /api/geocode: approximate coordinates are labelled, unresolved places get no pin.
+  const [geoInfo, setGeoInfo] = useState<{ approximate: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(!hasInitialCoords);
   const [modalOpen, setModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -123,11 +125,13 @@ export default function VenueMap({
       try {
         const query = `${venue}, ${location}`;
         const res = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && data.lat && data.lng) {
-            setGeocodedCoords([data.lat, data.lng]);
-          }
+        const data = await res.json().catch(() => null);
+        if (!isMounted || !data) return;
+        if (res.ok && typeof data.lat === "number" && typeof data.lng === "number") {
+          setGeocodedCoords([data.lat, data.lng]);
+          setGeoInfo({ approximate: data.approximate !== false, message: typeof data.message === "string" ? data.message : "" });
+        } else {
+          setGeoInfo({ approximate: true, message: typeof data.message === "string" ? data.message : "Location not found." });
         }
       } catch (err) {
         console.error("Geocoding error:", err);
@@ -167,7 +171,11 @@ export default function VenueMap({
     return `https://www.openstreetmap.org/?mlat=${coords[0]}&mlon=${coords[1]}#map=16/${coords[0]}/${coords[1]}`;
   }, [coords, venue, location]);
 
-  const effectiveCoords: [number, number] = coords || [12.9716, 77.5946];
+  // No default city: an unknown venue gets no pin. Approximate matches are zoomed out and labelled.
+  const approximate = !hasInitialCoords && geoInfo?.approximate === true;
+  const miniZoom = approximate ? 11 : 13;
+  const modalZoom = approximate ? 12 : 15;
+  const notFoundMessage = geoInfo?.message || "Location not found.";
 
   return (
     <>
@@ -190,11 +198,16 @@ export default function VenueMap({
             <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
             <span>Finding venue...</span>
           </div>
+        ) : !coords ? (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-0.5 bg-muted/50 px-2 text-center text-[10px] text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <span className="truncate w-full">Location not found</span>
+          </div>
         ) : (
           <div className="relative h-full w-full pointer-events-none">
             <MapContainer
-              center={effectiveCoords}
-              zoom={13}
+              center={coords}
+              zoom={miniZoom}
               zoomControl={false}
               dragging={false}
               scrollWheelZoom={false}
@@ -207,16 +220,16 @@ export default function VenueMap({
                 url="/api/tiles/{z}/{x}/{y}.png"
                 maxZoom={19}
               />
-              <Marker position={effectiveCoords} icon={miniIcon} />
+              <Marker position={coords} icon={miniIcon} />
               <MapResizer />
-              <MapRecenter center={effectiveCoords} zoom={13} />
+              <MapRecenter center={coords} zoom={miniZoom} />
             </MapContainer>
 
             {/* Subtle bottom gradient label showing venue pin indicator */}
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-2 py-0.5 pointer-events-none">
               <p className="truncate text-[10px] font-medium text-white flex items-center gap-1">
                 <MapPin className="h-2.5 w-2.5 text-blue-400 shrink-0" />
-                <span className="truncate">{venue}</span>
+                <span className="truncate">{approximate ? `≈ ${venue}` : venue}</span>
               </p>
             </div>
           </div>
@@ -266,6 +279,11 @@ export default function VenueMap({
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
+                {approximate && (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-1 text-[11px] font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-200" title={geoInfo?.message}>
+                    Approximate location
+                  </span>
+                )}
                 {coords && (
                   <span className="hidden sm:inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-[11px] font-mono text-muted-foreground">
                     {coords[0].toFixed(4)}°, {coords[1].toFixed(4)}°
@@ -284,9 +302,16 @@ export default function VenueMap({
 
             {/* Interactive Leaflet Map Content */}
             <div className="relative h-[420px] sm:h-[480px] w-full bg-muted/40">
+              {!coords ? (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center text-sm text-muted-foreground">
+                  <MapPin className="h-6 w-6 text-muted-foreground" />
+                  <p className="font-medium text-foreground">{loading ? "Finding venue..." : notFoundMessage}</p>
+                  <p className="text-xs">No pin is shown rather than a guessed location. Use OpenStreetMap search below.</p>
+                </div>
+              ) : (
               <MapContainer
-                center={effectiveCoords}
-                zoom={15}
+                center={coords}
+                zoom={modalZoom}
                 zoomControl={false}
                 scrollWheelZoom={true}
                 className="h-full w-full z-0"
@@ -297,7 +322,7 @@ export default function VenueMap({
                   maxZoom={19}
                 />
                 <ZoomControl position="bottomright" />
-                <Marker position={effectiveCoords} icon={venueIcon}>
+                <Marker position={coords} icon={venueIcon}>
                   <Popup autoPan={true} offset={[0, -28]}>
                     <div className="p-1 min-w-[200px]">
                       <h4 className="font-bold text-sm text-gray-900 leading-tight">
@@ -306,11 +331,12 @@ export default function VenueMap({
                       <p className="text-xs text-gray-600 mt-1 leading-normal">
                         {location}
                       </p>
-                      {coords && (
-                        <p className="text-[10px] text-gray-400 font-mono mt-1">
-                          {coords[0].toFixed(5)}, {coords[1].toFixed(5)}
-                        </p>
+                      {approximate && (
+                        <p className="text-[11px] text-amber-700 mt-1 leading-normal">{geoInfo?.message}</p>
                       )}
+                      <p className="text-[10px] text-gray-400 font-mono mt-1">
+                        {coords[0].toFixed(5)}, {coords[1].toFixed(5)}
+                      </p>
                       <div className="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between">
                         <a
                           href={directionsUrl}
@@ -325,8 +351,9 @@ export default function VenueMap({
                   </Popup>
                 </Marker>
                 <MapResizer />
-                <MapRecenter center={effectiveCoords} zoom={15} />
+                <MapRecenter center={coords} zoom={modalZoom} />
               </MapContainer>
+              )}
             </div>
 
             {/* Modal Footer */}

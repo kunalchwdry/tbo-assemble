@@ -1,0 +1,507 @@
+{
+  "protocol": "rolling-origin-v1",
+  "generatedBy": "scripts/forecast-rolling-origin.ts",
+  "snapshot": {
+    "file": "src/data/public-portfolio.json",
+    "sha256": "6a3821fb81891661773f20eed4c09b09cf003b7d614f6f956f9f5b068b3994b0",
+    "builtAt": "2026-11-16T16:08:18Z"
+  },
+  "lagDays": {
+    "dgca": 30,
+    "stb": 30
+  },
+  "lagSource": "override (--lag)",
+  "horizons": [
+    3,
+    6
+  ],
+  "firstTarget": "2024-01",
+  "selection": {
+    "onlineWindow": 24,
+    "onlineMin": 6,
+    "conformalWindow": 36,
+    "conformalMin": 12
+  },
+  "plannerGateOnHoldout": {
+    "passed": 429,
+    "fallback": 357
+  },
+  "plannerByGate": [
+    {
+      "h": 3,
+      "gate": "passed",
+      "n": 270,
+      "relMae": 1.0076379821650017,
+      "identicalToSeasonalNaive": 0
+    },
+    {
+      "h": 3,
+      "gate": "fallback",
+      "n": 123,
+      "relMae": 1,
+      "identicalToSeasonalNaive": 123
+    },
+    {
+      "h": 6,
+      "gate": "passed",
+      "n": 159,
+      "relMae": 1.3816914857103284,
+      "identicalToSeasonalNaive": 0
+    },
+    {
+      "h": 6,
+      "gate": "fallback",
+      "n": 234,
+      "relMae": 1,
+      "identicalToSeasonalNaive": 234
+    }
+  ],
+  "rows": [
+    {
+      "segment": "DGCA city arrivals",
+      "h": 3,
+      "candidate": "planner",
+      "n": 180,
+      "series": 6,
+      "wape": 0.10412381241808077,
+      "relMae": 1.227962953049234,
+      "bandN": 180,
+      "coverage": 0.6555555555555556
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 3,
+      "candidate": "learned",
+      "n": 180,
+      "series": 6,
+      "wape": 0.09780826749638595,
+      "relMae": 1.1534818616249176,
+      "bandN": 180,
+      "coverage": 0.6888888888888889
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 3,
+      "candidate": "seasonal-naive",
+      "n": 180,
+      "series": 6,
+      "wape": 0.08479393629874925,
+      "relMae": 1,
+      "bandN": 180,
+      "coverage": 0.8222222222222222
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 3,
+      "candidate": "last-observed",
+      "n": 180,
+      "series": 6,
+      "wape": 0.19056247365652232,
+      "relMae": 2.2473596812999137,
+      "bandN": 180,
+      "coverage": 0.7166666666666667
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 3,
+      "candidate": "online-best",
+      "n": 180,
+      "series": 6,
+      "wape": 0.09987500165129443,
+      "relMae": 1.1778554695162515,
+      "bandN": 180,
+      "coverage": 0.7166666666666667
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 6,
+      "candidate": "planner",
+      "n": 180,
+      "series": 6,
+      "wape": 0.10168297065788341,
+      "relMae": 1.1991773833877704,
+      "bandN": 180,
+      "coverage": 0.5388888888888889
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 6,
+      "candidate": "learned",
+      "n": 180,
+      "series": 6,
+      "wape": 0.10594509475526043,
+      "relMae": 1.2494418749707596,
+      "bandN": 156,
+      "coverage": 0.5705128205128205
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 6,
+      "candidate": "seasonal-naive",
+      "n": 180,
+      "series": 6,
+      "wape": 0.08479393629874925,
+      "relMae": 1,
+      "bandN": 180,
+      "coverage": 0.8222222222222222
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 6,
+      "candidate": "last-observed",
+      "n": 180,
+      "series": 6,
+      "wape": 0.17768486014268928,
+      "relMae": 2.0954901718050114,
+      "bandN": 180,
+      "coverage": 0.7666666666666667
+    },
+    {
+      "segment": "DGCA city arrivals",
+      "h": 6,
+      "candidate": "online-best",
+      "n": 180,
+      "series": 6,
+      "wape": 0.10233723598726296,
+      "relMae": 1.2068933281585665,
+      "bandN": 172,
+      "coverage": 0.7093023255813954
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 3,
+      "candidate": "planner",
+      "n": 180,
+      "series": 6,
+      "wape": 0.09234062320879219,
+      "relMae": 0.9689478934419529,
+      "bandN": 180,
+      "coverage": 0.6833333333333333
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 3,
+      "candidate": "learned",
+      "n": 180,
+      "series": 6,
+      "wape": 0.09100879473686181,
+      "relMae": 0.9549727615069533,
+      "bandN": 180,
+      "coverage": 0.7055555555555556
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 3,
+      "candidate": "seasonal-naive",
+      "n": 180,
+      "series": 6,
+      "wape": 0.09529988540536939,
+      "relMae": 1,
+      "bandN": 180,
+      "coverage": 0.8333333333333334
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 3,
+      "candidate": "last-observed",
+      "n": 180,
+      "series": 6,
+      "wape": 0.1138765867829849,
+      "relMae": 1.1949288952300132,
+      "bandN": 180,
+      "coverage": 0.8722222222222222
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 3,
+      "candidate": "online-best",
+      "n": 180,
+      "series": 6,
+      "wape": 0.09311463812834886,
+      "relMae": 0.9770697806432261,
+      "bandN": 180,
+      "coverage": 0.7277777777777777
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 6,
+      "candidate": "planner",
+      "n": 180,
+      "series": 6,
+      "wape": 0.1035170407186555,
+      "relMae": 1.0862241888154793,
+      "bandN": 180,
+      "coverage": 0.6055555555555555
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 6,
+      "candidate": "learned",
+      "n": 180,
+      "series": 6,
+      "wape": 0.11988771083253322,
+      "relMae": 1.2580047743245082,
+      "bandN": 156,
+      "coverage": 0.5512820512820513
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 6,
+      "candidate": "seasonal-naive",
+      "n": 180,
+      "series": 6,
+      "wape": 0.09529988540536939,
+      "relMae": 1,
+      "bandN": 180,
+      "coverage": 0.8222222222222222
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 6,
+      "candidate": "last-observed",
+      "n": 180,
+      "series": 6,
+      "wape": 0.12453334583214715,
+      "relMae": 1.3067523145744588,
+      "bandN": 180,
+      "coverage": 0.9
+    },
+    {
+      "segment": "DGCA routes",
+      "h": 6,
+      "candidate": "online-best",
+      "n": 180,
+      "series": 6,
+      "wape": 0.10814030479644374,
+      "relMae": 1.1347369866863544,
+      "bandN": 169,
+      "coverage": 0.7514792899408284
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 3,
+      "candidate": "planner",
+      "n": 33,
+      "series": 1,
+      "wape": 0.04455649104905588,
+      "relMae": 0.8057482779279883,
+      "bandN": 33,
+      "coverage": 0.6363636363636364
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 3,
+      "candidate": "learned",
+      "n": 33,
+      "series": 1,
+      "wape": 0.04455649104905588,
+      "relMae": 0.8057482779279883,
+      "bandN": 33,
+      "coverage": 0.6363636363636364
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 3,
+      "candidate": "seasonal-naive",
+      "n": 33,
+      "series": 1,
+      "wape": 0.05529827648361168,
+      "relMae": 1,
+      "bandN": 33,
+      "coverage": 0.9393939393939394
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 3,
+      "candidate": "last-observed",
+      "n": 33,
+      "series": 1,
+      "wape": 0.0775990807852532,
+      "relMae": 1.4032820861650297,
+      "bandN": 33,
+      "coverage": 0.8484848484848485
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 3,
+      "candidate": "online-best",
+      "n": 33,
+      "series": 1,
+      "wape": 0.04325734554419198,
+      "relMae": 0.7822548602760128,
+      "bandN": 33,
+      "coverage": 0.6666666666666666
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 6,
+      "candidate": "planner",
+      "n": 33,
+      "series": 1,
+      "wape": 0.0696513101429009,
+      "relMae": 1.259556618614378,
+      "bandN": 33,
+      "coverage": 0.6666666666666666
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 6,
+      "candidate": "learned",
+      "n": 33,
+      "series": 1,
+      "wape": 0.06818085809271013,
+      "relMae": 1.2329653368657223,
+      "bandN": 27,
+      "coverage": 0.6666666666666666
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 6,
+      "candidate": "seasonal-naive",
+      "n": 33,
+      "series": 1,
+      "wape": 0.05529827648361168,
+      "relMae": 1,
+      "bandN": 33,
+      "coverage": 0.9696969696969697
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 6,
+      "candidate": "last-observed",
+      "n": 33,
+      "series": 1,
+      "wape": 0.08978911975495214,
+      "relMae": 1.6237236576724459,
+      "bandN": 33,
+      "coverage": 0.8484848484848485
+    },
+    {
+      "segment": "Singapore room nights",
+      "h": 6,
+      "candidate": "online-best",
+      "n": 33,
+      "series": 1,
+      "wape": 0.08667784620100062,
+      "relMae": 1.5674601762079994,
+      "bandN": 27,
+      "coverage": 0.7037037037037037
+    },
+    {
+      "segment": "All series",
+      "h": 3,
+      "candidate": "planner",
+      "n": 393,
+      "series": 13,
+      "wape": 0.07368026825200247,
+      "relMae": 1.0059139283693679,
+      "bandN": 393,
+      "coverage": 0.6666666666666666
+    },
+    {
+      "segment": "All series",
+      "h": 3,
+      "candidate": "learned",
+      "n": 393,
+      "series": 13,
+      "wape": 0.07139867576573447,
+      "relMae": 0.974764670701763,
+      "bandN": 393,
+      "coverage": 0.6921119592875318
+    },
+    {
+      "segment": "All series",
+      "h": 3,
+      "candidate": "seasonal-naive",
+      "n": 393,
+      "series": 13,
+      "wape": 0.07324709020725215,
+      "relMae": 1,
+      "bandN": 393,
+      "coverage": 0.8371501272264631
+    },
+    {
+      "segment": "All series",
+      "h": 3,
+      "candidate": "last-observed",
+      "n": 393,
+      "series": 13,
+      "wape": 0.12109795997119512,
+      "relMae": 1.6532801457170414,
+      "bandN": 393,
+      "coverage": 0.7989821882951654
+    },
+    {
+      "segment": "All series",
+      "h": 3,
+      "candidate": "online-best",
+      "n": 393,
+      "series": 13,
+      "wape": 0.07189736773655195,
+      "relMae": 0.9815730226705093,
+      "bandN": 393,
+      "coverage": 0.7175572519083969
+    },
+    {
+      "segment": "All series",
+      "h": 6,
+      "candidate": "planner",
+      "n": 393,
+      "series": 13,
+      "wape": 0.08707617626993419,
+      "relMae": 1.1888004837264217,
+      "bandN": 393,
+      "coverage": 0.5801526717557252
+    },
+    {
+      "segment": "All series",
+      "h": 6,
+      "candidate": "learned",
+      "n": 393,
+      "series": 13,
+      "wape": 0.09126741027399533,
+      "relMae": 1.246020968420108,
+      "bandN": 339,
+      "coverage": 0.5693215339233039
+    },
+    {
+      "segment": "All series",
+      "h": 6,
+      "candidate": "seasonal-naive",
+      "n": 393,
+      "series": 13,
+      "wape": 0.07324709020725215,
+      "relMae": 1,
+      "bandN": 393,
+      "coverage": 0.8346055979643766
+    },
+    {
+      "segment": "All series",
+      "h": 6,
+      "candidate": "last-observed",
+      "n": 393,
+      "series": 13,
+      "wape": 0.1250421356326796,
+      "relMae": 1.7071276862858813,
+      "bandN": 393,
+      "coverage": 0.8346055979643766
+    },
+    {
+      "segment": "All series",
+      "h": 6,
+      "candidate": "online-best",
+      "n": 393,
+      "series": 13,
+      "wape": 0.0962556221762866,
+      "relMae": 1.3141221296836771,
+      "bandN": 368,
+      "coverage": 0.7282608695652174
+    }
+  ],
+  "caveats": [
+    "Pseudo-out-of-sample: availability is assumed from the snapshot build lag, values are the latest revisions, no real-time vintages.",
+    "Market-level public series (air passengers, room nights), not TBO bookings; no prospective claim.",
+    "Overlapping monthly forecasts: n counts forecasts, not independent tests.",
+    "The planner band is calibrated on its own internal backtest at each origin; baseline bands are sequential split-conformal."
+  ]
+}

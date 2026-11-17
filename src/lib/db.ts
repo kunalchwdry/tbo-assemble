@@ -1,7 +1,8 @@
 import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const connectionString = process.env.DATABASE_URL;
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+let instance: PrismaClient | undefined;
 
 const defaultMockEvent = {
   id: "2e4e7cb5-955e-4dc5-9dc4-5ce255f541e5",
@@ -37,20 +38,6 @@ const defaultMockEvent = {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
-    {
-      id: "rb-2",
-      roomType: "Royal Premiere",
-      description: "City view, executive lounge access",
-      rate: 24000,
-      totalQty: 25,
-      bookedQty: 18,
-      floor: "4",
-      wing: "Main Wing",
-      hotelName: "The Leela Palace",
-      eventId: "2e4e7cb5-955e-4dc5-9dc4-5ce255f541e5",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
   ],
   guests: [
     {
@@ -69,38 +56,6 @@ const defaultMockEvent = {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
-    {
-      id: "g-2",
-      name: "Vikram Malhotra",
-      email: "vikram@example.com",
-      phone: "+91 98765 43211",
-      group: "Keynote Speaker",
-      status: "confirmed",
-      proximityRequest: null,
-      notes: null,
-      allocatedFloor: "4",
-      allocatedWing: "Main",
-      allocatedRoom: "405",
-      eventId: "2e4e7cb5-955e-4dc5-9dc4-5ce255f541e5",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: "g-3",
-      name: "Pooja Reddy",
-      email: "pooja@example.com",
-      phone: "+91 98765 43212",
-      group: "Operations",
-      status: "invited",
-      proximityRequest: null,
-      notes: null,
-      allocatedFloor: null,
-      allocatedWing: null,
-      allocatedRoom: null,
-      eventId: "2e4e7cb5-955e-4dc5-9dc4-5ce255f541e5",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
   ],
   bookings: [
     {
@@ -109,18 +64,6 @@ const defaultMockEvent = {
       eventId: "2e4e7cb5-955e-4dc5-9dc4-5ce255f541e5",
       roomBlockId: "rb-1",
       totalAmount: 74000,
-      status: "confirmed",
-      checkedIn: false,
-      checkedInAt: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: "b-2",
-      guestId: "g-2",
-      eventId: "2e4e7cb5-955e-4dc5-9dc4-5ce255f541e5",
-      roomBlockId: "rb-2",
-      totalAmount: 96000,
       status: "confirmed",
       checkedIn: false,
       checkedInAt: null,
@@ -173,22 +116,39 @@ function createFallbackPrisma(): PrismaClient {
   ) as PrismaClient;
 }
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-let prismaInstance: PrismaClient;
-
-if (connectionString) {
-  const adapter = new PrismaPg({ connectionString });
-  prismaInstance = globalForPrisma.prisma ?? new PrismaClient({ adapter });
-} else {
-  console.warn(
-    "[Prisma] DATABASE_URL is not configured. Running in local demo fallback mode with sample event data."
-  );
-  prismaInstance = globalForPrisma.prisma ?? createFallbackPrisma();
+/**
+ * Creates the client on first use rather than when this module loads. `next build` imports every route
+ * to read its configuration, so a top-level check made builds (and Vercel preview deployments without
+ * the secret) fail even for pages that never touch the database, such as the inventory demo.
+ * Database-backed routes still fail clearly, at request time, when DATABASE_URL is missing.
+ */
+function client(): PrismaClient {
+  if (instance) return instance;
+  if (globalForPrisma.prisma) return (instance = globalForPrisma.prisma);
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        "[Prisma] DATABASE_URL is not configured. Running in local demo fallback mode."
+      );
+      return (instance = createFallbackPrisma());
+    }
+    throw new Error("DATABASE_URL must be configured for the PostgreSQL database.");
+  }
+  instance = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
+  if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = instance;
+  return instance;
 }
 
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prismaInstance;
-}
+const prisma = new Proxy({} as PrismaClient, {
+  get(_target, property) {
+    // Not a thenable, and inspection (symbols) never forces a connection.
+    if (property === "then" || typeof property === "symbol")
+      return instance ? Reflect.get(instance, property) : undefined;
+    const real = client();
+    const value = Reflect.get(real, property, real);
+    return typeof value === "function" ? value.bind(real) : value;
+  },
+});
 
-export default prismaInstance;
+export default prisma;

@@ -1,17 +1,142 @@
 import { NextResponse } from 'next/server';
+import { forecastCutoffReport, type DemandHistoryPoint } from '@/lib/learned-demand';
+import { parseInstant, REVISION_NOTE, type CutoffReport } from '@/lib/forecast-cutoff';
+import type { Opportunity } from '@/lib/procurement-core';
 import { columns, optionalColumns, readInventoryCSV } from '@/lib/inventory-csv';
 import { optimizePortfolio } from '@/lib/portfolio-optimizer';
+import { checkModelRisk } from '@/lib/model-risk';
+import { INPUT_LIMITS, formatLimit } from '@/lib/input-limits';
+import { clientKey, rateLimitHeaders } from '@/lib/rate-limit';
+import { routeLimiters } from '@/lib/route-limits';
 export const dynamic='force-dynamic';
+/** Large portfolios take seconds to plan (about 4 s for 1,000 products on one core). */
+export const maxDuration=60;
 export async function POST(request:Request){
  try {
-  if(Number(request.headers.get('content-length')||0)>200000)return NextResponse.json({error:'Request is too large.'},{status:413});
-  const text=await request.text();if(text.length>200000)return NextResponse.json({error:'Request is too large.'},{status:413});
-  const body=JSON.parse(text);const {items,budget,risk,asOf}=body;
-  if(!Array.isArray(items)||items.length<1||items.length>20||typeof budget!=='number'||!Number.isFinite(budget)||budget<0||budget>1e9||typeof risk!=='number'||!Number.isFinite(risk)||risk<0||risk>.8)return NextResponse.json({error:'Provide 1–20 items, a budget between 0 and 1 billion, and risk between 0 and 0.8.'},{status:400});
+  const tooLarge=()=>NextResponse.json({error:`Request is too large (maximum ${formatLimit(INPUT_LIMITS.maxRequestBytes/1e6)} MB).`},{status:413});
+  if(Number(request.headers.get('content-length')||0)>INPUT_LIMITS.maxRequestBytes)return tooLarge();
+  const text=await request.text();if(new TextEncoder().encode(text).length>INPUT_LIMITS.maxRequestBytes)return tooLarge();
+  const body=JSON.parse(text);const {items,budget,risk,asOf,forecastAsOf,engine:requestedEngine,serviceTarget,jointPricing,modelRisk,budgetBasis}=body;
+  if(requestedEngine!==undefined&&requestedEngine!=='scenario-grid-v4'&&requestedEngine!=='risk-cvar-v5')return NextResponse.json({error:'engine must be scenario-grid-v4 or risk-cvar-v5.'},{status:400});
+  // Default engine: scenario-grid-v4 for up to 100 items (unchanged behaviour), risk-cvar-v5 above (v4 does not scale).
+  const engine:'scenario-grid-v4'|'risk-cvar-v5'=requestedEngine??(Array.isArray(items)&&items.length>INPUT_LIMITS.maxItemsLegacyEngine?'risk-cvar-v5':'scenario-grid-v4');
+  if(serviceTarget!==undefined&&(typeof serviceTarget!=='number'||!Number.isFinite(serviceTarget)||serviceTarget<0||serviceTarget>.99))return NextResponse.json({error:'serviceTarget must be a number from 0 to 0.99.'},{status:400});
+  if(jointPricing!==undefined&&typeof jointPricing!=='boolean')return NextResponse.json({error:'jointPricing must be true or false.'},{status:400});
+  if(modelRisk!==undefined&&typeof modelRisk!=='boolean')return NextResponse.json({error:'modelRisk must be true or false.'},{status:400});
+  if(budgetBasis!==undefined&&budgetBasis!=='cash'&&budgetBasis!=='capital-at-risk')return NextResponse.json({error:'budgetBasis must be cash or capital-at-risk.'},{status:400});
+  if(engine!=='risk-cvar-v5'&&((serviceTarget??0)>0||jointPricing!==undefined||modelRisk||budgetBasis!==undefined))return NextResponse.json({error:'serviceTarget, jointPricing, modelRisk and budgetBasis need engine risk-cvar-v5.'},{status:400});
+  if(!Array.isArray(items)||items.length<1||items.length>INPUT_LIMITS.maxItems||typeof budget!=='number'||!Number.isFinite(budget)||budget<0||budget>1e9||typeof risk!=='number'||!Number.isFinite(risk)||risk<0||risk>.8)return NextResponse.json({error:`Provide 1–${formatLimit(INPUT_LIMITS.maxItems)} items, a budget between 0 and 1 billion, and risk between 0 and 0.8.`},{status:400});
+  if(engine==='scenario-grid-v4'&&items.length>INPUT_LIMITS.maxItemsLegacyEngine)return NextResponse.json({error:`engine scenario-grid-v4 supports up to ${INPUT_LIMITS.maxItemsLegacyEngine} items; use risk-cvar-v5 for larger portfolios.`},{status:400});
+  if(modelRisk&&items.length>INPUT_LIMITS.maxItemsLegacyEngine)return NextResponse.json({error:`modelRisk compares against scenario-grid-v4 and supports up to ${INPUT_LIMITS.maxItemsLegacyEngine} items.`},{status:400});
   if(typeof asOf!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(asOf)||!Number.isFinite(Date.parse(asOf+'T00:00:00Z'))||new Date(asOf+'T00:00:00Z').toISOString().slice(0,10)!==asOf)return NextResponse.json({error:'asOf must be a valid YYYY-MM-DD date.'},{status:400});
+  // forecastAsOf is the forecast DATA cutoff; asOf above is only the supplier-quote review date. Never derived from asOf.
+  if(forecastAsOf!==undefined&&forecastAsOf!==null){const parsed=parseInstant(forecastAsOf);if(!parsed.ok)return NextResponse.json({error:`forecastAsOf ${parsed.error}.`},{status:400});}
   const keys=[...columns,...optionalColumns];
   const lines=items.map((item:unknown)=>{if(!item||typeof item!=='object'||Array.isArray(item))throw new Error('Each item must be an object.');return keys.map(key=>{const v=(item as Record<string,unknown>)[key];if(v!==undefined&&v!==null&&typeof v!=='string'&&typeof v!=='number')throw new Error(`Invalid ${key}.`);return `"${String(v??'').replaceAll('"','""')}"`;}).join(',')});
-  const inventory=readInventoryCSV([keys.join(','),...lines].join('\n'));for(let i=0;i<inventory.length;i++){const weight=items[i].bookingWeight;if(weight!==undefined&&weight!==null){if(typeof weight!=='number'||!Number.isFinite(weight)||weight<0||weight>1)throw new Error('bookingWeight must be a number between 0 and 1.');inventory[i].bookingWeight=weight;}}const optimization=optimizePortfolio(inventory,budget,risk,{asOf});const plan=optimization.rows;
-  return NextResponse.json({asOf,budget,risk,summary:{spend:plan.reduce((s,r)=>s+r.spend,0),expectedProfit:plan.reduce((s,r)=>s+r.expectedProfit,0),lowProfit:plan.reduce((s,r)=>s+r.downsideProfit,0),units:plan.reduce((s,r)=>s+r.qty,0)},recommendations:plan,optimization:{objective:optimization.objective,upperBound:optimization.upperBound,gap:optimization.gap,baselineObjective:optimization.baselineObjective,algorithm:optimization.algorithm,bucketCount:optimization.bucketCount},model:inventory.some(o=>o.bookingWeight!==undefined)?'scenario-grid-v4-experimental-blend':'scenario-grid-v4'}, {headers:{'Cache-Control':'no-store'}});
+  const inventory=readInventoryCSV([keys.join(','),...lines].join('\n'));for(let i=0;i<inventory.length;i++){const weight=items[i].bookingWeight;if(weight!==undefined&&weight!==null){if(typeof weight!=='number'||!Number.isFinite(weight)||weight<0||weight>1)throw new Error('bookingWeight must be a number between 0 and 1.');inventory[i].bookingWeight=weight;}const extras=readLearningInputs(items[i],i);if(extras.priceElasticity!==undefined)inventory[i].priceElasticity=extras.priceElasticity;if(extras.history)inventory[i].history=extras.history;if(extras.historyScope)inventory[i].historyScope=extras.historyScope;if(extras.availabilityLagDays!==undefined)inventory[i].availabilityLagDays=extras.availabilityLagDays;}// Per-instance burst limit, counted only for valid requests about to be optimised (seconds of CPU each); best effort on serverless.
+const decision=routeLimiters.plan.check(clientKey(request.headers));if(!decision.allowed)return NextResponse.json({error:`Too many planning requests. Try again in ${decision.retryAfterSeconds} s.`},{status:429,headers:{'Cache-Control':'no-store',...rateLimitHeaders(decision)}});
+  const dataCutoff:string|undefined=typeof forecastAsOf==='string'?forecastAsOf:undefined;const optimization=optimizePortfolio(inventory,budget,risk,{asOf,forecastAsOf:dataCutoff,engine,serviceTarget,jointPricing,budgetBasis});const robustness=modelRisk?checkModelRisk(inventory,budget,risk,{asOf,forecastAsOf:dataCutoff,jointPricing,budgetBasis,planRows:optimization.rows}):undefined;const forecastData=describeForecastData(inventory,dataCutoff,engine);const plan=optimization.rows;const riskSummary=optimization.risk;
+  return NextResponse.json({asOf,budget,risk,summary:{spend:plan.reduce((s,r)=>s+r.spend,0),expectedProfit:plan.reduce((s,r)=>s+r.expectedProfit,0),lowProfit:plan.reduce((s,r)=>s+r.downsideProfit,0),units:plan.reduce((s,r)=>s+r.qty,0),...(riskSummary?{cvar10:riskSummary.cvar,lossProbability:riskSummary.pLoss,demandServedShare:riskSummary.servedShare,demandServedShareBefore:riskSummary.servedShareBefore,prepaidUnits:riskSummary.prepaidUnits,allotmentUnits:riskSummary.allotmentUnits}:{})},recommendations:plan,optimization:{objective:optimization.objective,upperBound:optimization.upperBound,gap:optimization.gap,baselineObjective:optimization.baselineObjective,algorithm:optimization.algorithm,bucketCount:optimization.bucketCount,engine,...(riskSummary?{risk:riskSummary}:{}),...(optimization.service?{service:optimization.service,pricing:optimization.pricing}:{})},...(robustness?{modelRisk:robustness}:{}),...(forecastData?{forecastData}:{}),model:inventory.some(o=>o.bookingWeight!==undefined)?`${engine}-experimental-blend`:engine}, {headers:{'Cache-Control':'no-store'}});
  }catch(e){return NextResponse.json({error:e instanceof Error?e.message:'Invalid request.'},{status:400,headers:{'Cache-Control':'no-store'}})}
+}
+
+/**
+ * Optional per-item inputs for the risk-cvar-v5 learned demand model (src/lib/learned-demand.ts), passed through
+ * alongside the CSV columns: a supplied price elasticity, a monthly history (≤ 120 months; rows may set `exclude` for
+ * shock or imputed months) and `historyScope` ('product' or 'market').
+ */
+function readLearningInputs(item: Record<string, unknown>, index: number): { priceElasticity?: number; history?: DemandHistoryPoint[]; historyScope?: 'product' | 'market'; availabilityLagDays?: number } {
+  const out: { priceElasticity?: number; history?: DemandHistoryPoint[]; historyScope?: 'product' | 'market'; availabilityLagDays?: number } = {};
+  const lag = item.availabilityLagDays;
+  if (lag !== undefined && lag !== null) {
+    if (typeof lag !== 'number' || !Number.isInteger(lag) || lag < 0 || lag > 3650) throw new Error(`Item ${index + 1}: availabilityLagDays must be a whole number of days from 0 to 3650.`);
+    out.availabilityLagDays = lag;
+  }
+  const scope = item.historyScope;
+  if (scope !== undefined && scope !== null) {
+    if (scope !== 'product' && scope !== 'market') throw new Error(`Item ${index + 1}: historyScope must be "product" or "market".`);
+    out.historyScope = scope;
+  }
+  const e = item.priceElasticity;
+  if (e !== undefined && e !== null) {
+    if (typeof e !== 'number' || !Number.isFinite(e) || e >= 0 || e < -20) throw new Error(`Item ${index + 1}: priceElasticity must be a negative number from -20 to 0.`);
+    out.priceElasticity = e;
+  }
+  const h = item.history;
+  if (h !== undefined && h !== null) {
+    if (!Array.isArray(h) || h.length > INPUT_LIMITS.maxHistoryMonths) throw new Error(`Item ${index + 1}: history must be an array of at most ${INPUT_LIMITS.maxHistoryMonths} monthly rows.`);
+    const optional = ['searches', 'soldOutSearches', 'signal', 'price'] as const;
+    out.history = h.map((row: unknown, r: number) => {
+      if (!row || typeof row !== 'object' || Array.isArray(row)) throw new Error(`Item ${index + 1}, history row ${r + 1}: must be an object.`);
+      const v = row as Record<string, unknown>;
+      if (typeof v.month !== 'string' || !/^\d{4}-(0[1-9]|1[0-2])$/.test(v.month)) throw new Error(`Item ${index + 1}, history row ${r + 1}: month must be YYYY-MM.`);
+      if (typeof v.bookings !== 'number' || !Number.isFinite(v.bookings) || v.bookings < 0 || v.bookings > 1e7) throw new Error(`Item ${index + 1}, history row ${r + 1}: bookings must be a number from 0 to 10,000,000.`);
+      const point: DemandHistoryPoint = { month: v.month, bookings: v.bookings };
+      for (const key of optional) {
+        const x = v[key];
+        if (x === undefined || x === null) continue;
+        if (typeof x !== 'number' || !Number.isFinite(x) || x < 0 || x > 1e9) throw new Error(`Item ${index + 1}, history row ${r + 1}: ${key} must be a non-negative number.`);
+        point[key] = x;
+      }
+      if (v.exclude !== undefined && v.exclude !== null) {
+        if (typeof v.exclude !== 'boolean') throw new Error(`Item ${index + 1}, history row ${r + 1}: exclude must be true or false.`);
+        if (v.exclude) point.exclude = true;
+      }
+      if (v.availableAt !== undefined && v.availableAt !== null) {
+        const parsed = parseInstant(v.availableAt);
+        if (!parsed.ok) throw new Error(`Item ${index + 1}, history row ${r + 1}: availableAt ${parsed.error}.`);
+        point.availableAt = v.availableAt as string;
+      }
+      return point;
+    });
+  }
+  return out;
+}
+
+type ForecastData = {
+  /** The forecast data cutoff used, or null when none was given (every supplied history row was used). */
+  forecastAsOf: string | null;
+  /** The supplier-quote review date is a different input (`asOf`) and never acts as the data cutoff. */
+  quoteReviewDateIsCutoff: false;
+  itemsWithHistory: number;
+  /** Items whose every history row used has a recorded `availableAt` at or before the cutoff. */
+  strictAsOfItems: number;
+  rowsSupplied: number;
+  rowsUsed: number;
+  rowsAfterCutoff: number;
+  rowsAtOrAfterTarget: number;
+  rowsAssumedAvailability: number;
+  invalidRows: number;
+  /** Rows replaced by a later vintage of the same month available by the cutoff. */
+  supersededVintages: number;
+  note: string;
+  revisionNote: string;
+};
+
+/** Summary (counts only) of which history rows the forecasts could use; undefined when no item has a history. */
+function describeForecastData(items: Opportunity[], forecastAsOf: string | undefined, engine: string): ForecastData | undefined {
+  const withHistory = items.filter(item => item.history?.length);
+  if (!withHistory.length) return undefined;
+  const supplied = withHistory.reduce((s, item) => s + item.history!.length, 0);
+  const engineNote = engine === 'risk-cvar-v5' ? '' : ' scenario-grid-v4 does not use monthly history (only risk-cvar-v5 learns from it).';
+  if (forecastAsOf === undefined) {
+    return {
+      forecastAsOf: null, quoteReviewDateIsCutoff: false, itemsWithHistory: withHistory.length, strictAsOfItems: 0,
+      rowsSupplied: supplied, rowsUsed: supplied, rowsAfterCutoff: 0, rowsAtOrAfterTarget: 0, rowsAssumedAvailability: supplied, invalidRows: 0, supersededVintages: 0,
+      note: `No forecastAsOf: every supplied history row was used, so this is not an as-of forecast. Send forecastAsOf to use only data available by a cutoff.${engineNote}`,
+      revisionNote: REVISION_NOTE,
+    };
+  }
+  const reports = withHistory.map(item => forecastCutoffReport({ ...item, forecastAsOf })).filter((r): r is CutoffReport => !!r && !('error' in r));
+  const sum = (key: keyof CutoffReport) => reports.reduce((s, r) => s + (r[key] as number), 0);
+  const strict = reports.filter(r => r.strictAsOf).length;
+  return {
+    forecastAsOf, quoteReviewDateIsCutoff: false, itemsWithHistory: withHistory.length, strictAsOfItems: strict,
+    rowsSupplied: supplied, rowsUsed: sum('eligible'), rowsAfterCutoff: sum('droppedAfterCutoff'), rowsAtOrAfterTarget: sum('droppedAtOrAfterTarget'),
+    rowsAssumedAvailability: sum('assumedAvailability'), invalidRows: sum('invalid'), supersededVintages: sum('supersededVintages'),
+    note: (strict === withHistory.length
+      ? 'Strict as-of: every history row used has a recorded availableAt at or before the cutoff.'
+      : `Not a strict as-of forecast for ${withHistory.length - strict} of ${withHistory.length} items: rows without availableAt were assumed available at month end plus availabilityLagDays.`) + engineNote,
+    revisionNote: REVISION_NOTE,
+  };
 }

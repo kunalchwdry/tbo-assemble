@@ -1,0 +1,104 @@
+/* Inventory: match the intro page while keeping tools and state in place. */
+.inventory-page .content { max-width: 1360px; }
+.inventory-page .heading { gap:16px; align-items:flex-end; margin-bottom:22px; }
+.inventory-page .heading h1 { font-size:clamp(1.75rem,2.2vw,2.25rem); }
+.inventory-page .heading p { max-width:660px; }
+.inventory-page .workspace-nav-shell { display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); margin-bottom:10px; }
+.inventory-page .workspace-primary-nav { display:flex; align-items:stretch; gap:4px; overflow-x:auto; min-width:0; flex:1; scrollbar-width:none; }
+.inventory-page .workspace-primary-nav::-webkit-scrollbar { display:none; }
+.inventory-page .workspace-primary-nav a { flex:none; display:flex; align-items:center; min-height:50px; padding:0 15px; border-bottom:2px solid transparent; color:var(--muted-foreground); text-decoration:none; font-size:13px; font-weight:600; white-space:nowrap; }
+.inventory-page .workspace-primary-nav a:hover { color:var(--foreground); }
+.inventory-page .workspace-primary-nav a[aria-current=page] { color:var(--foreground); border-bottom-color:var(--brand); }
+.inventory-page .workspace-menu { position:relative; z-index:20; flex:none; overflow:visible; margin:0; border-radius:10px; }
+.inventory-page .workspace-menu>summary { min-height:40px; padding:8px 12px; gap:10px; }
+.inventory-page .workspace-menu>summary strong { font-size:12px; }
+.inventory-page .workspace-menu-current { color:var(--foreground); }
+.inventory-page .workspace-menu nav { position:absolute; right:0; top:calc(100% + 8px); width:min(820px,calc(100vw - 32px)); max-height:min(68vh,620px); overflow:auto; display:block; background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:0 16px 50px rgb(0 0 0 / .13); padding:12px; }
+.inventory-page .workspace-nav-scroll-hint { display:none; }
+.inventory-page .workspace-memory { margin:0 0 18px; font-size:11px; }
+.inventory-page .workspace-memory a { color:var(--brand); font-weight:650; text-decoration:none; }
+.inventory-page .workspace-memory a:hover { text-decoration:underline; }
+.inventory-page .notice { border-radius:12px; margin-bottom:22px; }
+/* A single live plan snapshot rather than another stack of unrelated cards. */
+.inventory-page .plan-overview { position:relative; overflow:hidden; margin:0 0 20px; padding:26px; border-radius:20px; color:#fff; background:#191817; }
+.inventory-page .plan-overview:after { content:''; position:absolute; right:-170px; top:-180px; width:360px; height:360px; border:1px solid #ffffff12; border-radius:50%; box-shadow:0 0 0 36px #ffffff06,0 0 0 72px #ffffff04; pointer-events:none; }
+.inventory-page .plan-overview-top { position:relative; z-index:1; display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+.inventory-page .plan-overline { display:block; margin-bottom:10px; color:#d6cec8; font-size:10px; font-weight:750; letter-spacing:.1em; }
+.inventory-page .plan-overline i { display:inline-block; width:7px; height:7px; margin-right:6px; border-radius:50%; background:#f46a24; }
+.inventory-page .plan-overview-top h2 { color:#fff; margin:0; font-family:var(--font-iosevka),sans-serif; font-size:clamp(27px,2.4vw,36px); line-height:1.1; letter-spacing:-.035em; }
+.inventory-page .plan-overview-top h2 em { font-style:normal; color:#f78850; }
+.inventory-page .plan-overview-top p { margin:9px 0 0; color:#c6bbb3; font-size:12px; line-height:1.55; }
+.inventory-page .plan-source { flex:none; padding:7px 10px; border:1px solid #795443; border-radius:25px; color:#ecc0a9; font-size:10px; font-weight:750; letter-spacing:.07em; }
+.inventory-page .plan-overview .metrics { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:24px; }
+.inventory-page .plan-overview .metric { min-width:0; min-height:133px; padding:16px; border:1px solid #4a403a; border-radius:14px; box-shadow:none; background:#272320; }
+.inventory-page .plan-overview .metric-top { color:#c6bbb4; font-size:12px; }
+.inventory-page .plan-overview .metric-icon { width:32px; height:32px; border-radius:9px; background:#3b3029; color:#f68a52; }
+.inventory-page .plan-overview .metric>strong { display:block; color:#fff; font-size:24px; line-height:1.15; margin-top:11px; overflow-wrap:anywhere; }
+.inventory-page .plan-overview .metric>strong small { font-size:12px; }
+.inventory-page .plan-overview .metric p,.inventory-page .plan-overview .metric-note { color:#beb3ac; font-size:11px; line-height:1.5; }
+.inventory-page .plan-overview .metric p b,.inventory-page .plan-overview .metric p b.green-text { color:#f0d0bd; }
+.inventory-page .plan-overview .metric-progress { background:#51453d; }
+.inventory-page .plan-overview .metric-progress span { background:#f26929; }
+.inventory-page .plan-overview-foot { position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:17px; color:#bdb2aa; font-size:11px; line-height:1.5; }
+.inventory-page .plan-overview-foot a { display:inline-flex; align-items:center; gap:6px; flex:none; color:#f7a275; font-size:12px; font-weight:700; text-decoration:none; }
+.inventory-page .plan-overview-foot a:hover { text-decoration:underline; }
+.inventory-page .control-panel { padding:26px; }
+.inventory-page .control-title { margin-bottom:22px; }
+.inventory-page .opportunities { margin-top:24px; }
+.inventory-page .opportunities .panel-head { padding:24px 24px 20px; }
+.inventory-page .opportunities .table-foot { padding-top:14px; padding-bottom:16px; }
+.inventory-page .analysis-hub { margin:38px 0 28px; }
+.inventory-page .analysis-hub-heading { margin-bottom:15px; }
+.inventory-page .analysis-eyebrow { display:block; color:var(--brand); font-size:10px; font-weight:750; letter-spacing:.1em; margin-bottom:6px; }
+.inventory-page .analysis-hub-heading h2 { color:var(--foreground); font-family:var(--font-iosevka),sans-serif; font-size:22px; line-height:1.2; margin:0 0 5px; }
+.inventory-page .analysis-hub-heading p { color:var(--muted-foreground); font-size:13px; line-height:1.5; margin:0; }
+.inventory-page .analysis-list { display:grid; gap:10px; }
+.inventory-page .analysis-disclosure { min-width:0; background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.inventory-page .analysis-disclosure>summary { display:flex; align-items:center; gap:14px; min-height:78px; padding:16px 20px; cursor:pointer; list-style:none; }
+.inventory-page .analysis-disclosure>summary::-webkit-details-marker { display:none; }
+.inventory-page .analysis-disclosure>summary:hover { background:var(--secondary); }
+.inventory-page .analysis-disclosure>summary:focus-visible { outline:2px solid var(--brand); outline-offset:-3px; }
+.inventory-page .analysis-icon { display:grid; place-items:center; flex:none; width:42px; height:42px; border-radius:12px; background:var(--secondary); color:var(--foreground); }
+.inventory-page .analysis-label { display:block; flex:1; min-width:0; }
+.inventory-page .analysis-label strong,.inventory-page .analysis-label small { display:block; }
+.inventory-page .analysis-label strong { color:var(--foreground); font-size:14px; line-height:1.35; }
+.inventory-page .analysis-label small { margin-top:4px; color:var(--muted-foreground); font-size:12px; line-height:1.45; }
+.inventory-page .analysis-chevron { flex:none; color:var(--muted-foreground); transition:transform .18s ease; }
+.inventory-page .analysis-disclosure[open] .analysis-chevron { transform:rotate(180deg); }
+.inventory-page .analysis-body { padding:0 18px 18px; border-top:1px solid var(--border); }
+.inventory-page .analysis-body .journey { margin:22px 0 0; }
+.inventory-page .analysis-body .budget-compare { margin-top:18px; }
+.inventory-page .analysis-body .risk-profile,.inventory-page .analysis-body .dashboard-grid { margin-top:18px; }
+.inventory-page .analysis-hint { margin:18px 2px 2px; font-size:13px; color:var(--muted-foreground); }
+@media(max-width:1000px) { .inventory-page .plan-overview .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:700px) {
+ .inventory-page .content { padding-left:16px; padding-right:16px; }
+ .inventory-page .heading { align-items:flex-start; }
+ .inventory-page .heading h1 { font-size:1.75rem; }
+ .inventory-page .workspace-nav-shell { gap:6px; }
+ .inventory-page .workspace-primary-nav a { min-height:46px; padding:0 10px; font-size:12px; }
+ .inventory-page .workspace-menu>summary { padding:8px 9px; }
+ .inventory-page .notice { flex-wrap:wrap; gap:8px; padding:13px 14px; }
+ .inventory-page .notice>span { flex:1 1 calc(100% - 26px); min-width:0; }
+ .inventory-page .notice button { margin-left:24px; }
+ .inventory-page .plan-overview { padding:20px; }
+ .inventory-page .plan-overview-top { flex-wrap:wrap; }
+ .inventory-page .plan-overview-top h2 { font-size:28px; }
+ .inventory-page .plan-overview .metrics { gap:8px; margin-top:20px; }
+ .inventory-page .plan-overview .metric { min-height:127px; padding:12px; }
+ .inventory-page .plan-overview .metric>strong { font-size:21px; }
+ .inventory-page .plan-overview-foot { align-items:flex-start; flex-direction:column; }
+ .inventory-page .control-panel { padding:20px; }
+ .inventory-page .analysis-hub { margin-top:32px; }
+ .inventory-page .analysis-disclosure>summary { min-height:72px; padding:14px; gap:11px; }
+ .inventory-page .analysis-icon { width:38px; height:38px; }
+ .inventory-page .analysis-body { padding:0 10px 12px; }
+}
+.inventory-page .plan-overview .metric p b.green-text { color:#f2c7ad !important; }
+.inventory-page .opportunity-scroll-hint { display:none; }
+.inventory-page .opportunities .count { background:#fff0e7; color:#b84a12; }
+@media(max-width:700px) {
+ .inventory-page .opportunity-scroll-hint { display:block; margin:0; padding:0 20px 10px; color:var(--muted-foreground); font-size:11px; }
+ .inventory-page .opportunity-cards { grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:minmax(250px,86%); gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-inline:contain; }
+ .inventory-page .opportunity-card { scroll-snap-align:start; }
+}

@@ -1,7 +1,29 @@
-import { bestAtQuantity, createGreedyPlan, planRow, timingFor, purchaseCost, minimumPurchase, type Opportunity, type PlanOptions, type PlanRow } from './procurement-core';
+import { bestAtQuantity, createGreedyPlan, planRow, timingFor, purchaseCost, minimumPurchase, type Opportunity, type PlanEngine, type PlanOptions, type PlanRow,type BudgetBasis} from './procurement-core';
+import { optimizePortfolioRisk, RISK_ENGINE_VERSION, type RiskSummary, type ServiceSummary } from './risk-optimizer';
+import { withForecastCutoff } from './forecast-cutoff';
 
 type Choice={qty:number;cost:number;value:number};
-export type OptimizedPlan={rows:PlanRow[]; objective:number; upperBound:number; gap:number; baselineObjective:number; algorithm:'discrete-budget'|'greedy-fallback'; bucketCount:number};
+export type OptimizedPlan={rows:PlanRow[]; objective:number; upperBound:number; gap:number; baselineObjective:number; algorithm:'discrete-budget'|'greedy-fallback'|'risk-cvar-local-search'|'risk-cvar-decomposition'; bucketCount:number; engine?:PlanEngine; risk?:RiskSummary; pricing?:'joint'|'fixed'; service?:ServiceSummary};
+
+/** Engine that produced a set of rows, so what-if tools replan with the same engine. */
+export function engineOf(rows:PlanRow[]):PlanEngine{return rows.some(r=>r.engine===RISK_ENGINE_VERSION)?RISK_ENGINE_VERSION:'scenario-grid-v4';}
+/** Engine and availability target a plan was built with, so what-if re-plans use the same settings. */
+/** Options a what-if re-plan must reuse so it answers the same question: engine, availability target and (v5, when not the default) budget basis. */
+export function planOptionsOf(rows:PlanRow[]):{engine:PlanEngine;serviceTarget?:number;budgetBasis?:BudgetBasis}{const engine=engineOf(rows);const v5=engine===RISK_ENGINE_VERSION;const target=v5?rows.find(r=>(r.serviceTarget??0)>0)?.serviceTarget:undefined;const basis=v5&&rows.some(r=>r.budgetBasis==='capital-at-risk')?'capital-at-risk' as const:undefined;return {engine,...(target?{serviceTarget:target}:{}),...(basis?{budgetBasis:basis}:{})};}
+
+/**
+ * Entry point for every planner in the app. `engine: 'risk-cvar-v5'` runs the portfolio risk engine
+ * (correlated scenarios, CVaR, flexible allotments); the default remains scenario-grid-v4 below.
+ */
+export function optimizePortfolio(inputItems:Opportunity[], budget:number, risk:number, options:PlanOptions={}):OptimizedPlan {
+ // Forecast data cutoff (never the quote review date): carried on each product so every forecast honours it.
+ const items=withForecastCutoff(inputItems,options.forecastAsOf);
+ if(options.engine===RISK_ENGINE_VERSION){
+  const legacyRows=options.compareLegacy?optimizeScenarioGrid(items,budget,risk,{asOf:options.asOf}).rows:undefined;
+  return optimizePortfolioRisk(items,budget,risk,{...options,legacyRows});
+ }
+ return {...optimizeScenarioGrid(items,budget,risk,options),engine:'scenario-grid-v4'};
+}
 
 /**
  * Multiple-choice knapsack approximation with a conservative budget grid.
@@ -10,7 +32,7 @@ export type OptimizedPlan={rows:PlanRow[]; objective:number; upperBound:number; 
  * better. A Lagrangian budget relaxation gives an upper bound on the model's
  * optimum. This proves nothing about the accuracy of the assumptions.
  */
-export function optimizePortfolio(items:Opportunity[], budget:number, risk:number, options:PlanOptions={}):OptimizedPlan {
+function optimizeScenarioGrid(items:Opportunity[], budget:number, risk:number, options:PlanOptions={}):OptimizedPlan {
  const asOf=options.asOf || new Date().toISOString().slice(0,10);
  const baseline=createGreedyPlan(items,budget,risk,{asOf});
  // Decimal prices can accumulate floating-point error in the greedy loop.
