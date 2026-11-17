@@ -1,5 +1,10 @@
 # Owner-scoped event, guest and booking access: design, tests and migration plan
 
+> **Superseded (17 Nov 2026).** This plan described agent-level ownership (`Agent.authUserId`). The project owner chose
+> **event-level ownership** instead: see [`event-ownership.md`](event-ownership.md) (design, migration, rollout) and
+> [`booking-capabilities.md`](booking-capabilities.md). The public-endpoint resource review below still applies.
+
+
 Status: **designed and tested locally with mocks. Disabled by default. Nothing is applied to any database or
 deployment.** Every step below that touches data, accounts or production settings needs explicit approval.
 

@@ -1,0 +1,1995 @@
+{
+  "summary": {
+    "generatedFrom": "static scan of src/ (no requests made)",
+    "routes": 57,
+    "byCategory": {
+      "cron": 2,
+      "disabled": 1,
+      "owner-data (legacy, no auth)": 22,
+      "owner-scoped v2": 7,
+      "public booking flow": 6,
+      "public data / demo": 16,
+      "public v2": 3
+    },
+    "withoutIdentityCheck": 44,
+    "ownerDataWithoutIdentityCheck": 23,
+    "writingRoutesWithoutIdentityCheck": 24,
+    "serverPagesWithDirectDbAccess": 17,
+    "serverPagesWithoutIdentityCheck": 17,
+    "unclassified": []
+  },
+  "routes": [
+    {
+      "route": "/api/ai/parse",
+      "methods": [
+        "POST"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous upload parsing (demo)",
+        "mustStayPublic": true,
+        "note": "Needs decompression caps for XLSX/DOCX (plan section 6)."
+      },
+      "consumers": [
+        "src/app/dashboard/onboarding/page.tsx"
+      ]
+    },
+    {
+      "route": "/api/bookings",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "reads": [
+        "addOn",
+        "booking",
+        "discountRule",
+        "event",
+        "guest",
+        "roomBlock"
+      ],
+      "writes": [
+        "activityLog",
+        "booking",
+        "bookingAddOn",
+        "guest",
+        "roomBlock"
+      ],
+      "rawSql": true,
+      "loads": [
+        "bookings"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public booking flow",
+        "intended": "guest creates a booking (POST); owner lists (GET)",
+        "mustStayPublic": true,
+        "note": "Creation stays public for open events; listing must become owner-only."
+      },
+      "consumers": [
+        "src/app/booking/[bookingId]/invoice/page.tsx",
+        "src/app/booking/[bookingId]/page.tsx",
+        "src/components/dashboard/checkin-client.tsx",
+        "src/components/microsite/booking-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/bookings/[bookingId]",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "reads": [
+        "booking",
+        "roomBlock",
+        "waitlist"
+      ],
+      "writes": [
+        "activityLog",
+        "booking",
+        "guest",
+        "roomBlock",
+        "waitlist"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public booking flow",
+        "intended": "booking holder (confirmation link); owner",
+        "mustStayPublic": true,
+        "note": "Booking id acts as the capability today."
+      },
+      "consumers": [
+        "src/app/booking/[bookingId]/invoice/page.tsx",
+        "src/app/booking/[bookingId]/page.tsx"
+      ]
+    },
+    {
+      "route": "/api/bookings/[bookingId]/checkin",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "booking"
+      ],
+      "writes": [
+        "activityLog",
+        "booking",
+        "guest"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public booking flow",
+        "intended": "event staff / owner; guest self check-in",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/app/booking/[bookingId]/page.tsx",
+        "src/components/dashboard/checkin-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/bookings/[bookingId]/upgrade",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "booking",
+        "bookingAddOn",
+        "discountRule",
+        "roomBlock"
+      ],
+      "writes": [
+        "activityLog",
+        "booking",
+        "roomBlock"
+      ],
+      "rawSql": false,
+      "loads": [
+        "bookings"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public booking flow",
+        "intended": "booking holder",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/app/booking/[bookingId]/page.tsx"
+      ]
+    },
+    {
+      "route": "/api/cron/collect-fares",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [
+        "cron secret"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "cron secret",
+      "classification": {
+        "category": "cron",
+        "intended": "Vercel cron with secret",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/cron/collect-traffic",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [
+        "cron secret"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "cron secret",
+      "classification": {
+        "category": "cron",
+        "intended": "Vercel cron with secret",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/events",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "reads": [
+        "agent",
+        "event"
+      ],
+      "writes": [
+        "addOn",
+        "agent",
+        "attritionRule",
+        "event",
+        "roomBlock"
+      ],
+      "rawSql": false,
+      "loads": [
+        "attritionRules",
+        "bookings",
+        "guests"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner (dashboard)",
+        "mustStayPublic": false,
+        "note": "GET lists every event with guests, bookings and rules; POST creates events (and a demo agent when none exists)."
+      },
+      "consumers": [
+        "src/app/booking/[bookingId]/page.tsx",
+        "src/app/dashboard/events/[eventId]/feedback/feedback-client.tsx",
+        "src/app/dashboard/events/[eventId]/overview-actions.tsx",
+        "src/app/dashboard/onboarding/page.tsx",
+        "src/app/event/[slug]/feedback/page.tsx",
+        "src/components/dashboard/activity-log.tsx",
+        "src/components/dashboard/allocator-client.tsx",
+        "src/components/dashboard/attrition-client.tsx",
+        "src/components/dashboard/dashboard-client.tsx",
+        "src/components/dashboard/discount-rules-client.tsx",
+        "src/components/dashboard/dynamic-pax.tsx",
+        "src/components/dashboard/event-edit-form.tsx",
+        "src/components/dashboard/quote-download.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]",
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [
+        "activityLog",
+        "addOn",
+        "attritionRule",
+        "booking",
+        "bookingAddOn",
+        "discountRule",
+        "event",
+        "feedback",
+        "guest",
+        "nudge",
+        "roomBlock",
+        "waitlist"
+      ],
+      "rawSql": false,
+      "loads": [
+        "attritionRules",
+        "bookings",
+        "discountRules",
+        "guests",
+        "guests(id,name,email,phone,status,group)"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner; booking page reads it today",
+        "mustStayPublic": false,
+        "note": "GET full event; PATCH/DELETE without identity."
+      },
+      "consumers": [
+        "src/app/booking/[bookingId]/page.tsx",
+        "src/app/dashboard/events/[eventId]/overview-actions.tsx",
+        "src/app/event/[slug]/feedback/page.tsx",
+        "src/components/dashboard/dashboard-client.tsx",
+        "src/components/dashboard/event-edit-form.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/activity",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "reads": [
+        "activityLog"
+      ],
+      "writes": [
+        "activityLog"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/activity-log.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/allocate",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "event",
+        "guest"
+      ],
+      "writes": [
+        "activityLog",
+        "guest"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/allocator-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/auto-allocate",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [
+        "activityLog",
+        "guest"
+      ],
+      "rawSql": false,
+      "loads": [
+        "guests"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/allocator-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/bulk-checkin",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "booking",
+        "event"
+      ],
+      "writes": [
+        "activityLog",
+        "booking",
+        "guest"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/events/[eventId]/clone",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [
+        "activityLog",
+        "addOn",
+        "attritionRule",
+        "discountRule",
+        "event",
+        "roomBlock"
+      ],
+      "rawSql": false,
+      "loads": [
+        "attritionRules",
+        "discountRules"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/app/dashboard/events/[eventId]/overview-actions.tsx",
+        "src/components/dashboard/dashboard-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/discount",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE",
+        "PATCH"
+      ],
+      "reads": [
+        "discountRule"
+      ],
+      "writes": [
+        "activityLog",
+        "discountRule"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner (writes); public price display (reads)",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/discount-rules-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/feedback",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "reads": [
+        "feedback"
+      ],
+      "writes": [
+        "activityLog",
+        "feedback"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public booking flow",
+        "intended": "guest submits; owner reads",
+        "mustStayPublic": true,
+        "note": "Submission can stay public with limits; the read side is owner-only."
+      },
+      "consumers": [
+        "src/app/dashboard/events/[eventId]/feedback/feedback-client.tsx",
+        "src/app/event/[slug]/feedback/page.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/nudge",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "guest",
+        "nudge"
+      ],
+      "writes": [
+        "activityLog",
+        "nudge"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/attrition-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/pax",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [
+        "activityLog",
+        "event"
+      ],
+      "rawSql": false,
+      "loads": [
+        "bookings"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/dynamic-pax.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/qr-batch",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "booking",
+        "event"
+      ],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/app/dashboard/events/[eventId]/overview-actions.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/quote",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "rawSql": false,
+      "loads": [
+        "agent(name,company,email)",
+        "bookings"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/quote-download.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/rooming-list",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [
+        "activityLog"
+      ],
+      "rawSql": false,
+      "loads": [
+        "bookings",
+        "guests"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false,
+        "note": "Export of guest names and rooms."
+      },
+      "consumers": [
+        "src/app/dashboard/events/[eventId]/overview-actions.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/[eventId]/status",
+      "methods": [
+        "PATCH"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [
+        "activityLog",
+        "event"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/app/dashboard/events/[eventId]/overview-actions.tsx"
+      ]
+    },
+    {
+      "route": "/api/events/search",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "rawSql": false,
+      "loads": [
+        "bookings(id,totalAmount,status)",
+        "guests(id,status,name)"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner; booking page uses it today",
+        "mustStayPublic": false,
+        "note": "Returns event ids by name, which the booking page then expands via /api/events/{id}."
+      },
+      "consumers": [
+        "src/app/booking/[bookingId]/page.tsx",
+        "src/app/event/[slug]/feedback/page.tsx",
+        "src/components/dashboard/dashboard-client.tsx"
+      ]
+    },
+    {
+      "route": "/api/flight/news",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": true,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/flight-intelligence.tsx"
+      ]
+    },
+    {
+      "route": "/api/flight/offers",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/flight-intelligence.tsx"
+      ]
+    },
+    {
+      "route": "/api/flight/serp-fares",
+      "methods": [
+        "POST"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": true,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/serp-fare-search.tsx"
+      ]
+    },
+    {
+      "route": "/api/flight/seven-day",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/seven-day-fare.tsx"
+      ]
+    },
+    {
+      "route": "/api/flight/weather",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": true,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/flight-intelligence.tsx"
+      ]
+    },
+    {
+      "route": "/api/geocode",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": true,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous venue lookup",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/venue-map-inner.tsx",
+        "src/lib/route-limits.ts"
+      ]
+    },
+    {
+      "route": "/api/guests",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "reads": [
+        "event",
+        "guest"
+      ],
+      "writes": [
+        "activityLog",
+        "booking",
+        "guest",
+        "roomBlock"
+      ],
+      "rawSql": false,
+      "loads": [
+        "bookings",
+        "bookings(id,roomBlockId,status)"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false,
+        "note": "GET returns every guest record (names, emails, phones)."
+      },
+      "consumers": [
+        "src/components/dashboard/guest-management.tsx"
+      ]
+    },
+    {
+      "route": "/api/guests/import",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "reads": [
+        "event",
+        "guest"
+      ],
+      "writes": [
+        "activityLog",
+        "guest"
+      ],
+      "rawSql": false,
+      "loads": [
+        "bookings"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/guest-management.tsx"
+      ]
+    },
+    {
+      "route": "/api/guests/search",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "guest"
+      ],
+      "writes": [],
+      "rawSql": false,
+      "loads": [
+        "bookings"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/india-market/collection",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/traffic-collection.tsx"
+      ]
+    },
+    {
+      "route": "/api/india-market/evidence",
+      "methods": [
+        "GET",
+        "DELETE",
+        "POST"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [
+        "supabase getUser"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "supabase getUser",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/route-evidence.tsx"
+      ]
+    },
+    {
+      "route": "/api/india-market/fares",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/india-market.tsx"
+      ]
+    },
+    {
+      "route": "/api/india-market/forecast-monitor",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": true,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/statsforecast-forward-status.tsx"
+      ]
+    },
+    {
+      "route": "/api/india-market/traffic",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/dashboard/india-market.tsx"
+      ]
+    },
+    {
+      "route": "/api/market/demand",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": true,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/app/inventory/workspace.tsx",
+        "src/components/live-market.tsx"
+      ]
+    },
+    {
+      "route": "/api/market/holidays",
+      "methods": [
+        "GET"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": true,
+      "body": false,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/live-market.tsx"
+      ]
+    },
+    {
+      "route": "/api/market/search-trends",
+      "methods": [
+        "POST"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": true,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": true,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous research and demo data",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/google-trends-scenario.tsx"
+      ]
+    },
+    {
+      "route": "/api/procurement/plan",
+      "methods": [
+        "POST"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": true,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public data / demo",
+        "intended": "anonymous planner (demo, synthetic or user inputs)",
+        "mustStayPublic": true
+      },
+      "consumers": [
+        "src/components/plan-api-check.tsx",
+        "src/lib/route-limits.ts"
+      ]
+    },
+    {
+      "route": "/api/rfp",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "reads": [
+        "event",
+        "rFP",
+        "vendor"
+      ],
+      "writes": [
+        "activityLog",
+        "rFP"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false,
+        "note": "Supplier requests and quotes."
+      },
+      "consumers": [
+        "src/components/dashboard/rfp-dashboard.tsx"
+      ]
+    },
+    {
+      "route": "/api/room-occupants",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH"
+      ],
+      "reads": [
+        "booking",
+        "guest",
+        "roomOccupant"
+      ],
+      "writes": [
+        "activityLog",
+        "roomOccupant"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner; booking holder adds roommates",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/room-occupants.tsx"
+      ]
+    },
+    {
+      "route": "/api/schedule",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "reads": [
+        "event",
+        "scheduleItem"
+      ],
+      "writes": [
+        "activityLog",
+        "scheduleItem"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner (writes); public itinerary (reads)",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/event-schedule.tsx"
+      ]
+    },
+    {
+      "route": "/api/seed",
+      "methods": [
+        "POST"
+      ],
+      "reads": [],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": true,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "disabled",
+      "classification": {
+        "category": "disabled",
+        "intended": "nobody on deployed environments",
+        "mustStayPublic": false
+      },
+      "consumers": [
+        "src/components/dashboard/sidebar.tsx"
+      ]
+    },
+    {
+      "route": "/api/v2/booking-access/exchange",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "bookingAccess"
+      ],
+      "writes": [
+        "bookingAccess"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "booking capability (256-bit link token)"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "booking capability (256-bit link token)",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "exchangeLinkHandler"
+      ],
+      "classification": {
+        "category": "public v2",
+        "intended": "holder of a booking-link token",
+        "mustStayPublic": true,
+        "note": "Exchanges a 256-bit link token for an HttpOnly session bound to one booking; same-origin, rate-limited."
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/booking-access/legacy",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "booking"
+      ],
+      "writes": [
+        "bookingAccess"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "legacy booking id as bearer (view-only bridge)"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "legacy booking id as bearer (view-only bridge)",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "legacyBookingLinkHandler"
+      ],
+      "classification": {
+        "category": "public v2",
+        "intended": "holder of a pre-existing booking URL (temporary bridge)",
+        "mustStayPublic": true,
+        "note": "Bearer booking id -> 2-hour view-only session; LEGACY_BOOKING_LINKS=0 disables it (410). Sunset planned."
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/bookings/[bookingId]",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "booking",
+        "bookingAccess",
+        "eventMember"
+      ],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "v2 owner policy (getUser + EventMember) or booking capability session"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "v2 owner policy (getUser + EventMember) or booking capability session",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "getBookingHandler"
+      ],
+      "classification": {
+        "category": "owner-scoped v2",
+        "intended": "event member (full) or booking-holder session (narrow view)",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/bookings/[bookingId]/access",
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
+      "reads": [
+        "booking",
+        "eventMember"
+      ],
+      "writes": [
+        "bookingAccess"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "v2 owner policy (getUser + EventMember), owner role"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "v2 owner policy (getUser + EventMember), owner role",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "issueBookingAccessHandler",
+        "revokeBookingAccessHandler"
+      ],
+      "classification": {
+        "category": "owner-scoped v2",
+        "intended": "event owner (issue / revoke booking links)",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/events",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "event",
+        "eventMember"
+      ],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "v2 owner policy (getUser + EventMember)"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "v2 owner policy (getUser + EventMember)",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "listEventsHandler"
+      ],
+      "classification": {
+        "category": "owner-scoped v2",
+        "intended": "signed-in owner",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/events/[eventId]",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "reads": [
+        "addOn",
+        "attritionRule",
+        "booking",
+        "event",
+        "eventMember",
+        "guest",
+        "roomBlock"
+      ],
+      "writes": [
+        "event"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "v2 owner policy (getUser + EventMember)"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "v2 owner policy (getUser + EventMember)",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "getEventHandler",
+        "patchEventHandler"
+      ],
+      "classification": {
+        "category": "owner-scoped v2",
+        "intended": "signed-in owner",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/events/[eventId]/status",
+      "methods": [
+        "POST"
+      ],
+      "reads": [
+        "event",
+        "eventMember"
+      ],
+      "writes": [
+        "event"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "v2 owner policy (getUser + EventMember)"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "v2 owner policy (getUser + EventMember)",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "eventStatusHandler"
+      ],
+      "classification": {
+        "category": "owner-scoped v2",
+        "intended": "event owner or editor",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/guests",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "reads": [
+        "eventMember",
+        "guest"
+      ],
+      "writes": [
+        "guest"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "v2 owner policy (getUser + EventMember)"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "v2 owner policy (getUser + EventMember)",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "listGuestsHandler",
+        "createGuestHandler"
+      ],
+      "classification": {
+        "category": "owner-scoped v2",
+        "intended": "signed-in owner",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/guests/[guestId]",
+      "methods": [
+        "PATCH",
+        "DELETE"
+      ],
+      "reads": [
+        "booking",
+        "eventMember",
+        "guest"
+      ],
+      "writes": [
+        "guest"
+      ],
+      "rawSql": false,
+      "loads": [],
+      "identity": [
+        "v2 owner policy (getUser + EventMember)"
+      ],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "v2 owner policy (getUser + EventMember)",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "patchGuestHandler",
+        "deleteGuestHandler"
+      ],
+      "classification": {
+        "category": "owner-scoped v2",
+        "intended": "event owner or editor",
+        "mustStayPublic": false
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/v2/public/events/[slug]",
+      "methods": [
+        "GET"
+      ],
+      "reads": [
+        "addOn",
+        "event",
+        "roomBlock"
+      ],
+      "writes": [],
+      "rawSql": false,
+      "loads": [],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": false,
+      "protectedBy": "none",
+      "flag": "OWNER_SCOPE_API=1 (503 when off)",
+      "handlers": [
+        "publicEventHandler"
+      ],
+      "classification": {
+        "category": "public v2",
+        "intended": "anyone with the event link",
+        "mustStayPublic": true,
+        "note": "Allowlisted public fields of active/published events only; no guests, agent, rules or ids."
+      },
+      "consumers": []
+    },
+    {
+      "route": "/api/vendors",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "reads": [
+        "rFP",
+        "vendor"
+      ],
+      "writes": [
+        "vendor"
+      ],
+      "rawSql": false,
+      "loads": [
+        "rfps(id,status,quotedAmount)"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "owner-data (legacy, no auth)",
+        "intended": "owner",
+        "mustStayPublic": false,
+        "note": "Supplier details."
+      },
+      "consumers": [
+        "src/components/dashboard/rfp-dashboard.tsx"
+      ]
+    },
+    {
+      "route": "/api/waitlist",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "reads": [
+        "event",
+        "roomBlock",
+        "waitlist"
+      ],
+      "writes": [
+        "activityLog",
+        "waitlist"
+      ],
+      "rawSql": false,
+      "loads": [
+        "bookings"
+      ],
+      "identity": [],
+      "disabledMarker": false,
+      "rateLimited": false,
+      "outbound": false,
+      "body": true,
+      "protectedBy": "none",
+      "classification": {
+        "category": "public booking flow",
+        "intended": "guest joins (POST); owner reads",
+        "mustStayPublic": true
+      },
+      "consumers": []
+    }
+  ],
+  "pages": [
+    {
+      "page": "/dashboard",
+      "file": "src/app/dashboard/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "bookings(id,totalAmount,status)",
+        "guests(id,status,name)"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/analytics",
+      "file": "src/app/dashboard/analytics/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "bookings",
+        "guests"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/calendar",
+      "file": "src/app/dashboard/calendar/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "guests"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]",
+      "file": "src/app/dashboard/events/[eventId]/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "attritionRules",
+        "bookings",
+        "discountRules",
+        "guests"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/activity",
+      "file": "src/app/dashboard/events/[eventId]/activity/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/allocator",
+      "file": "src/app/dashboard/events/[eventId]/allocator/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "guests"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/attrition",
+      "file": "src/app/dashboard/events/[eventId]/attrition/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "attritionRules",
+        "guests"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/checkin",
+      "file": "src/app/dashboard/events/[eventId]/checkin/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/feedback",
+      "file": "src/app/dashboard/events/[eventId]/feedback/page.tsx",
+      "reads": [
+        "event",
+        "feedback"
+      ],
+      "writes": [],
+      "loads": [],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/guests",
+      "file": "src/app/dashboard/events/[eventId]/guests/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "bookings",
+        "guests"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/inventory",
+      "file": "src/app/dashboard/events/[eventId]/inventory/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "guests(id)"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/pax",
+      "file": "src/app/dashboard/events/[eventId]/pax/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/rfp",
+      "file": "src/app/dashboard/events/[eventId]/rfp/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "rfps"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/rooms",
+      "file": "src/app/dashboard/events/[eventId]/rooms/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "bookings",
+        "guests(id,name,email,phone)",
+        "occupants"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/dashboard/events/[eventId]/schedule",
+      "file": "src/app/dashboard/events/[eventId]/schedule/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/event/[slug]",
+      "file": "src/app/event/[slug]/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [
+        "agent(email)",
+        "attritionRules",
+        "discountRules"
+      ],
+      "protectedBy": "none"
+    },
+    {
+      "page": "/event/[slug]/book",
+      "file": "src/app/event/[slug]/book/page.tsx",
+      "reads": [
+        "event"
+      ],
+      "writes": [],
+      "loads": [],
+      "protectedBy": "none"
+    }
+  ],
+  "actions": [
+    {
+      "file": "src/app/dashboard/private-events/actions.ts",
+      "reads": [],
+      "writes": [],
+      "protectedBy": "supabase getUser"
+    },
+    {
+      "file": "src/app/secure-account/actions.ts",
+      "reads": [],
+      "writes": [],
+      "protectedBy": "supabase getUser"
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # Supabase Auth rollout — not yet production-ready
 
+> Owner-scoped access to the legacy events, guests and bookings (event-level ownership, booking capabilities) is
+> planned in [`event-ownership.md`](event-ownership.md); current status and residual risk are in [`README.md`](README.md).
+
+
 The `/login` page uses Supabase Auth, and `/secure-account` verifies identity through `getUser()`.
 The account can create, edit and delete private event drafts and room blocks using
 a user-token Supabase client and owner-scoped RLS. Private events remain separate from the old
