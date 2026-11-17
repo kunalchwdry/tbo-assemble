@@ -130,11 +130,14 @@ Ownership is never inferred from an email that resembles the agent's. Tested in 
 5. **Move the dashboard and booking page to v2** behind a reversible switch. Compare aggregate counts and errors.
 6. **Restrict the legacy routes** (separate approval).
 
-Production facts (read-only check, 17 Nov 2026):
-- Production has no `_prisma_migrations` table, so the schema is managed with `prisma db push`.
-- After the up migration, run `db push` only from a branch whose `schema.prisma` contains the two new models. An older
-  schema would offer to drop them (behind a data-loss prompt).
-- The project's `ensure_rls` event trigger also turns RLS on for the new tables. The migration's explicit
+Production status (17 Nov 2026, approved by the project owner):
+- The up migration is applied as Supabase migration `20261117173521 event_ownership_and_booking_access`. The project
+  records schema changes as Supabase migrations; it has no Prisma migration history.
+- The 8 events that existed then are assigned to one approved account as owner (reference
+  `R14-owner-mapping-2026-11-17`, fingerprint `70214dc6e305`). Evidence: `README.md`, "Production changes".
+- Never run `prisma db push` against production from a branch whose `schema.prisma` lacks the two models (for example
+  `main` before this branch is merged). Prisma would offer to drop them, behind a data-loss prompt.
+- The project's `ensure_rls` event trigger also turns RLS on for new tables. The migration's explicit
   `ENABLE ROW LEVEL SECURITY` and `REVOKE` remain the source of truth.
 
 Rollback: switch `OWNER_SCOPE_API` off, then optionally run the down migration. Rolling back never means re-opening the

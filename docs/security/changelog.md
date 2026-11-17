@@ -109,6 +109,24 @@ route handlers' own `no-referrer`. Config headers win, and among config entries 
 - Sign-ups are open with email confirmation off (left unchanged).
 - Details: `README.md`, "Deployed configuration".
 
+## 10. Production: ownership migration and mapping (approved by the project owner)
+
+The owner approved three things through the chat's question form:
+- the account, named by them and resolved to exactly one Supabase user;
+- all 8 events (including a "Copy of …" draft created that day through the open dashboard);
+- going ahead without a data dump.
+
+What was done:
+- Snapshot of all 28 tables: exact row counts plus catalog checksums.
+- Up migration applied as Supabase migration `20261117173521 event_ownership_and_booking_access`. Verified: RLS on,
+  0 policies, no `anon`/`authenticated` privileges, 11 constraints, 6 indexes, and a snapshot identical to the one
+  before.
+- Ownership mapping, fingerprint `70214dc6e305`. Dry run 8/8 OK; applied in one statement that refuses anything but
+  exactly 8 rows. Result: 8 active owners, 1 per event. Snapshot still identical.
+- Live site unchanged (pages 200, `/api/v2` 503).
+- The application code is still not deployed.
+- Undo queries: `README.md`, "Production changes".
+
 ## Verification at the end of this branch (17 Nov 2026)
 
 | Check | Result |

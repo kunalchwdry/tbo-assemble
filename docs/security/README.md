@@ -1,12 +1,15 @@
 # Security work: status, evidence and residual risk
 
 Branch `security/owner-scope-s1`, based on `main` at `195fd1c`. Last updated 17 Nov 2026.
-Implements the security implementation plan in stages. **Nothing here is deployed.**
+Implements the security implementation plan in stages. **The application code here is not deployed.**
 
 - Production runs `195fd1c`; this branch has not been pushed.
 - The new API is off (`OWNER_SCOPE_API` unset → 503).
-- No real database has been migrated.
-- No record has been assigned an owner.
+- **Production database (approved by the project owner, 17 Nov 2026):**
+  - the additive ownership migration is applied;
+  - the 8 events are assigned to one approved account;
+  - the running app does not use either yet;
+  - see "Production changes".
 
 **This branch does not make the application secure.** The legacy routes and dashboard pages listed below still expose
 private data to anyone until the cutover steps are approved and done.
@@ -17,8 +20,8 @@ private data to anyone until the cutover steps are approved and done.
 |---|---|---|
 | Inventory of every route, method, server page and action (§0, §9) | [`route-inventory.md`](route-inventory.md) / `.json`, from `scripts/security-route-inventory.ts` (`--check` fails on unclassified routes) | done (static scan) |
 | Event-level ownership (§1) | `EventMember` in `prisma/schema.prisma`; [`event-ownership.md`](event-ownership.md) | built, off |
-| Additive migration with rollback (§1, §4) | `migrations/2026-11-17-event-ownership.{up,down}.sql`, checked by `scripts/security-migration-check.sh` | tested on isolated DB, **not applied** |
-| Approved ownership mapping with dry run (§1) | `scripts/security-ownership-mapping.ts` (fingerprint + approval reference, one transaction, no emails) | tested on isolated DB, **not run on real data** |
+| Additive migration with rollback (§1, §4) | `migrations/2026-11-17-event-ownership.{up,down}.sql`, checked by `scripts/security-migration-check.sh` | tested on isolated DB; **applied to production 17 Nov 2026** (Supabase migration `20261117173521`) |
+| Approved ownership mapping with dry run (§1) | `scripts/security-ownership-mapping.ts` (fingerprint + approval reference, one transaction, no emails) | tested on isolated DB; **production mapping applied 17 Nov 2026** (same checks, run through the Supabase connector) |
 | Server-side authorization inside queries (§1, §5) | `src/lib/access/` (`owner-repo.ts` has the membership condition in every query, row lock on inserts, compare-and-set status) | built, off |
 | Owner-scoped v2 reads **and writes** (§2) | `src/app/api/v2/{events,guests,bookings}` | built, off |
 | Public DTO (§2) | `GET /api/v2/public/events/{slug}`: allowlisted fields, active/published only | built, off |
@@ -51,22 +54,49 @@ private data to anyone until the cutover steps are approved and done.
 Not evidence of security:
 - None of the above ran v2 against real Supabase Auth: identity was injected in the tests. The production project is now
   reachable through the connector, but only read-only checks were made.
-- No database was migrated, and no load test was done.
+- The production migration is additive. Catalog checks and before/after snapshots verified it, not application
+  traffic. No load test was done.
 
 ## Deployed configuration (production Supabase project `tvrb…mjzp`, read-only check, 17 Nov 2026)
 
-The connector ran SELECT queries on the system catalog only (tables, policies, grants, functions, roles, event
-triggers) and read the auth settings. No table rows were read, and nothing was changed.
+This read-only check ran SELECT queries on the system catalog only (tables, policies, grants, functions, roles, event
+triggers) and read the auth settings. No table rows were read, and nothing was changed. The approved changes made
+afterwards are listed under "Production changes".
 
 | Area | Finding |
 |---|---|
-| Where the data lives | The 17 legacy Prisma tables are in this project, with real data (planner estimates: about 8 events, 143 guests, 107 bookings). There is no `_prisma_migrations` table, so the schema is managed with `prisma db push` |
+| Where the data lives | The 17 legacy Prisma tables are in this project, with real data (exact counts on 17 Nov: 8 events, 142 guests, 107 bookings). Schema changes are recorded as Supabase migrations (13 before this work), and there is no Prisma migration history |
 | RLS | **On for all 28 public tables.** The active event trigger `ensure_rls` (function `rls_auto_enable`) turns RLS on for every new table created in `public`, so future Prisma tables get it too. None of the 17 legacy tables has a policy, so the Data API returns no rows to `anon` or `authenticated`. Neither role can bypass RLS. The owner role `postgres` can, which is why the app (Prisma) still reads the tables |
 | Grants | `anon` and `authenticated` hold **full privileges** (select, insert, update, delete, truncate, …) on the 17 legacy tables, `market_fare_observations` and the two `serpapi_*` tables, through the schema's default privileges. Today only RLS stands in the way; one mistaken permissive policy would open a table. The research tables (`route_forecast_evidence`, `traffic_research_*`) have no grants |
 | Saved plans and quote reviews | **Deployed exactly as `private-inventory-plans.sql` / `private-quote-reviews.sql`.** RLS on; owner-only select, insert and delete via `auth.uid()`; no update; insert limited to the same columns; no anonymous access. The same pattern holds for the private drafts, guests and room blocks, with owner-only update on the allowed columns |
 | Views and functions | No views or materialised views in `public`. The two quota trigger functions run with owner rights (`SECURITY DEFINER`) but cannot be executed by `anon`/`authenticated`. `rls_auto_enable` is an event-trigger function and cannot be called through the API |
-| Ownership migration | Not applied: `EventMember` and `BookingAccess` do not exist |
+| Ownership migration | Not applied at the time of this check; applied later that day (see "Production changes") |
 | Auth (settings read, **not changed**) | Sign-ups are open and email confirmation is off (`mailer_autoconfirm`), so anyone can create an account under any email address without proving it. The v2 design never trusts emails, and ownership is granted only by exact user id. Other settings: passwords at least 6 characters; leaked-password check off; captcha off; refresh-token rotation on; 1-hour access tokens; anonymous sign-ins off; redirect URLs limited to `/secure-account/callback`. There are 11 accounts |
+
+## Production changes (approved by the project owner, 17 Nov 2026)
+
+| Step | What was done | Evidence |
+|---|---|---|
+| Approval | Given through the chat's question form. **Account:** the owner's sign-in account, named by the owner and resolved to exactly one Supabase user (id `c5b8819d…`). **Events:** all 8. **Production change:** go ahead without a data dump. This was the owner's choice: the change only adds tables, and a dump would copy guests' personal data into the work sandbox | Reference `R14-owner-mapping-2026-11-17` |
+| Snapshot before | Exact row counts of all 28 tables, plus checksums of columns, constraints, policies, grants, indexes and RLS flags | taken 17:34:50 UTC |
+| Migration | `migrations/2026-11-17-event-ownership.up.sql` (commit `4bfda34`), applied as Supabase migration `20261117173521 event_ownership_and_booking_access`. Its `BEGIN`/`COMMIT` lines were removed because the tool runs the migration in one transaction | Both tables: owner `postgres`, RLS on, 0 policies, no privileges of any kind for `anon`/`authenticated`, 11 constraints, 6 indexes, 0 rows |
+| Snapshot after the migration | Identical to the snapshot before | 17:36:04 UTC |
+| Ownership dry run | Every grant checked: event found, account found, valid role, no duplicate, no existing member. The fingerprint comes from the library's `fingerprint()`. The mapping file (ids only) is kept outside the repo | 8/8 OK, fingerprint `70214dc6e305` |
+| Ownership apply | One statement inserts the 8 grants and rolls back unless exactly 8 rows go in. `grantedBy` holds the approval reference | 8 active owners, 1 per event, 0 events without an owner |
+| Snapshot after the mapping | Identical to the snapshot before | 17:36:54 UTC |
+| Live site | `/`, `/dashboard`, `/event/{slug}`: 200. `/api/v2/events`: 503 (flag off). The legacy API still lists 8 events | behaviour unchanged |
+
+Undo (each needs the same kind of approval):
+- Ownership only: `UPDATE "EventMember" SET "revokedAt" = now() WHERE "grantedBy" = 'R14-owner-mapping-2026-11-17';`
+- The whole schema change: `migrations/2026-11-17-event-ownership.down.sql` (drops only the two tables).
+
+Notes:
+- Nothing visible changes yet. Production code (`195fd1c`) does not read these tables, and the v2 API that does is not
+  deployed.
+- The owner chose the account by its email address. Sign-ups are not email-verified, so the owner should confirm it is
+  the account they sign in with; otherwise, revoke as above.
+- The 8th event was included at the owner's request. It is a draft "Copy of …" created on 17 Nov through the open
+  dashboard; its creator is unknown.
 
 ## Residual risk (honest list)
 
@@ -104,7 +134,10 @@ triggers) and read the auth settings. No table rows were read, and nothing was c
 5. **Rate limits are per server instance.** They are in memory, so on serverless they do not add up to a global limit.
 6. **Audit pseudonyms.** They are unkeyed hashes: someone holding a list of user ids could link log lines to users.
    A keyed hash (`AUDIT_LOG_KEY`) would prevent that.
-7. **Not started (plan §6 / phase 6):**
+7. **Schema drift until merge.** Production now has `EventMember` and `BookingAccess`, but `main`'s
+   `prisma/schema.prisma` does not. Running `prisma db push` against production from `main` (or any branch without the
+   two models) would offer to drop them, behind a data-loss prompt. Do not do it before this branch is merged.
+8. **Not started (plan §6 / phase 6):**
    - shared rate limits;
    - archive decompression caps for `/api/ai/parse` (XLSX/DOCX);
    - a site-wide CSP (report-only first);
@@ -114,14 +147,18 @@ triggers) and read the auth settings. No table rows were read, and nothing was c
 
 ## Decisions needed (nothing below happens without an explicit yes)
 
+Done on 17 Nov 2026 with the owner's approval: the up migration on production and the ownership mapping (see
+"Production changes").
+
 1. Push this branch, or create a Vercel preview (flag off).
-2. Run the backup and restore drill on production. The dump contains personal data, so it must stay on an approved,
-   encrypted machine.
-3. Apply the up migration to production. It is additive, and the app is unaffected while the flag is off.
-4. Name the approved synthetic accounts, then turn the flag on **for the preview only**.
-5. Assign the 7 existing events with an exact mapping (event id → Supabase user id → role), or leave them unclaimed.
-6. Approve or decline revoking the Data API grants (`anon`, `authenticated`) on the legacy, `market_fare_observations`
+2. Name the approved synthetic accounts, then turn the flag on **for the preview only**.
+3. Run a production backup and restore drill before any change that alters existing tables or rows. The dump contains
+   personal data, so it must stay on an approved, encrypted machine. The owner chose to skip it for the additive
+   migration.
+4. Decide owners for events created from now on. The legacy dashboard creates them unclaimed. v2 has no endpoint for
+   creating events yet; when one is built, it should make the creator the owner in the same transaction.
+5. Approve or decline revoking the Data API grants (`anon`, `authenticated`) on the legacy, `market_fare_observations`
    and `serpapi_*` tables, and the matching default privileges for new tables. The app does not use them: Supabase client
    code only touches the `private_*` tables. The deployed RLS check itself is done (read-only).
-7. Later, separately: move the booking page and dashboard to v2, switch off the legacy bridge, and restrict the
+6. Later, separately: move the booking page and dashboard to v2, switch off the legacy bridge, and restrict the
    legacy routes.
