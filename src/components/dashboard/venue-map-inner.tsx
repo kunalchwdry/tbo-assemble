@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -105,6 +106,11 @@ export default function VenueMap({
   const [geoInfo, setGeoInfo] = useState<{ approximate: boolean; message: string } | null>(null);
   const [loading, setLoading] = useState(!hasInitialCoords);
   const [modalOpen, setModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const coords = useMemo<[number, number] | null>(() => {
     return hasInitialCoords ? [initialLat, initialLng] : geocodedCoords;
@@ -210,7 +216,10 @@ export default function VenueMap({
               attributionControl={false}
               className="h-full w-full z-0"
             >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <TileLayer
+                url="/api/tiles/{z}/{x}/{y}.png"
+                maxZoom={19}
+              />
               <Marker position={coords} icon={miniIcon} />
               <MapResizer />
               <MapRecenter center={coords} zoom={miniZoom} />
@@ -236,7 +245,7 @@ export default function VenueMap({
       </div>
 
       {/* 2. Full-featured Modal / Dialog displaying large interactive OpenStreetMap */}
-      {modalOpen && (
+      {modalOpen && mounted && typeof document !== "undefined" && createPortal(
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 animate-fade-in"
           role="dialog"
@@ -309,7 +318,7 @@ export default function VenueMap({
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  url="/api/tiles/{z}/{x}/{y}.png"
                   maxZoom={19}
                 />
                 <ZoomControl position="bottomright" />
@@ -386,7 +395,8 @@ export default function VenueMap({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
